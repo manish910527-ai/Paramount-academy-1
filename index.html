@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Paramount Academy Khandwa</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* --- THEME & STYLES (Same as before) --- */
+        :root {
+            --bg-body: #0b1221; --bg-card: #151d2e; --bg-header: #0f172a;
+            --primary: #38bdf8; --primary-light: #7dd3fc; --accent: #818cf8;
+            --text-main: #f1f5f9; --text-muted: #94a3b8; --border: #334155;
+            --success: #4ade80; --danger: #f87171; --glass: rgba(15, 23, 42, 0.95);
+            --neon-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
+        }
+        .light-mode {
+            --bg-body: #f1f5f9; --bg-card: #ffffff; --bg-header: #ffffff;
+            --primary: #0284c7; --accent: #6366f1; --text-main: #0f172a;
+            --text-muted: #64748b; --border: #e2e8f0; --glass: rgba(255, 255, 255, 0.9);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Roboto', sans-serif; background-color: var(--bg-body); color: var(--text-main); min-height: 100vh; transition: background 0.3s, color 0.3s; }
+        h1, h2, h3, h4, h5, h6 { font-family: 'Poppins', sans-serif; }
+        .container { padding: 15px; max-width: 600px; margin: 0 auto; }
+        .hidden { display: none !important; }
+        
+        .btn { padding: 12px 24px; border: none; border-radius: 8px; font-family: 'Poppins', sans-serif; font-weight: 600; cursor: pointer; transition: all 0.3s; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-primary { background: linear-gradient(135deg, var(--primary), var(--accent)); color: white; box-shadow: var(--neon-shadow); }
+        .btn-outline { background: transparent; border: 1px solid var(--primary); color: var(--primary); }
+        
+        .input-group { margin-bottom: 15px; }
+        .input-group input, .input-group select { width: 100%; padding: 12px; background: var(--bg-body); border: 1px solid var(--border); border-radius: 6px; color: var(--text-main); }
+        .input-group input:focus { border-color: var(--primary); outline: none; }
+
+        .app-header { background: var(--glass); backdrop-filter: blur(10px); padding: 12px 15px; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        .header-logo { height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); }
+        .user-info { display: flex; align-items: center; gap: 15px; }
+        .theme-toggle { font-size: 1.2rem; color: var(--text-muted); cursor: pointer; transition: color 0.3s; }
+        .theme-toggle:hover { color: var(--primary); }
+        
+        .home-banner { width: 100%; height: 180px; border-radius: 12px; object-fit: cover; margin-bottom: 15px; border: 1px solid var(--border); }
+
+        .card { background: var(--bg-card); border-radius: 12px; padding: 20px; margin-bottom: 15px; border: 1px solid var(--border); position: relative; overflow: hidden; transition: background 0.3s; }
+        .card::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: linear-gradient(to bottom, var(--primary), var(--accent)); }
+        .card-title { font-weight: 600; margin-bottom: 5px; display: flex; justify-content: space-between; align-items: center; }
+        
+        .auth-screen { height: 100vh; display: flex; flex-direction: column; justify-content: center; background: radial-gradient(circle at top, #1e293b, var(--bg-body)); }
+        .auth-box { background: var(--bg-card); padding: 30px; border-radius: 20px; border: 1px solid var(--border); text-align: center; box-shadow: var(--neon-shadow); }
+        .auth-logo-img { height: 80px; margin-bottom: 15px; }
+
+        .category-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; }
+        .cat-card { background: var(--bg-card); padding: 20px; border-radius: 12px; text-align: center; border: 1px solid var(--border); transition: transform 0.2s; cursor: pointer; }
+        .cat-card:hover { transform: scale(1.02); border-color: var(--primary); }
+        .cat-icon { font-size: 2rem; background: linear-gradient(135deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px; }
+
+        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--glass); backdrop-filter: blur(10px); border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding: 10px 0; z-index: 100; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); text-decoration: none; font-size: 0.75rem; cursor: pointer; }
+        .nav-item i { font-size: 1.2rem; margin-bottom: 4px; }
+        .nav-item.active { color: var(--primary); font-weight: 600; }
+
+        .timer { font-size: 2rem; font-weight: 700; color: var(--primary); font-family: 'Poppins', sans-serif; }
+        .question-box { background: var(--bg-card); border-radius: 12px; padding: 20px; border: 1px solid var(--border); }
+        .option-btn { display: block; width: 100%; padding: 15px; margin-bottom: 10px; background: var(--bg-body); border: 1px solid var(--border); border-radius: 8px; color: var(--text-main); text-align: left; cursor: pointer; }
+        .option-btn.selected { border-color: var(--primary); background: rgba(56, 189, 248, 0.2); color: var(--primary); font-weight: bold; }
+
+        .section { padding-bottom: 80px; animation: fadeIn 0.5s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+    <!-- AUTH SCREEN -->
+    <div id="authContainer" class="auth-screen">
+        <div class="container">
+            <div class="auth-box">
+                <img src="https://z-cdn-media.chatglm.cn/files/0e3ee4e2-a828-452f-bc6c-f4506dcc9.png?auth_key=1877312433-dcb79dfed99a4b8a9d928e230dbae08b-0-e09b25444248d21d5c682bd526d48fa0" class="auth-logo-img" alt="Logo">
+                <h2 style="margin-bottom: 5px; color: var(--primary);">Paramount Academy</h2>
+                <p style="color: var(--text-muted); margin-bottom: 20px;">Khandwa's Premium Coaching</p>
+                
+                <div id="loginForm">
+                    <div class="input-group"><input type="email" id="loginEmail" placeholder="Email Address"></div>
+                    <div class="input-group"><input type="password" id="loginPass" placeholder="Password"></div>
+                    <button class="btn btn-primary" style="width: 100%;" onclick="handleLogin()">Login</button>
+                    <p style="margin-top: 15px; color: var(--text-muted);">New student? <span style="color: var(--primary); cursor: pointer;" onclick="toggleAuth('register')">Register</span></p>
+                </div>
+
+                <div id="registerForm" class="hidden">
+                    <div class="input-group"><input type="text" id="regName" placeholder="Full Name"></div>
+                    <div class="input-group"><input type="email" id="regEmail" placeholder="Email Address"></div>
+                    <div class="input-group"><input type="password" id="regPass" placeholder="Create Password"></div>
+                    <div class="input-group">
+                        <select id="regExam">
+                            <option value="">Select Exam Focus</option>
+                            <option value="SSC">SSC</option>
+                            <option value="Railway">Railway</option>
+                            <option value="MP State">MP State Exams</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary" style="width: 100%;" onclick="handleRegister()">Register</button>
+                    <p style="margin-top: 15px; color: var(--text-muted);">Already have account? <span style="color: var(--primary); cursor: pointer;" onclick="toggleAuth('login')">Login</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN APP -->
+    <div id="appContainer" class="hidden">
+        <header class="app-header">
+            <img src="https://z-cdn-media.chatglm.cn/files/0e3ee4e2-a828-452f-bc6c-f4506dcc9.png?auth_key=1877312433-dcb79dfed99a4b8a9d928e230dbae08b-0-e09b25444248d21d5c682bd526d48fa0" class="header-logo" alt="Logo">
+            <div class="user-info">
+                <i class="fas fa-moon theme-toggle" id="themeToggle" onclick="toggleTheme()"></i>
+                <div class="user-avatar" style="width: 32px; height: 32px; background: linear-gradient(135deg, var(--primary), var(--accent)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.8rem;" id="userAvatar">U</div>
+            </div>
+        </header>
+
+        <section id="homeSection" class="section container">
+            <h2 style="margin-bottom: 5px;">Welcome, <span id="dashName">Student</span></h2>
+            <p style="color: var(--text-muted); margin-bottom: 15px;">Let's crack the exam today!</p>
+            <img id="homeBannerImg" src="https://via.placeholder.com/600x200?text=Loading..." class="home-banner" alt="Banner">
+            <div class="card" style="background: linear-gradient(135deg, #1e293b, #0f172a); border: 1px solid var(--primary);" onclick="startTest('weekly')">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <h3 style="color: var(--primary-light);"><i class="fas fa-bolt"></i> Saturday Weekly Test</h3>
+                        <p style="font-size:0.9rem; color:#cbd5e1;">Live Now • 30 Min</p>
+                    </div>
+                    <i class="fas fa-chevron-right" style="color:var(--primary);"></i>
+                </div>
+            </div>
+
+            <h3 style="margin-top: 20px; color: var(--text-muted); text-transform: uppercase; font-size: 0.9rem;">Study Materials</h3>
+            <div class="category-grid">
+                <div class="cat-card" onclick="navigateTo('study', 'Maths')"><div class="cat-icon"><i class="fas fa-calculator"></i></div><div class="cat-name">Maths</div></div>
+                <div class="cat-card" onclick="navigateTo('study', 'Reasoning')"><div class="cat-icon"><i class="fas fa-brain"></i></div><div class="cat-name">Reasoning</div></div>
+                <div class="cat-card" onclick="navigateTo('study', 'English')"><div class="cat-icon"><i class="fas fa-language"></i></div><div class="cat-name">English</div></div>
+                <div class="cat-card" onclick="navigateTo('study', 'GK')"><div class="cat-icon"><i class="fas fa-globe"></i></div><div class="cat-name">GK & GS</div></div>
+            </div>
+
+            <h3 style="margin-top: 20px; color: var(--text-muted); text-transform: uppercase; font-size: 0.9rem;">Quick Mocks</h3>
+            <div id="testList">
+                <div class="card" onclick="startTest('sectional')">
+                    <div class="card-title">Practice Mock <span style="color:var(--success); font-size:0.8rem;">New</span></div>
+                    <p style="color: var(--text-muted); font-size:0.85rem;">10 Questions • 10 Mins</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="studySection" class="section container hidden">
+            <h2 id="studyTitle">Study Material</h2>
+            <div id="pdfListContainer" style="margin-top: 15px;"></div>
+        </section>
+
+        <section id="testSection" class="section container hidden">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <h3 id="testNameTitle">Test</h3>
+                <div class="timer" id="timerBox">20:00</div>
+            </div>
+            <div id="questionContainer"></div>
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button class="btn btn-outline" style="flex:1" onclick="changeQuestion(-1)">Previous</button>
+                <button class="btn btn-primary" style="flex:2" onclick="changeQuestion(1)">Next</button>
+            </div>
+        </section>
+
+        <section id="analysisSection" class="section container hidden">
+            <h2>Performance</h2>
+            <div style="text-align: center; margin: 30px 0;">
+                <div class="score-val" style="font-size: 3rem;" id="avgScore">-</div>
+                <p style="color: var(--text-muted);">Average Score</p>
+            </div>
+            <h3 style="margin-bottom: 15px; color: var(--text-muted);">Recent Attempts</h3>
+            <div id="attemptList"></div>
+        </section>
+
+        <nav class="bottom-nav">
+            <div class="nav-item active" onclick="showSection('home')"><i class="fas fa-home"></i><span>Home</span></div>
+            <div class="nav-item" onclick="showSection('study')"><i class="fas fa-book-open"></i><span>Study</span></div>
+            <div class="nav-item" onclick="showSection('test')"><i class="fas fa-pen"></i><span>Tests</span></div>
+            <div class="nav-item" onclick="showSection('analysis')"><i class="fas fa-chart-line"></i><span>Stats</span></div>
+            <div class="nav-item" onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i><span>Logout</span></div>
+        </nav>
+    </div>
+
+    <!-- FIREBASE LOGIC -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+        import { getDatabase, ref, set, get, child, push, onValue } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyBPC07vEL3aeLf4jzV6hfxnvScglW6WGK0",
+          authDomain: "paramount-academy-c236d.firebaseapp.com",
+          databaseURL: "https://paramount-academy-c236d-default-rtdb.asia-southeast1.firebasedatabase.app/",
+          projectId: "paramount-academy-c236d",
+          storageBucket: "paramount-academy-c236d.firebasestorage.app",
+          messagingSenderId: "825327030964",
+          appId: "1:825327030964:web:6a520db01d9ed9d549bde1"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const dbRef = ref(db);
+
+        window.currentUser = null;
+        let questions = [];
+        let currentQ = 0;
+        let score = 0;
+
+        // --- THEME ---
+        window.toggleTheme = () => {
+            document.body.classList.toggle('light-mode');
+            const icon = document.getElementById('themeToggle');
+            const isLight = document.body.classList.contains('light-mode');
+            icon.classList.toggle('fa-moon', !isLight);
+            icon.classList.toggle('fa-sun', isLight);
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+        };
+
+        const loadTheme = () => {
+            if(localStorage.getItem('theme') === 'light') {
+                document.body.classList.add('light-mode');
+                document.getElementById('themeToggle').classList.replace('fa-moon', 'fa-sun');
+            }
+        };
+
+        // --- AUTH LOGIC (FIXED) ---
+        window.toggleAuth = (type) => {
+            document.getElementById('loginForm').classList.toggle('hidden', type === 'register');
+            document.getElementById('registerForm').classList.toggle('hidden', type === 'login');
+        };
+
+        window.handleLogin = async () => {
+            const email = document.getElementById('loginEmail').value;
+            const pass = document.getElementById('loginPass').value;
+            if(!email || !pass) return alert("Fill all fields");
+            
+            try {
+                const emailKey = btoa(email);
+                const snapshot = await get(child(dbRef, `users/${emailKey}`));
+                
+                if (snapshot.exists()) {
+                    const userData = snapshot.val();
+                    if(userData.pass === pass) {
+                        setSession(userData);
+                        showApp();
+                    } else {
+                        alert("Wrong Password");
+                    }
+                } else {
+                    alert("User not found. Please Register first.");
+                }
+            } catch (error) {
+                console.error(error);
+                alert("Login Error: " + error.message);
+            }
+        };
+
+        window.handleRegister = () => {
+            const name = document.getElementById('regName').value;
+            const email = document.getElementById('regEmail').value;
+            const pass = document.getElementById('regPass').value;
+            const exam = document.getElementById('regExam').value;
+            
+            if(name && email && pass && exam) {
+                const emailKey = btoa(email);
+                const userData = { name, email, pass, exam };
+                
+                set(ref(db, 'users/' + emailKey), userData)
+                .then(() => {
+                    alert("Registration Successful!");
+                    setSession(userData);
+                    showApp();
+                })
+                .catch((error) => {
+                    console.error(error);
+                    alert("Registration Error: " + error.message);
+                });
+            } else {
+                alert("Please fill all fields");
+            }
+        };
+
+        window.handleLogout = () => {
+            localStorage.removeItem('pUser'); // Clear session
+            window.currentUser = null;
+            location.reload(); // Refresh page
+        };
+
+        const setSession = (user) => {
+            localStorage.setItem('pUser', JSON.stringify(user)); // Save to local storage
+            window.currentUser = user;
+        };
+
+        const showApp = () => {
+            document.getElementById('authContainer').classList.add('hidden');
+            document.getElementById('appContainer').classList.remove('hidden');
+            document.getElementById('dashName').innerText = currentUser.name;
+            document.getElementById('userAvatar').innerText = currentUser.name.charAt(0).toUpperCase();
+            loadTheme();
+            loadBanner();
+            loadPDFs();
+        };
+
+        // --- NAVIGATION ---
+        window.showSection = (sec) => {
+            document.querySelectorAll('.section').forEach(s => s.classList.add('hidden'));
+            if(sec === 'home') document.getElementById('homeSection').classList.remove('hidden');
+            if(sec === 'study') { document.getElementById('studySection').classList.remove('hidden'); loadPDFs(); }
+            if(sec === 'test') startTest('demo'); 
+            if(sec === 'analysis') { document.getElementById('analysisSection').classList.remove('hidden'); loadResults(); }
+        };
+
+        window.navigateTo = (sec, data) => {
+            document.querySelectorAll('.section').forEach(s => s.classList.add('hidden'));
+            document.getElementById('studySection').classList.remove('hidden');
+            document.getElementById('studyTitle').innerText = data + " Material";
+        };
+
+        // --- DATA LOADERS ---
+        const loadBanner = () => {
+            onValue(ref(db, 'settings/banner'), (snapshot) => {
+                if(snapshot.exists()) document.getElementById('homeBannerImg').src = snapshot.val();
+            });
+        };
+
+        const loadPDFs = () => {
+            const container = document.getElementById('pdfListContainer');
+            onValue(ref(db, 'pdfs'), (snapshot) => {
+                container.innerHTML = '';
+                if(snapshot.exists()){
+                    snapshot.forEach((child) => {
+                        const pdf = child.val();
+                        const card = document.createElement('div');
+                        card.className = 'card';
+                        card.innerHTML = `<div class="card-title"><i class="fas fa-file-pdf" style="color:var(--danger);"></i> ${pdf.title}</div><a href="${pdf.url}" target="_blank" class="btn btn-outline" style="font-size:0.8rem; padding: 8px 15px; margin-top:10px;">Open PDF</a>`;
+                        container.appendChild(card);
+                    });
+                } else { container.innerHTML = '<div class="card"><p>No PDFs uploaded yet.</p></div>'; }
+            });
+        };
+
+        const loadResults = () => {
+            if(!currentUser) return;
+            const container = document.getElementById('attemptList');
+            onValue(ref(db, 'results/' + btoa(currentUser.email)), (snapshot) => {
+                 if(snapshot.exists()){
+                     container.innerHTML = '';
+                     snapshot.forEach((child) => {
+                        const res = child.val();
+                        const card = document.createElement('div');
+                        card.className = 'card';
+                        card.innerHTML = `<div class="card-title">${res.testName} <span style="color:var(--primary); font-weight:bold;">${res.score}/${res.total}</span></div>`;
+                        container.prepend(card);
+                     });
+                 }
+            });
+        };
+      
+        // --- TEST ENGINE ---
+        window.startTest = (type) => {
+            const container = document.getElementById('questionContainer');
+            container.innerHTML = '<div class="card"><p>Loading questions...</p></div>';
+            
+            document.querySelectorAll('.section').forEach(s => s.classList.add('hidden'));
+            document.getElementById('testSection').classList.remove('hidden');
+            document.getElementById('testNameTitle').innerText = type === 'weekly' ? "Saturday Test" : "Practice Test";
+
+            onValue(ref(db, 'questions'), (snapshot) => {
+                if (snapshot.exists()) {
+                    questions = [];
+                    snapshot.forEach((child) => { questions.push(child.val()); });
+                    questions.sort(() => Math.random() - 0.5); 
+                    questions = questions.slice(0, 10); 
+                    
+                    currentQ = 0; score = 0;
+                    loadQuestion();
+                } else {
+                    container.innerHTML = '<div class="card"><p>No questions found! Admin needs to add questions.</p></div>';
+                }
+            }, { onlyOnce: true });
+        };
+
+        const loadQuestion = () => {
+            const q = questions[currentQ];
+            document.getElementById('questionContainer').innerHTML = `
+                <div class="question-box">
+                    <p style="color:var(--primary); margin-bottom:10px;">Question ${currentQ + 1}/${questions.length}</p>
+                    <h4 class="question-text">${q.text}</h4>
+                    <button class="option-btn" onclick="selectOption(1, this)">A. ${q.op1}</button>
+                    <button class="option-btn" onclick="selectOption(2, this)">B. ${q.op2}</button>
+                    <button class="option-btn" onclick="selectOption(3, this)">C. ${q.op3}</button>
+                    <button class="option-btn" onclick="selectOption(4, this)">D. ${q.op4}</button>
+                </div>`;
+        };
+
+        window.selectOption = (op, btn) => {
+            document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            questions[currentQ].selected = op;
+        };
+
+        window.changeQuestion = (dir) => {
+            if(dir === 1) {
+                if(!questions[currentQ].selected) return alert("Select option");
+                if(questions[currentQ].selected == questions[currentQ].ans) score++;
+                currentQ++;
+                if(currentQ >= questions.length) return finishTest();
+                loadQuestion();
+            } else { if(currentQ > 0) { currentQ--; loadQuestion(); } }
+        };
+
+        const finishTest = () => {
+            push(ref(db, 'results/' + btoa(currentUser.email)), { testName: "Mock Test", score: score, total: questions.length, date: Date.now() });
+            alert(`Test Done! Score: ${score}/${questions.length}`);
+            showSection('analysis');
+        };
+
+        // --- INIT (AUTO LOGIN CHECK) ---
+        const savedUser = localStorage.getItem('pUser');
+        if(savedUser) {
+            window.currentUser = JSON.parse(savedUser);
+            showApp();
+        } else {
+            // Auth screen is visible by default
+        }
+
+       </script>
+</body>
+</html>
+                      
+      
