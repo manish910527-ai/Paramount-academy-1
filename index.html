@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* --- THEME & STYLES (Same as before) --- */
+        /* --- THEME & STYLES --- */
         :root {
             --bg-body: #0b1221; --bg-card: #151d2e; --bg-header: #0f172a;
             --primary: #38bdf8; --primary-light: #7dd3fc; --accent: #818cf8;
@@ -49,7 +49,7 @@
         
         .auth-screen { height: 100vh; display: flex; flex-direction: column; justify-content: center; background: radial-gradient(circle at top, #1e293b, var(--bg-body)); }
         .auth-box { background: var(--bg-card); padding: 30px; border-radius: 20px; border: 1px solid var(--border); text-align: center; box-shadow: var(--neon-shadow); }
-        .auth-logo-img { height: 80px; margin-bottom: 15px; }
+        .auth-logo-img { height: 80px; margin-bottom: 15px; border-radius: 50%; box-shadow: 0 0 15px rgba(56, 189, 248, 0.4); }
 
         .category-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; }
         .cat-card { background: var(--bg-card); padding: 20px; border-radius: 12px; text-align: center; border: 1px solid var(--border); transition: transform 0.2s; cursor: pointer; }
@@ -76,7 +76,8 @@
     <div id="authContainer" class="auth-screen">
         <div class="container">
             <div class="auth-box">
-                <img src="https://z-cdn-media.chatglm.cn/files/0e3ee4e2-a828-452f-bc6c-f4506dcc9.png?auth_key=1877312433-dcb79dfed99a4b8a9d928e230dbae08b-0-e09b25444248d21d5c682bd526d48fa0" class="auth-logo-img" alt="Logo">
+                <!-- ✅ LOGO ADDED HERE -->
+                <img src="https://i.postimg.cc/281Ys5Fb/logos-png-removebg-preview.png" class="auth-logo-img" alt="Paramount Logo">
                 <h2 style="margin-bottom: 5px; color: var(--primary);">Paramount Academy</h2>
                 <p style="color: var(--text-muted); margin-bottom: 20px;">Khandwa's Premium Coaching</p>
                 
@@ -109,7 +110,8 @@
     <!-- MAIN APP -->
     <div id="appContainer" class="hidden">
         <header class="app-header">
-            <img src="https://z-cdn-media.chatglm.cn/files/0e3ee4e2-a828-452f-bc6c-f4506dcc9.png?auth_key=1877312433-dcb79dfed99a4b8a9d928e230dbae08b-0-e09b25444248d21d5c682bd526d48fa0" class="header-logo" alt="Logo">
+            <!-- ✅ LOGO ADDED IN HEADER -->
+            <img src="https://i.postimg.cc/281Ys5Fb/logos-png-removebg-preview.png" class="header-logo" alt="Logo">
             <div class="user-info">
                 <i class="fas fa-moon theme-toggle" id="themeToggle" onclick="toggleTheme()"></i>
                 <div class="user-avatar" style="width: 32px; height: 32px; background: linear-gradient(135deg, var(--primary), var(--accent)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.8rem;" id="userAvatar">U</div>
@@ -207,7 +209,6 @@
         let currentQ = 0;
         let score = 0;
 
-        // --- THEME ---
         window.toggleTheme = () => {
             document.body.classList.toggle('light-mode');
             const icon = document.getElementById('themeToggle');
@@ -224,7 +225,6 @@
             }
         };
 
-        // --- AUTH LOGIC (FIXED) ---
         window.toggleAuth = (type) => {
             document.getElementById('loginForm').classList.toggle('hidden', type === 'register');
             document.getElementById('registerForm').classList.toggle('hidden', type === 'login');
@@ -241,19 +241,10 @@
                 
                 if (snapshot.exists()) {
                     const userData = snapshot.val();
-                    if(userData.pass === pass) {
-                        setSession(userData);
-                        showApp();
-                    } else {
-                        alert("Wrong Password");
-                    }
-                } else {
-                    alert("User not found. Please Register first.");
-                }
-            } catch (error) {
-                console.error(error);
-                alert("Login Error: " + error.message);
-            }
+                    if(userData.pass === pass) { setSession(userData); showApp(); } 
+                    else { alert("Wrong Password"); }
+                } else { alert("User not found. Please Register first."); }
+            } catch (error) { console.error(error); alert("Login Error: " + error.message); }
         };
 
         window.handleRegister = () => {
@@ -265,44 +256,24 @@
             if(name && email && pass && exam) {
                 const emailKey = btoa(email);
                 const userData = { name, email, pass, exam };
-                
                 set(ref(db, 'users/' + emailKey), userData)
-                .then(() => {
-                    alert("Registration Successful!");
-                    setSession(userData);
-                    showApp();
-                })
-                .catch((error) => {
-                    console.error(error);
-                    alert("Registration Error: " + error.message);
-                });
-            } else {
-                alert("Please fill all fields");
-            }
+                .then(() => { setSession(userData); showApp(); })
+                .catch((error) => { console.error(error); alert("Registration Error: " + error.message); });
+            } else { alert("Please fill all fields"); }
         };
 
-        window.handleLogout = () => {
-            localStorage.removeItem('pUser'); // Clear session
-            window.currentUser = null;
-            location.reload(); // Refresh page
-        };
+        window.handleLogout = () => { localStorage.removeItem('pUser'); window.currentUser = null; location.reload(); };
 
-        const setSession = (user) => {
-            localStorage.setItem('pUser', JSON.stringify(user)); // Save to local storage
-            window.currentUser = user;
-        };
+        const setSession = (user) => { localStorage.setItem('pUser', JSON.stringify(user)); window.currentUser = user; };
 
         const showApp = () => {
             document.getElementById('authContainer').classList.add('hidden');
             document.getElementById('appContainer').classList.remove('hidden');
             document.getElementById('dashName').innerText = currentUser.name;
             document.getElementById('userAvatar').innerText = currentUser.name.charAt(0).toUpperCase();
-            loadTheme();
-            loadBanner();
-            loadPDFs();
+            loadTheme(); loadBanner(); loadPDFs();
         };
 
-        // --- NAVIGATION ---
         window.showSection = (sec) => {
             document.querySelectorAll('.section').forEach(s => s.classList.add('hidden'));
             if(sec === 'home') document.getElementById('homeSection').classList.remove('hidden');
@@ -317,7 +288,6 @@
             document.getElementById('studyTitle').innerText = data + " Material";
         };
 
-        // --- DATA LOADERS ---
         const loadBanner = () => {
             onValue(ref(db, 'settings/banner'), (snapshot) => {
                 if(snapshot.exists()) document.getElementById('homeBannerImg').src = snapshot.val();
@@ -356,8 +326,7 @@
                  }
             });
         };
-      
-        // --- TEST ENGINE ---
+
         window.startTest = (type) => {
             const container = document.getElementById('questionContainer');
             container.innerHTML = '<div class="card"><p>Loading questions...</p></div>';
@@ -372,12 +341,8 @@
                     snapshot.forEach((child) => { questions.push(child.val()); });
                     questions.sort(() => Math.random() - 0.5); 
                     questions = questions.slice(0, 10); 
-                    
-                    currentQ = 0; score = 0;
-                    loadQuestion();
-                } else {
-                    container.innerHTML = '<div class="card"><p>No questions found! Admin needs to add questions.</p></div>';
-                }
+                    currentQ = 0; score = 0; loadQuestion();
+                } else { container.innerHTML = '<div class="card"><p>No questions found! Admin needs to add questions.</p></div>'; }
             }, { onlyOnce: true });
         };
 
@@ -416,17 +381,10 @@
             showSection('analysis');
         };
 
-        // --- INIT (AUTO LOGIN CHECK) ---
         const savedUser = localStorage.getItem('pUser');
-        if(savedUser) {
-            window.currentUser = JSON.parse(savedUser);
-            showApp();
-        } else {
-            // Auth screen is visible by default
-        }
-
-       </script>
+        if(savedUser) { window.currentUser = JSON.parse(savedUser); showApp(); }
+    </script>
 </body>
 </html>
-                      
-      
+        
+  
