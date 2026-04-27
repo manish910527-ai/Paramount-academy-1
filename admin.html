@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Paramount Academy</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Roboto&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { --bg-body: #0b1221; --bg-card: #151d2e; --primary: #38bdf8; --text-main: #f1f5f9; --border: #334155; }
+        body { font-family: 'Roboto', sans-serif; background: var(--bg-body); color: var(--text-main); margin: 0; }
+        h1, h2, h3 { font-family: 'Poppins', sans-serif; }
+        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
+        
+        .auth-box { max-width: 400px; margin: 100px auto; background: var(--bg-card); padding: 40px; border-radius: 15px; border: 1px solid var(--border); text-align: center; }
+        .input-group { margin-bottom: 15px; text-align: left; }
+        .input-group input, select { width: 100%; padding: 12px; background: #0b1221; border: 1px solid var(--border); border-radius: 6px; color: #fff; }
+        .btn { padding: 12px 30px; border: none; border-radius: 6px; background: var(--primary); color: #000; font-weight: bold; cursor: pointer; width: 100%; }
+        
+        .header { background: #151d2e; padding: 15px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        .logo-img { height: 40px; }
+        
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        .tab { padding: 10px 20px; background: #0b1221; border: 1px solid var(--border); border-radius: 20px; cursor: pointer; color: #ccc; }
+        .tab.active { background: var(--primary); color: #000; border-color: var(--primary); }
+
+        table { width: 100%; border-collapse: collapse; background: #151d2e; margin-top: 10px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid var(--border); }
+        th { color: var(--primary); }
+        
+        .form-card { background: var(--bg-card); padding: 30px; border-radius: 10px; border: 1px solid var(--border); margin-top: 20px; }
+        textarea { width: 100%; background: #0b1221; border: 1px solid var(--border); color: #fff; padding: 10px; border-radius: 5px; min-height: 80px; font-family: inherit; }
+    </style>
+</head>
+<body>
+
+    <div id="authScreen">
+        <div class="auth-box">
+            <img src="https://z-cdn-media.chatglm.cn/files/0e3ee4e2-a828-452f-bc6c-f4506dcc9.png?auth_key=1877312433-dcb79dfed99a4b8a9d928e230dbae08b-0-e09b25444248d21d5c682bd526d48fa0" style="height:60px; margin-bottom:10px;" alt="Logo">
+            <h2 style="margin-bottom:20px;">Admin Panel</h2>
+            <div class="input-group"><input type="text" id="adminUser" placeholder="Admin ID"></div>
+            <div class="input-group"><input type="password" id="adminPass" placeholder="Password"></div>
+            <button class="btn" onclick="adminLogin()">Login</button>
+            <p style="color:#666; font-size:0.8rem; margin-top:10px;">Default: admin / admin123</p>
+        </div>
+    </div>
+
+    <div id="dashboardScreen" class="hidden">
+        <div class="header">
+            <img src="https://z-cdn-media.chatglm.cn/files/0e3ee4e2-a828-452f-bc6c-f4506dcc9.png?auth_key=1877312433-dcb79dfed99a4b8a9d928e230dbae08b-0-e09b25444248d21d5c682bd526d48fa0" class="logo-img" alt="Logo">
+            <button class="btn" style="width:auto; padding:8px 15px; background:#333; color:#fff;" onclick="handleAdminLogout()">Logout</button>
+        </div>
+        <div class="container">
+            <div class="tabs">
+                <div class="tab active" onclick="showTab('banner')">Home Banner</div>
+                <div class="tab" onclick="showTab('questions')">Add Questions</div>
+                <div class="tab" onclick="showTab('students')">Students</div>
+                <div class="tab" onclick="showTab('upload')">Upload PDF</div>
+            </div>
+
+            <!-- BANNER TAB -->
+            <div id="bannerTab" class="form-card">
+                <h3 style="margin-bottom:15px; color:var(--primary);">Home Page Banner</h3>
+                <p style="font-size:0.8rem; color:#999; margin-bottom:10px;">Paste image URL (Recommended: 600x200 px)</p>
+                <div class="input-group"><input type="text" id="bannerUrl" placeholder="Paste Image URL here..."></div>
+                <button class="btn" onclick="updateBanner()" style="background:linear-gradient(135deg, #38bdf8, #818cf8); color:#fff;">Update Banner</button>
+                <div style="margin-top:15px;">
+                    <p style="font-size:0.9rem; color:#ccc;">Current Preview:</p>
+                    <img id="bannerPreview" src="" style="width:100%; margin-top:5px; border-radius:8px; border:1px solid #333; display:none;">
+                </div>
+            </div>
+
+            <!-- QUESTIONS TAB -->
+            <div id="questionsTab" class="hidden form-card">
+                <h3 style="margin-bottom:15px; color:var(--primary);">Add New Question</h3>
+                <div class="input-group"><select id="qExam"><option>SSC</option><option>Railway</option><option>MP State</option></select></div>
+                <div class="input-group"><select id="qSubject"><option>Maths</option><option>Reasoning</option><option>English</option><option>GK</option></select></div>
+                <div class="input-group"><textarea id="qText" placeholder="Enter Question Text..."></textarea></div>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                    <input type="text" id="op1" placeholder="Option A" style="padding:10px; background:#0b1221; border:1px solid #333; color:#fff;">
+                    <input type="text" id="op2" placeholder="Option B" style="padding:10px; background:#0b1221; border:1px solid #333; color:#fff;">
+                    <input type="text" id="op3" placeholder="Option C" style="padding:10px; background:#0b1221; border:1px solid #333; color:#fff;">
+                    <input type="text" id="op4" placeholder="Option D" style="padding:10px; background:#0b1221; border:1px solid #333; color:#fff;">
+                </div>
+                <div class="input-group" style="margin-top:10px;"><input type="number" id="qAns" placeholder="Correct Option (1-4)" min="1" max="4"></div>
+                <button class="btn" onclick="saveQuestion()" style="margin-top:10px; background:linear-gradient(135deg, #38bdf8, #818cf8); color:#fff;">Save Question</button>
+            </div>
+
+            <!-- STUDENTS TAB -->
+            <div id="studentsTab" class="hidden form-card">
+                <h3 style="margin-bottom:15px; color:var(--primary);">Registered Students</h3>
+                <table id="studentsTable"><thead><tr><th>Name</th><th>Email</th><th>Exam</th></tr></thead><tbody></tbody></table>
+            </div>
+
+            <!-- UPLOAD PDF TAB -->
+            <div id="uploadTab" class="hidden form-card">
+                <h3 style="margin-bottom:15px; color:var(--primary);">Upload Study Material</h3>
+                <div class="input-group"><input type="text" id="pdfTitle" placeholder="Title"></div>
+                <div class="input-group"><input type="text" id="pdfUrl" placeholder="PDF URL"></div>
+                <button class="btn" onclick="uploadPdf()" style="background:#333; color:#fff;">Upload</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+        import { getDatabase, ref, set, push, onValue } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyBPC07vEL3aeLf4jzV6hfxnvScglW6WGK0",
+          authDomain: "paramount-academy-c236d.firebaseapp.com",
+          databaseURL: "https://paramount-academy-c236d-default-rtdb.asia-southeast1.firebasedatabase.app/",
+          projectId: "paramount-academy-c236d",
+          storageBucket: "paramount-academy-c236d.firebasestorage.app",
+          messagingSenderId: "825327030964",
+          appId: "1:825327030964:web:6a520db01d9ed9d549bde1"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // --- ADMIN AUTH LOGIC (FIXED) ---
+        window.adminLogin = () => {
+            const u = document.getElementById('adminUser').value;
+            const p = document.getElementById('adminPass').value;
+            if(u === 'admin' && p === 'admin123') {
+                localStorage.setItem('isAdmin', 'true'); // Save Session
+                showDashboard();
+            } else { alert("Wrong Credentials!"); }
+        };
+
+        window.handleAdminLogout = () => {
+            localStorage.removeItem('isAdmin'); // Clear Session
+            location.reload();
+        };
+
+        const showDashboard = () => {
+            document.getElementById('authScreen').classList.add('hidden');
+            document.getElementById('dashboardScreen').classList.remove('hidden');
+            loadStudents();
+            loadCurrentBanner();
+        };
+
+        // --- TABS & FUNCTIONS ---
+        window.showTab = (tabName) => {
+            document.querySelectorAll('.form-card').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabName + 'Tab').classList.remove('hidden');
+            event.target.classList.add('active');
+        };
+
+        window.updateBanner = () => {
+            const url = document.getElementById('bannerUrl').value;
+            if(!url) return alert("Enter URL");
+            set(ref(db, 'settings/banner'), url).then(() => {
+                alert("Banner Updated!");
+                loadCurrentBanner();
+            });
+        };
+
+        const loadCurrentBanner = () => {
+            onValue(ref(db, 'settings/banner'), (snapshot) => {
+                if(snapshot.exists()) {
+                    const img = document.getElementById('bannerPreview');
+                    img.src = snapshot.val();
+                    img.style.display = 'block';
+                }
+            });
+        };
+
+        window.saveQuestion = () => {
+            const data = {
+                exam: document.getElementById('qExam').value,
+                subject: document.getElementById('qSubject').value,
+                text: document.getElementById('qText').value,
+                op1: document.getElementById('op1').value,
+                op2: document.getElementById('op2').value,
+                op3: document.getElementById('op3').value,
+                op4: document.getElementById('op4').value,
+                ans: document.getElementById('qAns').value
+            };
+            if(!data.text || !data.ans) return alert("Fill question and answer");
+            push(ref(db, 'questions'), data).then(() => alert("Saved!"));
+        };
+
+        window.uploadPdf = () => {
+            const title = document.getElementById('pdfTitle').value;
+            const url = document.getElementById('pdfUrl').value;
+            if(!title || !url) return alert("Fill all");
+            push(ref(db, 'pdfs'), { title: title, url: url }).then(() => alert("Uploaded!"));
+        };
+
+        const loadStudents = () => {
+            const table = document.getElementById('studentsTable').getElementsByTagName('tbody')[0];
+            onValue(ref(db, 'users'), (snapshot) => {
+                table.innerHTML = '';
+                snapshot.forEach((child) => {
+                    const user = child.val();
+                    const row = table.insertRow();
+                    row.innerHTML = `<td>${user.name}</td><td>${user.email}</td><td>${user.exam}</td>`;
+                });
+            });
+        };
+
+        // --- INIT CHECK (AUTO LOGIN) ---
+        if(localStorage.getItem('isAdmin') === 'true') {
+            showDashboard();
+        }
+    </script>
+</body>
+</html>
