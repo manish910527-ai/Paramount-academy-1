@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* --- THEME & STYLES --- */
         :root {
             --bg-body: #0b1221; --bg-card: #151d2e; --bg-header: #0f172a;
             --primary: #38bdf8; --primary-light: #7dd3fc; --accent: #818cf8;
@@ -23,37 +22,34 @@
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Roboto', sans-serif; background-color: var(--bg-body); color: var(--text-main); min-height: 100vh; transition: background 0.3s, color 0.3s; }
-        h1, h2, h3, h4, h5, h6 { font-family: 'Poppins', sans-serif; }
+        h1, h2, h3, h4 { font-family: 'Poppins', sans-serif; }
         .container { padding: 15px; max-width: 600px; margin: 0 auto; }
         .hidden { display: none !important; }
         
-        .btn { padding: 12px 24px; border: none; border-radius: 8px; font-family: 'Poppins', sans-serif; font-weight: 600; cursor: pointer; transition: all 0.3s; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn { padding: 12px 24px; border: none; border-radius: 8px; font-family: 'Poppins', sans-serif; font-weight: 600; cursor: pointer; transition: all 0.3s; width: 100%; }
         .btn-primary { background: linear-gradient(135deg, var(--primary), var(--accent)); color: white; box-shadow: var(--neon-shadow); }
-        .btn-outline { background: transparent; border: 1px solid var(--primary); color: var(--primary); }
+        .btn-outline { background: transparent; border: 1px solid var(--primary); color: var(--primary); width: auto; padding: 8px 15px; }
         
         .input-group { margin-bottom: 15px; }
         .input-group input, .input-group select { width: 100%; padding: 12px; background: var(--bg-body); border: 1px solid var(--border); border-radius: 6px; color: var(--text-main); }
-        .input-group input:focus { border-color: var(--primary); outline: none; }
 
         .app-header { background: var(--glass); backdrop-filter: blur(10px); padding: 12px 15px; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
         .header-logo { height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); }
         .user-info { display: flex; align-items: center; gap: 15px; }
-        .theme-toggle { font-size: 1.2rem; color: var(--text-muted); cursor: pointer; transition: color 0.3s; }
-        .theme-toggle:hover { color: var(--primary); }
+        .theme-toggle { font-size: 1.2rem; color: var(--text-muted); cursor: pointer; }
         
         .home-banner { width: 100%; height: 180px; border-radius: 12px; object-fit: cover; margin-bottom: 15px; border: 1px solid var(--border); }
 
-        .card { background: var(--bg-card); border-radius: 12px; padding: 20px; margin-bottom: 15px; border: 1px solid var(--border); position: relative; overflow: hidden; transition: background 0.3s; }
+        .card { background: var(--bg-card); border-radius: 12px; padding: 20px; margin-bottom: 15px; border: 1px solid var(--border); position: relative; overflow: hidden; }
         .card::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: linear-gradient(to bottom, var(--primary), var(--accent)); }
-        .card-title { font-weight: 600; margin-bottom: 5px; display: flex; justify-content: space-between; align-items: center; }
         
         .auth-screen { height: 100vh; display: flex; flex-direction: column; justify-content: center; background: radial-gradient(circle at top, #1e293b, var(--bg-body)); }
         .auth-box { background: var(--bg-card); padding: 30px; border-radius: 20px; border: 1px solid var(--border); text-align: center; box-shadow: var(--neon-shadow); }
         .auth-logo-img { height: 80px; margin-bottom: 15px; border-radius: 50%; box-shadow: 0 0 15px rgba(56, 189, 248, 0.4); }
 
         .category-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; }
-        .cat-card { background: var(--bg-card); padding: 20px; border-radius: 12px; text-align: center; border: 1px solid var(--border); transition: transform 0.2s; cursor: pointer; }
-        .cat-card:hover { transform: scale(1.02); border-color: var(--primary); }
+        .cat-card { background: var(--bg-card); padding: 20px; border-radius: 12px; text-align: center; border: 1px solid var(--border); cursor: pointer; transition: 0.2s; }
+        .cat-card:hover { border-color: var(--primary); transform: scale(1.02); }
         .cat-icon { font-size: 2rem; background: linear-gradient(135deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px; }
 
         .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--glass); backdrop-filter: blur(10px); border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding: 10px 0; z-index: 100; }
@@ -61,7 +57,7 @@
         .nav-item i { font-size: 1.2rem; margin-bottom: 4px; }
         .nav-item.active { color: var(--primary); font-weight: 600; }
 
-        .timer { font-size: 2rem; font-weight: 700; color: var(--primary); font-family: 'Poppins', sans-serif; }
+        .timer { font-size: 2rem; font-weight: 700; color: var(--primary); }
         .question-box { background: var(--bg-card); border-radius: 12px; padding: 20px; border: 1px solid var(--border); }
         .option-btn { display: block; width: 100%; padding: 15px; margin-bottom: 10px; background: var(--bg-body); border: 1px solid var(--border); border-radius: 8px; color: var(--text-main); text-align: left; cursor: pointer; }
         .option-btn.selected { border-color: var(--primary); background: rgba(56, 189, 248, 0.2); color: var(--primary); font-weight: bold; }
@@ -76,15 +72,14 @@
     <div id="authContainer" class="auth-screen">
         <div class="container">
             <div class="auth-box">
-                <!-- ✅ LOGO ADDED HERE -->
-                <img src="https://i.postimg.cc/281Ys5Fb/logos-png-removebg-preview.png" class="auth-logo-img" alt="Paramount Logo">
+                <img src="https://i.postimg.cc/281Ys5Fb/logos-png-removebg-preview.png" class="auth-logo-img" alt="Logo">
                 <h2 style="margin-bottom: 5px; color: var(--primary);">Paramount Academy</h2>
                 <p style="color: var(--text-muted); margin-bottom: 20px;">Khandwa's Premium Coaching</p>
                 
                 <div id="loginForm">
                     <div class="input-group"><input type="email" id="loginEmail" placeholder="Email Address"></div>
                     <div class="input-group"><input type="password" id="loginPass" placeholder="Password"></div>
-                    <button class="btn btn-primary" style="width: 100%;" onclick="handleLogin()">Login</button>
+                    <button class="btn btn-primary" onclick="handleLogin()">Login</button>
                     <p style="margin-top: 15px; color: var(--text-muted);">New student? <span style="color: var(--primary); cursor: pointer;" onclick="toggleAuth('register')">Register</span></p>
                 </div>
 
@@ -100,7 +95,7 @@
                             <option value="MP State">MP State Exams</option>
                         </select>
                     </div>
-                    <button class="btn btn-primary" style="width: 100%;" onclick="handleRegister()">Register</button>
+                    <button class="btn btn-primary" onclick="handleRegister()">Register</button>
                     <p style="margin-top: 15px; color: var(--text-muted);">Already have account? <span style="color: var(--primary); cursor: pointer;" onclick="toggleAuth('login')">Login</span></p>
                 </div>
             </div>
@@ -110,7 +105,6 @@
     <!-- MAIN APP -->
     <div id="appContainer" class="hidden">
         <header class="app-header">
-            <!-- ✅ LOGO ADDED IN HEADER -->
             <img src="https://i.postimg.cc/281Ys5Fb/logos-png-removebg-preview.png" class="header-logo" alt="Logo">
             <div class="user-info">
                 <i class="fas fa-moon theme-toggle" id="themeToggle" onclick="toggleTheme()"></i>
@@ -122,11 +116,13 @@
             <h2 style="margin-bottom: 5px;">Welcome, <span id="dashName">Student</span></h2>
             <p style="color: var(--text-muted); margin-bottom: 15px;">Let's crack the exam today!</p>
             <img id="homeBannerImg" src="https://via.placeholder.com/600x200?text=Loading..." class="home-banner" alt="Banner">
-            <div class="card" style="background: linear-gradient(135deg, #1e293b, #0f172a); border: 1px solid var(--primary);" onclick="startTest('weekly')">
+            
+            <!-- DYNAMIC WEEKLY TEST -->
+            <div id="weeklyTestCard" class="card hidden" style="background: linear-gradient(135deg, #1e293b, #0f172a); border: 1px solid var(--primary); cursor:pointer;" onclick="startTest('weekly')">
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                     <div>
-                        <h3 style="color: var(--primary-light);"><i class="fas fa-bolt"></i> Saturday Weekly Test</h3>
-                        <p style="font-size:0.9rem; color:#cbd5e1;">Live Now • 30 Min</p>
+                        <h3 style="color: var(--primary-light);"><i class="fas fa-bolt"></i> <span id="weeklyName">Saturday Test</span></h3>
+                        <p style="font-size:0.9rem; color:#cbd5e1;" id="weeklyMsg">Live Now</p>
                     </div>
                     <i class="fas fa-chevron-right" style="color:var(--primary);"></i>
                 </div>
@@ -169,7 +165,7 @@
         <section id="analysisSection" class="section container hidden">
             <h2>Performance</h2>
             <div style="text-align: center; margin: 30px 0;">
-                <div class="score-val" style="font-size: 3rem;" id="avgScore">-</div>
+                <div style="font-size: 3rem; font-weight:bold; color:var(--primary);" id="avgScore">-</div>
                 <p style="color: var(--text-muted);">Average Score</p>
             </div>
             <h3 style="margin-bottom: 15px; color: var(--text-muted);">Recent Attempts</h3>
@@ -185,7 +181,6 @@
         </nav>
     </div>
 
-    <!-- FIREBASE LOGIC -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
         import { getDatabase, ref, set, get, child, push, onValue } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
@@ -217,7 +212,6 @@
             icon.classList.toggle('fa-sun', isLight);
             localStorage.setItem('theme', isLight ? 'light' : 'dark');
         };
-
         const loadTheme = () => {
             if(localStorage.getItem('theme') === 'light') {
                 document.body.classList.add('light-mode');
@@ -234,17 +228,15 @@
             const email = document.getElementById('loginEmail').value;
             const pass = document.getElementById('loginPass').value;
             if(!email || !pass) return alert("Fill all fields");
-            
             try {
                 const emailKey = btoa(email);
                 const snapshot = await get(child(dbRef, `users/${emailKey}`));
-                
                 if (snapshot.exists()) {
                     const userData = snapshot.val();
                     if(userData.pass === pass) { setSession(userData); showApp(); } 
                     else { alert("Wrong Password"); }
-                } else { alert("User not found. Please Register first."); }
-            } catch (error) { console.error(error); alert("Login Error: " + error.message); }
+                } else { alert("User not found."); }
+            } catch (error) { alert("Error: " + error.message); }
         };
 
         window.handleRegister = () => {
@@ -252,18 +244,14 @@
             const email = document.getElementById('regEmail').value;
             const pass = document.getElementById('regPass').value;
             const exam = document.getElementById('regExam').value;
-            
             if(name && email && pass && exam) {
                 const emailKey = btoa(email);
-                const userData = { name, email, pass, exam };
-                set(ref(db, 'users/' + emailKey), userData)
-                .then(() => { setSession(userData); showApp(); })
-                .catch((error) => { console.error(error); alert("Registration Error: " + error.message); });
-            } else { alert("Please fill all fields"); }
+                set(ref(db, 'users/' + emailKey), { name, email, pass, exam })
+                .then(() => { setSession({name, email, pass, exam}); showApp(); });
+            } else { alert("Fill all fields"); }
         };
 
-        window.handleLogout = () => { localStorage.removeItem('pUser'); window.currentUser = null; location.reload(); };
-
+        window.handleLogout = () => { localStorage.removeItem('pUser'); location.reload(); };
         const setSession = (user) => { localStorage.setItem('pUser', JSON.stringify(user)); window.currentUser = user; };
 
         const showApp = () => {
@@ -271,7 +259,7 @@
             document.getElementById('appContainer').classList.remove('hidden');
             document.getElementById('dashName').innerText = currentUser.name;
             document.getElementById('userAvatar').innerText = currentUser.name.charAt(0).toUpperCase();
-            loadTheme(); loadBanner(); loadPDFs();
+            loadTheme(); loadBanner(); loadPDFs(); loadWeeklyTest();
         };
 
         window.showSection = (sec) => {
@@ -281,7 +269,6 @@
             if(sec === 'test') startTest('demo'); 
             if(sec === 'analysis') { document.getElementById('analysisSection').classList.remove('hidden'); loadResults(); }
         };
-
         window.navigateTo = (sec, data) => {
             document.querySelectorAll('.section').forEach(s => s.classList.add('hidden'));
             document.getElementById('studySection').classList.remove('hidden');
@@ -291,6 +278,20 @@
         const loadBanner = () => {
             onValue(ref(db, 'settings/banner'), (snapshot) => {
                 if(snapshot.exists()) document.getElementById('homeBannerImg').src = snapshot.val();
+            });
+        };
+        
+        const loadWeeklyTest = () => {
+             onValue(ref(db, 'settings/weeklyTest'), (snapshot) => {
+                const card = document.getElementById('weeklyTestCard');
+                if(snapshot.exists()){
+                    const data = snapshot.val();
+                    if(data.isActive) {
+                        card.classList.remove('hidden');
+                        document.getElementById('weeklyName').innerText = data.name || "Weekly Test";
+                        document.getElementById('weeklyMsg').innerText = data.msg || "Click to Start";
+                    } else { card.classList.add('hidden'); }
+                }
             });
         };
 
@@ -303,10 +304,10 @@
                         const pdf = child.val();
                         const card = document.createElement('div');
                         card.className = 'card';
-                        card.innerHTML = `<div class="card-title"><i class="fas fa-file-pdf" style="color:var(--danger);"></i> ${pdf.title}</div><a href="${pdf.url}" target="_blank" class="btn btn-outline" style="font-size:0.8rem; padding: 8px 15px; margin-top:10px;">Open PDF</a>`;
+                        card.innerHTML = `<div style="font-weight:600; margin-bottom:5px;"><i class="fas fa-file-pdf" style="color:var(--danger);"></i> ${pdf.title}</div><a href="${pdf.url}" target="_blank" class="btn btn-outline">Open PDF</a>`;
                         container.appendChild(card);
                     });
-                } else { container.innerHTML = '<div class="card"><p>No PDFs uploaded yet.</p></div>'; }
+                } else { container.innerHTML = '<div class="card"><p>No PDFs found.</p></div>'; }
             });
         };
 
@@ -320,7 +321,7 @@
                         const res = child.val();
                         const card = document.createElement('div');
                         card.className = 'card';
-                        card.innerHTML = `<div class="card-title">${res.testName} <span style="color:var(--primary); font-weight:bold;">${res.score}/${res.total}</span></div>`;
+                        card.innerHTML = `<div style="display:flex; justify-content:space-between;">${res.testName} <span style="color:var(--primary);">${res.score}/${res.total}</span></div>`;
                         container.prepend(card);
                      });
                  }
@@ -329,11 +330,10 @@
 
         window.startTest = (type) => {
             const container = document.getElementById('questionContainer');
-            container.innerHTML = '<div class="card"><p>Loading questions...</p></div>';
-            
+            container.innerHTML = '<div class="card"><p>Loading...</p></div>';
             document.querySelectorAll('.section').forEach(s => s.classList.add('hidden'));
             document.getElementById('testSection').classList.remove('hidden');
-            document.getElementById('testNameTitle').innerText = type === 'weekly' ? "Saturday Test" : "Practice Test";
+            document.getElementById('testNameTitle').innerText = type === 'weekly' ? "Weekly Test" : "Practice Test";
 
             onValue(ref(db, 'questions'), (snapshot) => {
                 if (snapshot.exists()) {
@@ -342,7 +342,7 @@
                     questions.sort(() => Math.random() - 0.5); 
                     questions = questions.slice(0, 10); 
                     currentQ = 0; score = 0; loadQuestion();
-                } else { container.innerHTML = '<div class="card"><p>No questions found! Admin needs to add questions.</p></div>'; }
+                } else { container.innerHTML = '<div class="card"><p>No questions.</p></div>'; }
             }, { onlyOnce: true });
         };
 
@@ -351,7 +351,7 @@
             document.getElementById('questionContainer').innerHTML = `
                 <div class="question-box">
                     <p style="color:var(--primary); margin-bottom:10px;">Question ${currentQ + 1}/${questions.length}</p>
-                    <h4 class="question-text">${q.text}</h4>
+                    <h4 style="margin-bottom:15px;">${q.text}</h4>
                     <button class="option-btn" onclick="selectOption(1, this)">A. ${q.op1}</button>
                     <button class="option-btn" onclick="selectOption(2, this)">B. ${q.op2}</button>
                     <button class="option-btn" onclick="selectOption(3, this)">C. ${q.op3}</button>
@@ -377,7 +377,7 @@
 
         const finishTest = () => {
             push(ref(db, 'results/' + btoa(currentUser.email)), { testName: "Mock Test", score: score, total: questions.length, date: Date.now() });
-            alert(`Test Done! Score: ${score}/${questions.length}`);
+            alert(`Done! Score: ${score}/${questions.length}`);
             showSection('analysis');
         };
 
@@ -386,5 +386,3 @@
     </script>
 </body>
 </html>
-        
-  
