@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel - Paramount</title>
+    <title>Admin - Paramount</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Roboto&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -11,267 +11,337 @@
         body { font-family: 'Roboto', sans-serif; background: var(--bg-body); color: var(--text-main); margin: 0; }
         h1, h2, h3 { font-family: 'Poppins', sans-serif; }
         .container { max-width: 800px; margin: 0 auto; padding: 20px; }
-        
-        .auth-box { max-width: 400px; margin: 100px auto; background: var(--bg-card); padding: 40px; border-radius: 15px; border: 1px solid var(--border); text-align: center; }
-        .input-group { margin-bottom: 15px; text-align: left; }
-        .input-group input, select { width: 100%; padding: 12px; background: #0b1221; border: 1px solid var(--border); border-radius: 6px; color: #fff; font-size: 1rem; }
-        .btn { padding: 12px 30px; border: none; border-radius: 6px; background: var(--primary); color: #000; font-weight: bold; cursor: pointer; width: 100%; font-size: 1rem; margin-top: 5px; }
-        
+        .card { background: var(--bg-card); padding: 20px; border-radius: 10px; border: 1px solid var(--border); margin-bottom: 15px; }
+        .input-group { margin-bottom: 10px; }
+        .input-group input, select, textarea { width: 100%; padding: 10px; background: #0b1221; border: 1px solid var(--border); border-radius: 6px; color: #fff; }
+        .btn { padding: 10px 20px; border: none; border-radius: 6px; background: var(--primary); color: #000; font-weight: bold; cursor: pointer; margin-top:5px; }
+        .btn-sm { padding: 5px 10px; font-size: 0.8rem; }
+        .btn-del { background: #f87171; color: white; }
         .header { background: #151d2e; padding: 15px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-        .logo-img { height: 40px; border-radius: 50%; border: 2px solid var(--primary); }
-        
-        .tabs { display: flex; gap: 5px; margin-bottom: 20px; flex-wrap: wrap; }
-        .tab { padding: 8px 15px; background: #0b1221; border: 1px solid var(--border); border-radius: 20px; cursor: pointer; color: #ccc; font-size: 0.9rem; }
-        .tab.active { background: var(--primary); color: #000; border-color: var(--primary); }
-
-        table { width: 100%; border-collapse: collapse; background: #151d2e; margin-top: 10px; }
-        th, td { padding: 12px; text-align: left; border-bottom: 1px solid var(--border); }
-        th { color: var(--primary); }
-        
-        .form-card { background: var(--bg-card); padding: 30px; border-radius: 10px; border: 1px solid var(--border); margin-top: 20px; }
-        textarea { width: 100%; background: #0b1221; border: 1px solid var(--border); color: #fff; padding: 10px; border-radius: 5px; min-height: 80px; font-family: inherit; }
-        
-        .info-box { background: #1e293b; padding: 15px; border-radius: 8px; margin-top: 10px; font-size: 0.85rem; color: #94a3b8; border-left: 3px solid var(--primary); }
-        .switch { position: relative; display: inline-block; width: 50px; height: 26px; }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #334155; transition: .4s; border-radius: 26px; }
-        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
-        input:checked + .slider { background-color: var(--success); }
-        input:checked + .slider:before { transform: translateX(22px); }
+        .tab { padding: 8px 15px; background: #0b1221; border: 1px solid var(--border); border-radius: 20px; cursor: pointer; color: #ccc; display: inline-block; margin: 2px; }
+        .tab.active { background: var(--primary); color: #000; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { padding: 8px; border-bottom: 1px solid var(--border); text-align: left; font-size: 0.9rem; }
     </style>
 </head>
 <body>
 
-    <div id="authScreen">
-        <div class="auth-box">
-            <img src="https://i.postimg.cc/281Ys5Fb/logos-png-removebg-preview.png" style="height:60px; margin-bottom:10px; border-radius: 50%;" alt="Logo">
-            <h2 style="margin-bottom:10px; color:var(--primary);">Admin Panel</h2>
+    <!-- Login -->
+    <div id="authScreen" class="container" style="margin-top:100px;">
+        <div class="card" style="text-align:center;">
+            <h2 style="margin-bottom:20px; color:var(--primary);">Admin Login</h2>
             <div class="input-group"><input type="text" id="adminUser" placeholder="Admin ID"></div>
             <div class="input-group"><input type="password" id="adminPass" placeholder="Password"></div>
-            <button class="btn" onclick="adminLogin()">Login</button>
-            <p style="color:#666; font-size:0.8rem; margin-top:15px;">Default: admin / admin123</p>
+            <button class="btn" onclick="login()">Login</button>
         </div>
     </div>
 
-    <div id="dashboardScreen" class="hidden">
+    <!-- Dashboard -->
+    <div id="dashScreen" class="hidden">
         <div class="header">
-            <img src="https://i.postimg.cc/281Ys5Fb/logos-png-removebg-preview.png" class="logo-img" alt="Logo">
-            <button class="btn" style="width:auto; padding:8px 15px; background:#333; color:#fff;" onclick="handleAdminLogout()">Logout</button>
+            <h3 style="color:var(--primary);">Admin Panel</h3>
+            <button class="btn btn-sm" style="background:#333; color:#fff;" onclick="logout()">Logout</button>
         </div>
         <div class="container">
-            <div class="tabs">
-                <div class="tab active" onclick="showTab('manage')">Manage Tests</div>
-                <div class="tab" onclick="showTab('questions')">Add Question</div>
-                <div class="tab" onclick="showTab('bulk')">Bulk Upload</div>
-                <div class="tab" onclick="showTab('banner')">Banner</div>
-                <div class="tab" onclick="showTab('students')">Students</div>
-                <div class="tab" onclick="showTab('upload')">PDFs</div>
+            <div style="margin-bottom:15px;">
+                <span class="tab active" onclick="showTab('sat')">Saturday Test</span>
+                <span class="tab" onclick="showTab('sectional')">Sectional Tests</span>
+                <span class="tab" onclick="showTab('students')">Students</span>
+                <span class="tab" onclick="showTab('pdf')">PDFs</span>
             </div>
 
-            <div id="manageTab" class="form-card">
-                <h3 style="margin-bottom:15px; color:var(--primary);">Saturday Weekly Test</h3>
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                    <span style="font-weight:bold;">Test Status:</span>
-                    <label class="switch">
-                        <input type="checkbox" id="weeklyTestStatus">
-                        <span class="slider"></span>
-                    </label>
-                </div>
-                <div class="input-group">
-                    <input type="text" id="weeklyTestName" placeholder="Test Name (e.g., Mock Test 1)">
-                </div>
-                <div class="input-group">
-                    <input type="text" id="weeklyTestMsg" placeholder="Message (e.g., Live Now)">
-                </div>
-                <button class="btn" onclick="saveTestSettings()" style="background:var(--success); color:#000;">Save Settings</button>
-            </div>
-
-            <div id="bulkTab" class="hidden form-card">
-                <h3 style="margin-bottom:15px; color:var(--primary);">Bulk Upload Questions (CSV)</h3>
-                <div class="info-box">
-                    <p><strong>CSV Format:</strong> Exam, Subject, Question, Option1, Option2, Option3, Option4, Answer(1-4)</p>
-                    <p style="margin-top:5px;">Example: <code>SSC, Maths, 2+2=?, 3, 4, 5, 6, 2</code></p>
-                </div>
-                <div class="input-group" style="margin-top:15px;">
-                    <input type="file" id="csvFile" accept=".csv" style="border:none;">
-                </div>
-                <button class="btn" onclick="uploadCSV()" style="background:linear-gradient(135deg, #38bdf8, #818cf8);">Upload CSV File</button>
-                <div id="uploadStatus" style="margin-top:10px; text-align:center;"></div>
-            </div>
-
-            <div id="questionsTab" class="hidden form-card">
-                <h3 style="margin-bottom:15px; color:var(--primary);">Add Single Question</h3>
-                <div class="input-group"><select id="qExam"><option>SSC</option><option>Railway</option><option>MP State</option></select></div>
-                <div class="input-group"><select id="qSubject"><option>Maths</option><option>Reasoning</option><option>English</option><option>GK</option><option>Science</option></select></div>
-                <div class="input-group"><textarea id="qText" placeholder="Enter Question Text..."></textarea></div>
+            <!-- Saturday Test Config -->
+            <div id="satTab" class="card">
+                <h3 style="margin-bottom:10px; color:var(--primary);">Saturday Test Setup</h3>
+                <div class="input-group"><input type="text" id="satName" placeholder="Test Name"></div>
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-                    <input type="text" id="op1" placeholder="Option A" style="padding:10px; background:#0b1221; border:1px solid #333; color:#fff;">
-                    <input type="text" id="op2" placeholder="Option B" style="padding:10px; background:#0b1221; border:1px solid #333; color:#fff;">
-                    <input type="text" id="op3" placeholder="Option C" style="padding:10px; background:#0b1221; border:1px solid #333; color:#fff;">
-                    <input type="text" id="op4" placeholder="Option D" style="padding:10px; background:#0b1221; border:1px solid #333; color:#fff;">
+                    <div class="input-group"><input type="date" id="satDate"></div>
+                    <div class="input-group"><input type="time" id="satTime"></div>
                 </div>
-                <div class="input-group" style="margin-top:10px;"><input type="number" id="qAns" placeholder="Correct Option (1-4)" min="1" max="4"></div>
-                <button class="btn" onclick="saveQuestion()" style="margin-top:10px; background:linear-gradient(135deg, #38bdf8, #818cf8); color:#fff;">Save Question</button>
-            </div>
-
-            <div id="bannerTab" class="hidden form-card">
-                <h3 style="margin-bottom:15px; color:var(--primary);">Home Page Banner</h3>
-                <div class="input-group"><input type="text" id="bannerUrl" placeholder="Paste Image URL here..."></div>
-                <button class="btn" onclick="updateBanner()" style="background:linear-gradient(135deg, #38bdf8, #818cf8); color:#fff;">Update Banner</button>
-                <div style="margin-top:15px;">
-                    <p style="font-size:0.9rem; color:#ccc;">Current Preview:</p>
-                    <img id="bannerPreview" src="" style="width:100%; margin-top:5px; border-radius:8px; display:none;">
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                    <div class="input-group">
+                        <select id="satShift">
+                            <option>Morning</option>
+                            <option>Afternoon</option>
+                            <option>Evening</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <select id="satBatch">
+                            <option>All Batch</option>
+                            <option>New Batch</option>
+                            <option>Old Batch</option>
+                        </select>
+                    </div>
                 </div>
+                <div class="input-group"><input type="number" id="satDuration" placeholder="Duration (Minutes)"></div>
+                <div class="input-group">
+                    <label style="font-size:0.8rem; color:var(--text-main);">Test Active:</label>
+                    <input type="checkbox" id="satActive" style="width:auto;">
+                </div>
+                <button class="btn" onclick="saveSatSettings()">Save Settings</button>
+                <hr style="margin:15px 0; border-color:var(--border);">
+                <h4>Upload Questions for Saturday</h4>
+                <div class="input-group"><input type="file" id="satCsv" accept=".csv"></div>
+                <button class="btn" style="background:var(--success);" onclick="uploadCSV('saturday')">Upload CSV</button>
+                
+                <!-- Question List -->
+                <div id="satQList"></div>
             </div>
 
-            <div id="studentsTab" class="hidden form-card">
-                <h3 style="margin-bottom:15px; color:var(--primary);">Registered Students</h3>
-                <table id="studentsTable"><thead><tr><th>Name</th><th>Email</th><th>Exam</th></tr></thead><tbody></tbody></table>
+            <!-- Sectional Tests -->
+            <div id="sectionalTab" class="card hidden">
+                <h3 style="margin-bottom:10px; color:var(--primary);">Create Sectional Test</h3>
+                <div class="input-group">
+                    <select id="secSubject">
+                        <option>Maths</option><option>Reasoning</option><option>English</option><option>GK</option><option>Science</option>
+                    </select>
+                </div>
+                <div class="input-group"><input type="text" id="secName" placeholder="Test Name (e.g., Mock 1)"></div>
+                <div class="input-group"><input type="number" id="secDuration" placeholder="Duration (Minutes)"></div>
+                <button class="btn" onclick="createSectionalTest()">Create Test</button>
+                
+                <div id="sectionalList" style="margin-top:20px;"></div>
             </div>
 
-            <div id="uploadTab" class="hidden form-card">
-                <h3 style="margin-bottom:15px; color:var(--primary);">Upload Study Material</h3>
-                <div class="input-group"><input type="text" id="pdfTitle" placeholder="Title"></div>
+            <!-- Students -->
+            <div id="studentsTab" class="card hidden">
+                <h3 style="margin-bottom:10px; color:var(--primary);">Registered Students</h3>
+                <table id="studentTable"><thead><tr><th>Name</th><th>Email</th><th>Batch</th></tr></thead><tbody></tbody></table>
+            </div>
+
+            <!-- PDFs -->
+            <div id="pdfTab" class="card hidden">
+                <h3 style="margin-bottom:10px; color:var(--primary);">Upload PDFs</h3>
+                <div class="input-group">
+                    <select id="pdfSubject">
+                        <option>Maths</option><option>Reasoning</option><option>English</option><option>GK</option><option>Science</option>
+                    </select>
+                </div>
+                <div class="input-group"><input type="text" id="pdfTitle" placeholder="PDF Title"></div>
                 <div class="input-group"><input type="text" id="pdfUrl" placeholder="PDF URL"></div>
-                <button class="btn" onclick="uploadPdf()" style="background:#333; color:#fff;">Upload</button>
+                <button class="btn" onclick="uploadPdf()">Upload</button>
+                <div id="pdfList" style="margin-top:15px;"></div>
             </div>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-        import { getDatabase, ref, set, push, onValue } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
+        import { getDatabase, ref, set, push, onValue, remove } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
 
         const firebaseConfig = {
-          apiKey: "AIzaSyBPC07vEL3aeLf4jzV6hfxnvScglW6WGK0",
-          authDomain: "paramount-academy-c236d.firebaseapp.com",
-          databaseURL: "https://paramount-academy-c236d-default-rtdb.asia-southeast1.firebasedatabase.app/",
-          projectId: "paramount-academy-c236d",
-          storageBucket: "paramount-academy-c236d.firebasestorage.app",
-          messagingSenderId: "825327030964",
-          appId: "1:825327030964:web:6a520db01d9ed9d549bde1"
+            apiKey: "AIzaSyBPC07vEL3aeLf4jzV6hfxnvScglW6WGK0",
+            authDomain: "paramount-academy-c236d.firebaseapp.com",
+            databaseURL: "https://paramount-academy-c236d-default-rtdb.asia-southeast1.firebasedatabase.app/",
+            projectId: "paramount-academy-c236d",
+            storageBucket: "paramount-academy-c236d.firebasestorage.app",
+            messagingSenderId: "825327030964",
+            appId: "1:825327030964:web:6a520db01d9ed9d549bde1"
         };
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        window.adminLogin = () => {
+        window.login = () => {
             const u = document.getElementById('adminUser').value;
             const p = document.getElementById('adminPass').value;
-            if(u === 'admin' && p === 'admin123') {
+            // CREDENTIALS CHANGE
+            if(u === "paramount academy khandwa" && p === "Paramount@2016") {
                 localStorage.setItem('isAdmin', 'true');
-                showDashboard();
-            } else { alert("Wrong Credentials!"); }
+                showDash();
+            } else { alert("Wrong Credentials"); }
         };
 
-        window.handleAdminLogout = () => {
+        window.logout = () => {
             localStorage.removeItem('isAdmin');
-            document.getElementById('authScreen').classList.remove('hidden');
-            document.getElementById('dashboardScreen').classList.add('hidden');
+            location.reload();
         };
 
-        const showDashboard = () => {
+        const showDash = () => {
             document.getElementById('authScreen').classList.add('hidden');
-            document.getElementById('dashboardScreen').classList.remove('hidden');
-            loadStudents(); loadCurrentBanner(); loadTestSettings();
+            document.getElementById('dashScreen').classList.remove('hidden');
+            loadStudents();
+            loadSectionalList();
+            loadSatSettings();
+            loadPDFList();
+            loadQuestions('saturday', 'satQList');
         };
 
-        window.showTab = (tabName) => {
-            document.querySelectorAll('.form-card').forEach(el => el.classList.add('hidden'));
-            document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
-            document.getElementById(tabName + 'Tab').classList.remove('hidden');
+        window.showTab = (id) => {
+            document.querySelectorAll('.card').forEach(e => e.classList.add('hidden'));
+            document.getElementById(id + 'Tab').classList.remove('hidden');
+            document.querySelectorAll('.tab').forEach(e => e.classList.remove('active'));
             event.target.classList.add('active');
         };
 
-        const loadTestSettings = () => {
-            onValue(ref(db, 'settings/weeklyTest'), (snapshot) => {
-                if(snapshot.exists()){
-                    const data = snapshot.val();
-                    document.getElementById('weeklyTestStatus').checked = data.isActive || false;
-                    document.getElementById('weeklyTestName').value = data.name || '';
-                    document.getElementById('weeklyTestMsg').value = data.msg || '';
+        // --- SATURDAY TEST ---
+        window.saveSatSettings = () => {
+            const data = {
+                name: document.getElementById('satName').value,
+                date: document.getElementById('satDate').value,
+                time: document.getElementById('satTime').value,
+                shift: document.getElementById('satShift').value,
+                batch: document.getElementById('satBatch').value,
+                duration: document.getElementById('satDuration').value,
+                isActive: document.getElementById('satActive').checked
+            };
+            set(ref(db, 'settings/saturdayTest'), data);
+            alert("Saved!");
+        };
+
+        const loadSatSettings = () => {
+            onValue(ref(db, 'settings/saturdayTest'), (snap) => {
+                if(snap.exists()) {
+                    const d = snap.val();
+                    document.getElementById('satName').value = d.name || '';
+                    document.getElementById('satDate').value = d.date || '';
+                    document.getElementById('satTime').value = d.time || '';
+                    document.getElementById('satDuration').value = d.duration || '';
+                    document.getElementById('satActive').checked = d.isActive || false;
                 }
             });
         };
 
-        window.saveTestSettings = () => {
-            const isActive = document.getElementById('weeklyTestStatus').checked;
-            const name = document.getElementById('weeklyTestName').value;
-            const msg = document.getElementById('weeklyTestMsg').value;
-            set(ref(db, 'settings/weeklyTest'), { isActive, name, msg })
-            .then(() => alert("Test Settings Saved!"));
+        // --- SECTIONAL TESTS ---
+        window.createSectionalTest = () => {
+            const sub = document.getElementById('secSubject').value;
+            const name = document.getElementById('secName').value;
+            const dur = document.getElementById('secDuration').value;
+            if(!name || !dur) return alert("Fill details");
+
+            const newRef = push(ref(db, `tests/${sub}`));
+            set(newRef, { name, duration: dur, id: newRef.key });
+            alert("Test Created! Now upload CSV for this test ID: " + newRef.key);
         };
 
-        window.uploadCSV = () => {
-            const fileInput = document.getElementById('csvFile');
-            const statusDiv = document.getElementById('uploadStatus');
-            if (fileInput.files.length === 0) { alert("Select a file."); return; }
-            const file = fileInput.files[0];
+        const loadSectionalList = () => {
+            const list = document.getElementById('sectionalList');
+            onValue(ref(db, 'tests'), (snap) => {
+                list.innerHTML = '<h4>Existing Tests (Upload CSV below)</h4>';
+                if(snap.exists()) {
+                    snap.forEach(sub => {
+                        const subName = sub.key;
+                        sub.forEach(t => {
+                            const test = t.val();
+                            const div = document.createElement('div');
+                            div.style.cssText = "background:var(--bg-body); padding:10px; margin-top:10px; border-radius:5px; display:flex; justify-content:space-between; align-items:center;";
+                            div.innerHTML = `
+                                <span><b>${subName}</b> - ${test.name} (${test.duration}m)</span>
+                                <div>
+                                    <input type='file' id='file-${test.id}' accept='.csv' style='font-size:0.7rem;'>
+                                    <button class='btn btn-sm' style='padding:2px 5px;' onclick="uploadCSV('${test.id}')">Upload</button>
+                                </div>
+                            `;
+                            list.appendChild(div);
+                        });
+                    });
+                }
+            });
+        };
+
+        // --- CSV UPLOAD ---
+        window.uploadCSV = (testId) => {
+            let fileInput;
+            if(testId === 'saturday') fileInput = document.getElementById('satCsv');
+            else fileInput = document.getElementById(`file-${testId}`);
+
+            if(!fileInput || !fileInput.files[0]) return alert("Select CSV file");
+
             const reader = new FileReader();
-            statusDiv.innerHTML = "<p style='color:var(--primary);'>Processing...</p>";
-            reader.onload = function(e) {
-                const text = e.target.result;
-                const rows = text.split('\n');
+            reader.onload = (e) => {
+                const rows = e.target.result.split('\n');
                 let count = 0;
-                rows.forEach((row) => {
-                    if(!row.trim()) return;
-                    const cols = row.split(',');
+                const path = testId === 'saturday' ? 'questions/saturday' : `questions/${testId}`;
+
+                rows.forEach(r => {
+                    if(!r.trim()) return;
+                    const cols = r.split(',');
                     if(cols.length >= 8) {
-                        const qData = {
-                            exam: cols[0].trim(), subject: cols[1].trim(), text: cols[2].trim(),
-                            op1: cols[3].trim(), op2: cols[4].trim(), op3: cols[5].trim(),
-                            op4: cols[6].trim(), ans: cols[7].trim()
-                        };
-                        push(ref(db, 'questions'), qData);
+                        push(ref(db, path), {
+                            text: cols[2].trim(),
+                            op1: cols[3].trim(), op2: cols[4].trim(),
+                            op3: cols[5].trim(), op4: cols[6].trim(),
+                            ans: cols[7].trim()
+                        });
                         count++;
                     }
                 });
-                statusDiv.innerHTML = `<p style='color:var(--success); font-weight:bold;'>Success! ${count} questions uploaded.</p>`;
-                fileInput.value = "";
+                alert(`${count} Questions Uploaded!`);
+                loadQuestions(testId, testId === 'saturday' ? 'satQList' : `list-${testId}`);
             };
-            reader.readAsText(file);
+            reader.readAsText(fileInput.files[0]);
         };
 
-        window.updateBanner = () => {
-            const url = document.getElementById('bannerUrl').value;
-            if(!url) return alert("Enter URL");
-            set(ref(db, 'settings/banner'), url).then(() => { alert("Banner Updated!"); loadCurrentBanner(); });
-        };
-        const loadCurrentBanner = () => {
-            onValue(ref(db, 'settings/banner'), (snapshot) => {
-                if(snapshot.exists()) {
-                    const img = document.getElementById('bannerPreview');
-                    img.src = snapshot.val(); img.style.display = 'block';
+        // --- QUESTION MANAGEMENT (DELETE) ---
+        const loadQuestions = (testId, containerId) => {
+            const cont = document.getElementById(containerId);
+            const path = testId === 'saturday' ? 'questions/saturday' : `questions/${testId}`;
+            
+            onValue(ref(db, path), (snap) => {
+                cont.innerHTML = '<h4 style="margin-top:15px;">Questions List</h4>';
+                if(snap.exists()) {
+                    snap.forEach(q => {
+                        const d = q.val();
+                        const div = document.createElement('div');
+                        div.style.cssText = "background:var(--bg-body); padding:8px; margin-top:5px; border-radius:5px; display:flex; justify-content:space-between; font-size:0.8rem;";
+                        div.innerHTML = `
+                            <span style="width:90%; overflow:hidden; white-space:nowrap; text-overflow:ellipsis;">${d.text}</span>
+                            <button class='btn-sm btn-del' onclick="delQ('${path}', '${q.key}')">X</button>
+                        `;
+                        cont.appendChild(div);
+                    });
                 }
             });
         };
-        window.saveQuestion = () => {
-            const data = {
-                exam: document.getElementById('qExam').value, subject: document.getElementById('qSubject').value,
-                text: document.getElementById('qText').value, op1: document.getElementById('op1').value,
-                op2: document.getElementById('op2').value, op3: document.getElementById('op3').value,
-                op4: document.getElementById('op4').value, ans: document.getElementById('qAns').value
-            };
-            if(!data.text || !data.ans) return alert("Fill question and answer");
-            push(ref(db, 'questions'), data).then(() => alert("Saved!"));
+
+        window.delQ = (path, key) => {
+            if(confirm("Delete this question?")) {
+                remove(ref(db, `${path}/${key}`));
+            }
         };
-        window.uploadPdf = () => {
-            const title = document.getElementById('pdfTitle').value; const url = document.getElementById('pdfUrl').value;
-            if(!title || !url) return alert("Fill all");
-            push(ref(db, 'pdfs'), { title: title, url: url }).then(() => alert("Uploaded!"));
-        };
+
+        // --- STUDENTS & PDF ---
         const loadStudents = () => {
-            const table = document.getElementById('studentsTable').getElementsByTagName('tbody')[0];
-            onValue(ref(db, 'users'), (snapshot) => {
-                table.innerHTML = '';
-                snapshot.forEach((child) => {
-                    const user = child.val(); const row = table.insertRow();
-                    row.innerHTML = `<td>${user.name}</td><td>${user.email}</td><td>${user.exam}</td>`;
+            const tbody = document.getElementById('studentTable').getElementsByTagName('tbody')[0];
+            onValue(ref(db, 'users'), (snap) => {
+                tbody.innerHTML = '';
+                snap.forEach(u => {
+                    const d = u.val();
+                    const tr = tbody.insertRow();
+                    tr.innerHTML = `<td>${d.name}</td><td>${d.email}</td><td>${d.exam}</td>`;
                 });
             });
         };
 
-        if(localStorage.getItem('isAdmin') === 'true') { showDashboard(); }
+        window.uploadPdf = () => {
+            const sub = document.getElementById('pdfSubject').value;
+            const title = document.getElementById('pdfTitle').value;
+            const url = document.getElementById('pdfUrl').value;
+            if(!title || !url) return alert("Fill fields");
+            push(ref(db, 'pdfs'), { subject: sub, title, url });
+            alert("Uploaded!");
+        };
+
+        const loadPDFList = () => {
+            const list = document.getElementById('pdfList');
+            onValue(ref(db, 'pdfs'), (snap) => {
+                list.innerHTML = '';
+                if(snap.exists()) {
+                    snap.forEach(p => {
+                        const d = p.val();
+                        const div = document.createElement('div');
+                        div.style.cssText = "margin-top:5px; font-size:0.9rem; border-bottom:1px solid #333; padding:5px;";
+                        div.innerHTML = `<b>${d.subject}</b>: ${d.title}`;
+                        list.appendChild(div);
+                    });
+                }
+            });
+        };
+
+        // Init
+        if(localStorage.getItem('isAdmin') === 'true') showDash();
+
     </script>
 </body>
-</html>
+    </html>
