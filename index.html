@@ -6,75 +6,83 @@
     <title>Paramount Academy Khandwa</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <style>
         :root {
             --bg-body: #0b1221; --bg-card: #151d2e; --bg-header: #0f172a;
             --primary: #38bdf8; --primary-light: #7dd3fc; --accent: #818cf8;
             --text-main: #f1f5f9; --text-muted: #94a3b8; --border: #334155;
-            --success: #4ade80; --danger: #f87171; --glass: rgba(15, 23, 42, 0.95);
-            --neon-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
-        }
-        .light-mode {
-            --bg-body: #f1f5f9; --bg-card: #ffffff; --bg-header: #ffffff;
-            --primary: #0284c7; --accent: #6366f1; --text-main: #0f172a;
-            --text-muted: #64748b; --border: #e2e8f0; --glass: rgba(255, 255, 255, 0.9);
+            --success: #4ade80; --danger: #f87171; --warning: #fbbf24;
+            --glass: rgba(15, 23, 42, 0.95);
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Roboto', sans-serif; background-color: var(--bg-body); color: var(--text-main); min-height: 100vh; transition: background 0.3s, color 0.3s; }
+        body { font-family: 'Roboto', sans-serif; background-color: var(--bg-body); color: var(--text-main); min-height: 100vh; }
         h1, h2, h3, h4 { font-family: 'Poppins', sans-serif; }
         .container { padding: 15px; max-width: 600px; margin: 0 auto; }
         .hidden { display: none !important; }
         
-        .btn { padding: 12px 24px; border: none; border-radius: 8px; font-family: 'Poppins', sans-serif; font-weight: 600; cursor: pointer; transition: all 0.3s; width: 100%; }
-        .btn-primary { background: linear-gradient(135deg, var(--primary), var(--accent)); color: white; box-shadow: var(--neon-shadow); }
-        .btn-outline { background: transparent; border: 1px solid var(--primary); color: var(--primary); width: auto; padding: 8px 15px; }
+        .btn { padding: 12px 24px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; width: 100%; display:flex; align-items:center; justify-content:center; gap:10px; }
+        .btn-primary { background: linear-gradient(135deg, var(--primary), var(--accent)); color: white; }
+        .btn-outline { background: transparent; border: 1px solid var(--primary); color: var(--primary); }
+        .btn-danger { background: var(--danger); color: white; }
         
         .input-group { margin-bottom: 15px; }
         .input-group input, .input-group select { width: 100%; padding: 12px; background: var(--bg-body); border: 1px solid var(--border); border-radius: 6px; color: var(--text-main); }
 
-        .app-header { background: var(--glass); backdrop-filter: blur(10px); padding: 12px 15px; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-        .header-logo { height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); }
-        .user-info { display: flex; align-items: center; gap: 15px; }
-        .theme-toggle { font-size: 1.2rem; color: var(--text-muted); cursor: pointer; }
-        
-        .home-banner { width: 100%; height: 180px; border-radius: 12px; object-fit: cover; margin-bottom: 15px; border: 1px solid var(--border); }
+        /* Landing Screen */
+        .landing-screen { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: radial-gradient(circle at top, #1e293b, var(--bg-body)); padding: 20px; }
+        .landing-logo { height: 100px; margin-bottom: 20px; border-radius: 50%; box-shadow: 0 0 30px var(--primary); }
+        .landing-card { background: var(--bg-card); padding: 30px; border-radius: 20px; border: 1px solid var(--border); width: 100%; max-width: 350px; }
 
-        .card { background: var(--bg-card); border-radius: 12px; padding: 20px; margin-bottom: 15px; border: 1px solid var(--border); position: relative; overflow: hidden; }
+        /* Test Interface */
+        .test-header { background: var(--glass); padding: 10px 15px; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        .timer-test { font-size: 1.2rem; font-weight: 700; color: var(--warning); }
+        
+        .question-palette { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--bg-header); border-top: 1px solid var(--border); padding: 10px; display: grid; grid-template-columns: repeat(10, 1fr); gap: 5px; max-height: 150px; overflow-y: auto; z-index: 101; }
+        .q-btn { width: 100%; aspect-ratio: 1; border-radius: 4px; border: 1px solid var(--border); background: var(--bg-card); color: var(--text-muted); font-size: 0.7rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .q-btn.answered { background: var(--success); color: #000; border-color: var(--success); }
+        .q-btn.marked { background: var(--warning); color: #000; border-color: var(--warning); }
+        .q-btn.skipped { background: var(--danger); color: #fff; }
+        .q-btn.current { border: 2px solid var(--primary); box-shadow: 0 0 10px var(--primary); }
+
+        .option-btn { display: block; width: 100%; padding: 15px; margin-bottom: 10px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; color: var(--text-main); text-align: left; cursor: pointer; transition: 0.2s; }
+        .option-btn.selected { border-color: var(--primary); background: rgba(56, 189, 248, 0.2); }
+        
+        .card { background: var(--bg-card); border-radius: 12px; padding: 20px; margin-bottom: 15px; border: 1px solid var(--border); position: relative; }
         .card::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: linear-gradient(to bottom, var(--primary), var(--accent)); }
-        
-        .auth-screen { height: 100vh; display: flex; flex-direction: column; justify-content: center; background: radial-gradient(circle at top, #1e293b, var(--bg-body)); }
-        .auth-box { background: var(--bg-card); padding: 30px; border-radius: 20px; border: 1px solid var(--border); text-align: center; box-shadow: var(--neon-shadow); }
-        .auth-logo-img { height: 80px; margin-bottom: 15px; border-radius: 50%; box-shadow: 0 0 15px rgba(56, 189, 248, 0.4); }
 
-        .category-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; }
-        .cat-card { background: var(--bg-card); padding: 20px; border-radius: 12px; text-align: center; border: 1px solid var(--border); cursor: pointer; transition: 0.2s; }
-        .cat-card:hover { border-color: var(--primary); transform: scale(1.02); }
-        .cat-icon { font-size: 2rem; background: linear-gradient(135deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px; }
+        /* Instructions Modal */
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 200; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .modal-content { background: var(--bg-card); padding: 25px; border-radius: 15px; max-width: 400px; width: 100%; max-height: 90vh; overflow-y: auto; border: 1px solid var(--border); }
 
-        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--glass); backdrop-filter: blur(10px); border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding: 10px 0; z-index: 100; }
-        .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); text-decoration: none; font-size: 0.75rem; cursor: pointer; }
-        .nav-item i { font-size: 1.2rem; margin-bottom: 4px; }
-        .nav-item.active { color: var(--primary); font-weight: 600; }
-
-        .timer { font-size: 2rem; font-weight: 700; color: var(--primary); }
-        .question-box { background: var(--bg-card); border-radius: 12px; padding: 20px; border: 1px solid var(--border); }
-        .option-btn { display: block; width: 100%; padding: 15px; margin-bottom: 10px; background: var(--bg-body); border: 1px solid var(--border); border-radius: 8px; color: var(--text-main); text-align: left; cursor: pointer; }
-        .option-btn.selected { border-color: var(--primary); background: rgba(56, 189, 248, 0.2); color: var(--primary); font-weight: bold; }
-
-        .section { padding-bottom: 80px; animation: fadeIn 0.5s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        /* Topper List */
+        .topper-card { display: flex; align-items: center; gap: 15px; padding: 15px; background: var(--bg-body); border-radius: 10px; margin-bottom: 10px; }
+        .topper-rank { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #000; }
+        .rank-1 { background: #FFD700; } .rank-2 { background: #C0C0C0; } .rank-3 { background: #CD7F32; }
     </style>
 </head>
 <body>
 
-    <!-- AUTH SCREEN -->
-    <div id="authContainer" class="auth-screen">
+    <!-- LANDING SCREEN -->
+    <div id="landingScreen" class="landing-screen">
+        <img src="https://i.postimg.cc/281Ys5Fb/logos-png-removebg-preview.png" class="landing-logo" alt="Logo">
+        <h1 style="margin-bottom: 10px; color: var(--primary);">Paramount Academy</h1>
+        <p style="color: var(--text-muted); margin-bottom: 30px;">Khandwa's Premium Coaching</p>
+        <div class="landing-card">
+            <button class="btn btn-primary" style="margin-bottom: 15px;" onclick="showAuth('student')">
+                <i class="fas fa-user-graduate"></i> Student Login
+            </button>
+            <button class="btn btn-outline" onclick="window.location.href='admin.html'">
+                <i class="fas fa-user-shield"></i> Admin Login
+            </button>
+        </div>
+    </div>
+
+    <!-- AUTH SCREEN (STUDENT) -->
+    <div id="authContainer" class="landing-screen hidden">
         <div class="container">
-            <div class="auth-box">
-                <img src="https://i.postimg.cc/281Ys5Fb/logos-png-removebg-preview.png" class="auth-logo-img" alt="Logo">
-                <h2 style="margin-bottom: 5px; color: var(--primary);">Paramount Academy</h2>
-                <p style="color: var(--text-muted); margin-bottom: 20px;">Khandwa's Premium Coaching</p>
+            <div class="card" style="text-align: center;">
+                <img src="https://i.postimg.cc/281Ys5Fb/logos-png-removebg-preview.png" style="height:60px; margin-bottom:10px;" alt="Logo">
+                <h2 style="margin-bottom: 20px;">Student Area</h2>
                 
                 <div id="loginForm">
                     <div class="input-group"><input type="email" id="loginEmail" placeholder="Email Address"></div>
@@ -89,300 +97,484 @@
                     <div class="input-group"><input type="password" id="regPass" placeholder="Create Password"></div>
                     <div class="input-group">
                         <select id="regExam">
-                            <option value="">Select Exam Focus</option>
-                            <option value="SSC">SSC</option>
-                            <option value="Railway">Railway</option>
-                            <option value="MP State">MP State Exams</option>
+                            <option value="">Select Batch</option>
+                            <option value="New Batch">New Batch</option>
+                            <option value="Old Batch">Old Batch</option>
                         </select>
                     </div>
                     <button class="btn btn-primary" onclick="handleRegister()">Register</button>
-                    <p style="margin-top: 15px; color: var(--text-muted);">Already have account? <span style="color: var(--primary); cursor: pointer;" onclick="toggleAuth('login')">Login</span></p>
+                    <p style="margin-top: 15px; color: var(--text-muted);">Have account? <span style="color: var(--primary); cursor: pointer;" onclick="toggleAuth('login')">Login</span></p>
                 </div>
+                <button class="btn btn-outline" style="margin-top:20px; width:auto; padding:8px 20px;" onclick="goBack()"><i class="fas fa-arrow-left"></i> Back</button>
             </div>
         </div>
     </div>
 
-    <!-- MAIN APP -->
+    <!-- MAIN APP (Student) -->
     <div id="appContainer" class="hidden">
+        <!-- Dashboard -->
         <header class="app-header">
-            <img src="https://i.postimg.cc/281Ys5Fb/logos-png-removebg-preview.png" class="header-logo" alt="Logo">
-            <div class="user-info">
-                <i class="fas fa-moon theme-toggle" id="themeToggle" onclick="toggleTheme()"></i>
-                <div class="user-avatar" style="width: 32px; height: 32px; background: linear-gradient(135deg, var(--primary), var(--accent)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.8rem;" id="userAvatar">U</div>
+            <div style="display:flex; align-items:center; gap:10px;">
+                <img src="https://i.postimg.cc/281Ys5Fb/logos-png-removebg-preview.png" style="height:35px; border-radius:50%;" alt="Logo">
+                <h4 style="color:var(--primary);">Paramount</h4>
+            </div>
+            <div style="display:flex; align-items:center; gap:10px;">
+                <span id="userNameNav" style="font-size:0.8rem;"></span>
+                <div onclick="handleLogout()" style="cursor:pointer; color:var(--danger);"><i class="fas fa-sign-out-alt"></i></div>
             </div>
         </header>
 
-        <section id="homeSection" class="section container">
-            <h2 style="margin-bottom: 5px;">Welcome, <span id="dashName">Student</span></h2>
-            <p style="color: var(--text-muted); margin-bottom: 15px;">Let's crack the exam today!</p>
-            <img id="homeBannerImg" src="https://via.placeholder.com/600x200?text=Loading..." class="home-banner" alt="Banner">
+        <div class="container section" id="dashboardSection">
+            <h3 style="margin-bottom: 15px;">Welcome, <span id="dashName">Student</span></h3>
             
-            <!-- DYNAMIC WEEKLY TEST -->
-            <div id="weeklyTestCard" class="card hidden" style="background: linear-gradient(135deg, #1e293b, #0f172a); border: 1px solid var(--primary); cursor:pointer;" onclick="startTest('weekly')">
+            <!-- Saturday Test Card -->
+            <div id="saturdayTestCard" class="hidden card" style="background:linear-gradient(135deg, #1e293b, #000); border:1px solid var(--primary); cursor:pointer;" onclick="checkBatchAndStart()">
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                     <div>
-                        <h3 style="color: var(--primary-light);"><i class="fas fa-bolt"></i> <span id="weeklyName">Saturday Test</span></h3>
-                        <p style="font-size:0.9rem; color:#cbd5e1;" id="weeklyMsg">Live Now</p>
+                        <h3 style="color: var(--primary-light);"><i class="fas fa-bolt"></i> <span id="satTestName">Saturday Test</span></h3>
+                        <p style="font-size:0.8rem; color:#ccc;" id="satTestInfo">Live Now</p>
                     </div>
                     <i class="fas fa-chevron-right" style="color:var(--primary);"></i>
                 </div>
             </div>
 
-            <h3 style="margin-top: 20px; color: var(--text-muted); text-transform: uppercase; font-size: 0.9rem;">Study Materials</h3>
-            <div class="category-grid">
-                <div class="cat-card" onclick="navigateTo('study', 'Maths')"><div class="cat-icon"><i class="fas fa-calculator"></i></div><div class="cat-name">Maths</div></div>
-                <div class="cat-card" onclick="navigateTo('study', 'Reasoning')"><div class="cat-icon"><i class="fas fa-brain"></i></div><div class="cat-name">Reasoning</div></div>
-                <div class="cat-card" onclick="navigateTo('study', 'English')"><div class="cat-icon"><i class="fas fa-language"></i></div><div class="cat-name">English</div></div>
-                <div class="cat-card" onclick="navigateTo('study', 'GK')"><div class="cat-icon"><i class="fas fa-globe"></i></div><div class="cat-name">GK & GS</div></div>
+            <!-- Toppers List -->
+            <div id="toppersSection" class="hidden" style="margin-top: 15px;">
+                <h3 style="margin-bottom: 10px; color: var(--primary);"><i class="fas fa-trophy"></i> Toppers List</h3>
+                <div id="toppersList"></div>
             </div>
 
-            <h3 style="margin-top: 20px; color: var(--text-muted); text-transform: uppercase; font-size: 0.9rem;">Quick Mocks</h3>
-            <div id="testList">
-                <div class="card" onclick="startTest('sectional')">
-                    <div class="card-title">Practice Mock <span style="color:var(--success); font-size:0.8rem;">New</span></div>
-                    <p style="color: var(--text-muted); font-size:0.85rem;">10 Questions • 10 Mins</p>
-                </div>
+            <!-- Sectional Tests -->
+            <div style="margin-top: 20px;">
+                <h3 style="margin-bottom: 10px; color: var(--text-muted);">Sectional Tests</h3>
+                <div id="sectionalTestsContainer"></div>
             </div>
-        </section>
+        </div>
+    </div>
 
-        <section id="studySection" class="section container hidden">
-            <h2 id="studyTitle">Study Material</h2>
-            <div id="pdfListContainer" style="margin-top: 15px;"></div>
-        </section>
-
-        <section id="testSection" class="section container hidden">
-            <div style="text-align: center; margin-bottom: 20px;">
-                <h3 id="testNameTitle">Test</h3>
-                <div class="timer" id="timerBox">20:00</div>
+    <!-- INSTRUCTIONS MODAL -->
+    <div id="instructionsModal" class="modal hidden">
+        <div class="modal-content">
+            <h3 style="color:var(--primary); margin-bottom:15px;">Instructions (हिंदी)</h3>
+            <p style="font-size:0.9rem; color:var(--text-muted); margin-bottom:20px; line-height:1.6;">
+                1. परीक्षा निर्धारित समय पर auto-submit होगी।<br>
+                2. प्रत्येक गलत उत्तर पर negative marking है।<br>
+                3. "Mark for Review" का उपयोग करें।<br>
+                4. Question Palette का उपयोग करके किसी भी प्रश्न पर जाएं।<br>
+                <br>
+                <strong>रंगों का मतलब:</strong><br>
+                <span style="color:var(--success);">● हरा</span>: Attempted<br>
+                <span style="color:var(--warning);">● पीला</span>: Marked for Review<br>
+                <span style="color:var(--danger);">● लाल</span>: Skipped
+            </p>
+            <div style="text-align:center;">
+                <p style="font-size:0.9rem; margin-bottom:10px;">Test Duration: <span id="modalDuration">10</span> Mins</p>
+                <button class="btn btn-primary" onclick="startActualTest()">I Agree, Start Test</button>
             </div>
-            <div id="questionContainer"></div>
-            <div style="display: flex; gap: 10px; margin-top: 20px;">
-                <button class="btn btn-outline" style="flex:1" onclick="changeQuestion(-1)">Previous</button>
-                <button class="btn btn-primary" style="flex:2" onclick="changeQuestion(1)">Next</button>
-            </div>
-        </section>
+        </div>
+    </div>
 
-        <section id="analysisSection" class="section container hidden">
-            <h2>Performance</h2>
-            <div style="text-align: center; margin: 30px 0;">
-                <div style="font-size: 3rem; font-weight:bold; color:var(--primary);" id="avgScore">-</div>
-                <p style="color: var(--text-muted);">Average Score</p>
+    <!-- TEST INTERFACE -->
+    <div id="testInterface" class="hidden">
+        <div class="test-header">
+            <div>
+                <span id="testTitleHeader" style="font-weight:bold; font-size:0.9rem;">Test Name</span>
+                <div style="font-size:0.75rem; color:var(--text-muted);" id="qStatus">Question 1/10</div>
             </div>
-            <h3 style="margin-bottom: 15px; color: var(--text-muted);">Recent Attempts</h3>
-            <div id="attemptList"></div>
-        </section>
+            <div class="timer-test" id="timerDisplay">00:00</div>
+            <button class="btn btn-danger" style="width:auto; padding:5px 10px; font-size:0.8rem;" onclick="submitTestConfirm()">Submit</button>
+        </div>
 
-        <nav class="bottom-nav">
-            <div class="nav-item active" onclick="showSection('home')"><i class="fas fa-home"></i><span>Home</span></div>
-            <div class="nav-item" onclick="showSection('study')"><i class="fas fa-book-open"></i><span>Study</span></div>
-            <div class="nav-item" onclick="showSection('test')"><i class="fas fa-pen"></i><span>Tests</span></div>
-            <div class="nav-item" onclick="showSection('analysis')"><i class="fas fa-chart-line"></i><span>Stats</span></div>
-            <div class="nav-item" onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i><span>Logout</span></div>
-        </nav>
+        <div class="container" style="padding-bottom:160px;">
+            <div id="questionArea"></div>
+            
+            <div style="display:flex; gap:10px; margin-top:15px;">
+                <button class="btn btn-outline" onclick="markForReview()" style="flex:1; font-size:0.8rem;"><i class="fas fa-bookmark"></i> Review</button>
+                <button class="btn btn-outline" onclick="clearResponse()" style="flex:1; font-size:0.8rem;"><i class="fas fa-eraser"></i> Clear</button>
+            </div>
+            <div style="display:flex; gap:10px; margin-top:10px;">
+                <button class="btn btn-outline" onclick="saveAndNext(-1)" style="flex:1;">Previous</button>
+                <button class="btn btn-primary" onclick="saveAndNext(1)" style="flex:2;">Save & Next</button>
+            </div>
+        </div>
+
+        <div class="question-palette" id="qPalette"></div>
+    </div>
+
+    <!-- RESULT SCREEN -->
+    <div id="resultScreen" class="hidden section container" style="padding-top:50px; text-align:center;">
+        <i class="fas fa-check-circle" style="font-size:4rem; color:var(--success); margin-bottom:15px;"></i>
+        <h2 style="margin-bottom:5px;">Test Submitted</h2>
+        <p style="color:var(--text-muted); margin-bottom:20px;">Your Score</p>
+        <div style="font-size:3rem; font-weight:bold; color:var(--primary); margin-bottom:10px;"><span id="scoreObtained">0</span>/ <span id="scoreTotal">0</span></div>
+        <div id="resultRank" style="margin-bottom:20px;"></div>
+        
+        <h3 style="margin-top:30px; margin-bottom:10px; text-align:left;">Toppers</h3>
+        <div id="resultToppers" style="text-align:left;"></div>
+        
+        <button class="btn btn-primary" style="margin-top:30px;" onclick="goToDashboard()">Go to Dashboard</button>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-        import { getDatabase, ref, set, get, child, push, onValue } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
+        import { getDatabase, ref, set, get, child, push, onValue, remove } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
 
         const firebaseConfig = {
-          apiKey: "AIzaSyBPC07vEL3aeLf4jzV6hfxnvScglW6WGK0",
-          authDomain: "paramount-academy-c236d.firebaseapp.com",
-          databaseURL: "https://paramount-academy-c236d-default-rtdb.asia-southeast1.firebasedatabase.app/",
-          projectId: "paramount-academy-c236d",
-          storageBucket: "paramount-academy-c236d.firebasestorage.app",
-          messagingSenderId: "825327030964",
-          appId: "1:825327030964:web:6a520db01d9ed9d549bde1"
+            apiKey: "AIzaSyBPC07vEL3aeLf4jzV6hfxnvScglW6WGK0",
+            authDomain: "paramount-academy-c236d.firebaseapp.com",
+            databaseURL: "https://paramount-academy-c236d-default-rtdb.asia-southeast1.firebasedatabase.app/",
+            projectId: "paramount-academy-c236d",
+            storageBucket: "paramount-academy-c236d.firebasestorage.app",
+            messagingSenderId: "825327030964",
+            appId: "1:825327030964:web:6a520db01d9ed9d549bde1"
         };
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
         const dbRef = ref(db);
 
-        window.currentUser = null;
-        let questions = [];
-        let currentQ = 0;
-        let score = 0;
+        let currentUser = null;
+        let currentTestQuestions = [];
+        let currentQIndex = 0;
+        let userAnswers = []; // { status: 'answered'/'skipped'/'review', selected: null }
+        let timerInterval;
+        let timeLeft = 0;
+        let currentTestId = null;
 
-        window.toggleTheme = () => {
-            document.body.classList.toggle('light-mode');
-            const icon = document.getElementById('themeToggle');
-            const isLight = document.body.classList.contains('light-mode');
-            icon.classList.toggle('fa-moon', !isLight);
-            icon.classList.toggle('fa-sun', isLight);
-            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+        // --- NAVIGATION ---
+        window.showAuth = (type) => {
+            document.getElementById('landingScreen').classList.add('hidden');
+            document.getElementById('authContainer').classList.remove('hidden');
         };
-        const loadTheme = () => {
-            if(localStorage.getItem('theme') === 'light') {
-                document.body.classList.add('light-mode');
-                document.getElementById('themeToggle').classList.replace('fa-moon', 'fa-sun');
-            }
+        window.goBack = () => {
+            document.getElementById('authContainer').classList.add('hidden');
+            document.getElementById('landingScreen').classList.remove('hidden');
         };
-
         window.toggleAuth = (type) => {
             document.getElementById('loginForm').classList.toggle('hidden', type === 'register');
             document.getElementById('registerForm').classList.toggle('hidden', type === 'login');
         };
 
+        // --- AUTH ---
         window.handleLogin = async () => {
             const email = document.getElementById('loginEmail').value;
             const pass = document.getElementById('loginPass').value;
-            if(!email || !pass) return alert("Fill all fields");
-            try {
-                const emailKey = btoa(email);
-                const snapshot = await get(child(dbRef, `users/${emailKey}`));
-                if (snapshot.exists()) {
-                    const userData = snapshot.val();
-                    if(userData.pass === pass) { setSession(userData); showApp(); } 
-                    else { alert("Wrong Password"); }
-                } else { alert("User not found."); }
-            } catch (error) { alert("Error: " + error.message); }
+            if(!email || !pass) return alert("Fill fields");
+            const snapshot = await get(child(dbRef, `users/${btoa(email)}`));
+            if(snapshot.exists() && snapshot.val().pass === pass) {
+                currentUser = snapshot.val();
+                localStorage.setItem('pUser', JSON.stringify(currentUser));
+                showApp();
+            } else { alert("Wrong Credentials"); }
         };
-
+        
         window.handleRegister = () => {
             const name = document.getElementById('regName').value;
             const email = document.getElementById('regEmail').value;
             const pass = document.getElementById('regPass').value;
             const exam = document.getElementById('regExam').value;
             if(name && email && pass && exam) {
-                const emailKey = btoa(email);
-                set(ref(db, 'users/' + emailKey), { name, email, pass, exam })
-                .then(() => { setSession({name, email, pass, exam}); showApp(); });
+                const userData = { name, email, pass, exam };
+                set(ref(db, 'users/' + btoa(email)), userData);
+                currentUser = userData;
+                localStorage.setItem('pUser', JSON.stringify(currentUser));
+                showApp();
             } else { alert("Fill all fields"); }
         };
 
-        window.handleLogout = () => { localStorage.removeItem('pUser'); location.reload(); };
-        const setSession = (user) => { localStorage.setItem('pUser', JSON.stringify(user)); window.currentUser = user; };
+        window.handleLogout = () => {
+            localStorage.removeItem('pUser');
+            location.reload();
+        };
 
         const showApp = () => {
             document.getElementById('authContainer').classList.add('hidden');
             document.getElementById('appContainer').classList.remove('hidden');
             document.getElementById('dashName').innerText = currentUser.name;
-            document.getElementById('userAvatar').innerText = currentUser.name.charAt(0).toUpperCase();
-            loadTheme(); loadBanner(); loadPDFs(); loadWeeklyTest();
+            document.getElementById('userNameNav').innerText = currentUser.name;
+            loadDashboard();
         };
 
-        window.showSection = (sec) => {
-            document.querySelectorAll('.section').forEach(s => s.classList.add('hidden'));
-            if(sec === 'home') document.getElementById('homeSection').classList.remove('hidden');
-            if(sec === 'study') { document.getElementById('studySection').classList.remove('hidden'); loadPDFs(); }
-            if(sec === 'test') startTest('demo'); 
-            if(sec === 'analysis') { document.getElementById('analysisSection').classList.remove('hidden'); loadResults(); }
-        };
-        window.navigateTo = (sec, data) => {
-            document.querySelectorAll('.section').forEach(s => s.classList.add('hidden'));
-            document.getElementById('studySection').classList.remove('hidden');
-            document.getElementById('studyTitle').innerText = data + " Material";
-        };
-
-        const loadBanner = () => {
-            onValue(ref(db, 'settings/banner'), (snapshot) => {
-                if(snapshot.exists()) document.getElementById('homeBannerImg').src = snapshot.val();
-            });
-        };
-        
-        const loadWeeklyTest = () => {
-             onValue(ref(db, 'settings/weeklyTest'), (snapshot) => {
-                const card = document.getElementById('weeklyTestCard');
-                if(snapshot.exists()){
-                    const data = snapshot.val();
-                    if(data.isActive) {
+        // --- DASHBOARD ---
+        const loadDashboard = () => {
+            // Load Saturday Test
+            onValue(ref(db, 'settings/saturdayTest'), (snap) => {
+                if(snap.exists()) {
+                    const d = snap.val();
+                    const card = document.getElementById('saturdayTestCard');
+                    const now = new Date();
+                    const startTime = new Date(d.date + " " + d.time);
+                    
+                    // Check Batch
+                    const batchMatch = (d.batch === "All") || (d.batch === currentUser.exam);
+                    
+                    // Check Time (Allow 10 mins before start or during duration)
+                    const diff = (startTime - now) / 60000; // minutes difference
+                    
+                    if(d.isActive && batchMatch && diff <= 10) { 
                         card.classList.remove('hidden');
-                        document.getElementById('weeklyName').innerText = data.name || "Weekly Test";
-                        document.getElementById('weeklyMsg').innerText = data.msg || "Click to Start";
-                    } else { card.classList.add('hidden'); }
+                        document.getElementById('satTestName').innerText = d.name;
+                        document.getElementById('satTestInfo').innerText = `Time: ${d.time} | Batch: ${d.batch}`;
+                        currentTestId = 'saturday';
+                        loadToppers('saturday');
+                    } else {
+                        card.classList.add('hidden');
+                    }
+                }
+            });
+
+            // Load Sectional Tests
+            const cont = document.getElementById('sectionalTestsContainer');
+            onValue(ref(db, 'tests'), (snap) => {
+                cont.innerHTML = '';
+                if(snap.exists()) {
+                    snap.forEach((cat) => {
+                        const subject = cat.key;
+                        const tests = cat.val();
+                        
+                        const div = document.createElement('div');
+                        div.className = 'card';
+                        div.innerHTML = `<h4 style="color:var(--primary); margin-bottom:5px;">${subject}</h4>`;
+
+                        Object.keys(tests).forEach(testId => {
+                            const t = tests[testId];
+                            const testDiv = document.createElement('div');
+                            testDiv.style.cssText = "display:flex; justify-content:space-between; margin-top:8px; padding:8px; background:var(--bg-body); border-radius:5px; cursor:pointer;";
+                            testDiv.innerHTML = `<span>${t.name}</span><span style="color:var(--text-muted); font-size:0.8rem;">${t.duration} Min</span>`;
+                            testDiv.onclick = () => {
+                                currentTestId = testId;
+                                loadQuestionsAndStart(testId, t.duration, t.name);
+                            };
+                            div.appendChild(testDiv);
+                        });
+                        cont.appendChild(div);
+                    });
                 }
             });
         };
 
-        const loadPDFs = () => {
-            const container = document.getElementById('pdfListContainer');
-            onValue(ref(db, 'pdfs'), (snapshot) => {
-                container.innerHTML = '';
-                if(snapshot.exists()){
-                    snapshot.forEach((child) => {
-                        const pdf = child.val();
-                        const card = document.createElement('div');
-                        card.className = 'card';
-                        card.innerHTML = `<div style="font-weight:600; margin-bottom:5px;"><i class="fas fa-file-pdf" style="color:var(--danger);"></i> ${pdf.title}</div><a href="${pdf.url}" target="_blank" class="btn btn-outline">Open PDF</a>`;
-                        container.appendChild(card);
+        const loadToppers = (testId) => {
+            const topCont = document.getElementById('toppersSection');
+            const list = document.getElementById('toppersList');
+            
+            onValue(ref(db, `results/${testId}`), (snap) => {
+                if(snap.exists()) {
+                    let users = [];
+                    snap.forEach(u => users.push({...u.val(), email: u.key}));
+                    
+                    // Sort by score desc
+                    users.sort((a, b) => (b.score/b.total) - (a.score/a.total));
+                    
+                    list.innerHTML = '';
+                    users.slice(0, 3).forEach((u, i) => {
+                        const c = document.createElement('div');
+                        c.className = 'topper-card';
+                        c.innerHTML = `
+                            <div class="topper-rank rank-${i+1}">${i+1}</div>
+                            <div>
+                                <div style="font-weight:bold;">${u.name || 'Student'}</div>
+                                <div style="font-size:0.8rem; color:var(--text-muted);">Score: ${u.score}/${u.total}</div>
+                            </div>
+                        `;
+                        list.appendChild(c);
                     });
-                } else { container.innerHTML = '<div class="card"><p>No PDFs found.</p></div>'; }
+                    topCont.classList.remove('hidden');
+                }
             });
         };
 
-        const loadResults = () => {
-            if(!currentUser) return;
-            const container = document.getElementById('attemptList');
-            onValue(ref(db, 'results/' + btoa(currentUser.email)), (snapshot) => {
-                 if(snapshot.exists()){
-                     container.innerHTML = '';
-                     snapshot.forEach((child) => {
-                        const res = child.val();
-                        const card = document.createElement('div');
-                        card.className = 'card';
-                        card.innerHTML = `<div style="display:flex; justify-content:space-between;">${res.testName} <span style="color:var(--primary);">${res.score}/${res.total}</span></div>`;
-                        container.prepend(card);
-                     });
+        // --- TEST ENGINE ---
+        window.checkBatchAndStart = () => {
+             onValue(ref(db, 'settings/saturdayTest'), (snap) => {
+                 if(snap.exists()) {
+                     const d = snap.val();
+                     const duration = d.duration || 60;
+                     document.getElementById('modalDuration').innerText = duration;
+                     document.getElementById('instructionsModal').classList.remove('hidden');
+                 }
+             }, { onlyOnce: true });
+        };
+
+        window.startActualTest = () => {
+            document.getElementById('instructionsModal').classList.add('hidden');
+            onValue(ref(db, 'settings/saturdayTest'), (snap) => {
+                if(snap.exists()) {
+                    const d = snap.val();
+                    loadQuestionsAndStart('saturday', d.duration, d.name);
+                }
+            }, { onlyOnce: true });
+        };
+
+        const loadQuestionsAndStart = (testId, duration, name) => {
+            const path = testId === 'saturday' ? 'questions/saturday' : `questions/${testId}`;
+            
+            onValue(ref(db, path), (snap) => {
+                if(snap.exists()) {
+                    currentTestQuestions = [];
+                    snap.forEach(q => currentTestQuestions.push(q.val()));
+                    
+                    // Shuffle if needed
+                    // currentTestQuestions.sort(() => Math.random() - 0.5);
+
+                    userAnswers = new Array(currentTestQuestions.length).fill({ status: 'unanswered', selected: null });
+                    currentQIndex = 0;
+                    
+                    document.getElementById('appContainer').classList.add('hidden');
+                    document.getElementById('testInterface').classList.remove('hidden');
+                    document.getElementById('testTitleHeader').innerText = name;
+                    
+                    startTimer(duration);
+                    renderQuestion();
+                    renderPalette();
+                } else { alert("No questions found."); }
+            }, { onlyOnce: true });
+        };
+
+        const startTimer = (mins) => {
+            timeLeft = mins * 60;
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                const m = Math.floor(timeLeft / 60);
+                const s = timeLeft % 60;
+                document.getElementById('timerDisplay').innerText = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+                if(timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    submitTestFinal();
+                }
+                timeLeft--;
+            }, 1000);
+        };
+
+        const renderQuestion = () => {
+            const q = currentTestQuestions[currentQIndex];
+            document.getElementById('qStatus').innerText = `Question ${currentQIndex + 1}/${currentTestQuestions.length}`;
+            
+            const ans = userAnswers[currentQIndex];
+            document.getElementById('questionArea').innerHTML = `
+                <div style="margin-bottom:10px; color:var(--primary);">Q.${currentQIndex + 1}</div>
+                <p style="margin-bottom:20px; line-height:1.6;">${q.text}</p>
+                <button class="option-btn ${ans.selected == 1 ? 'selected' : ''}" onclick="selectOpt(1)">A. ${q.op1}</button>
+                <button class="option-btn ${ans.selected == 2 ? 'selected' : ''}" onclick="selectOpt(2)">B. ${q.op2}</button>
+                <button class="option-btn ${ans.selected == 3 ? 'selected' : ''}" onclick="selectOpt(3)">C. ${q.op3}</button>
+                <button class="option-btn ${ans.selected == 4 ? 'selected' : ''}" onclick="selectOpt(4)">D. ${q.op4}</button>
+            `;
+            updatePalette();
+        };
+
+        window.selectOpt = (opt) => {
+            userAnswers[currentQIndex] = { status: 'answered', selected: opt };
+            renderQuestion();
+        };
+
+        window.saveAndNext = (dir) => {
+            // If skipping without answering
+            if(userAnswers[currentQIndex].status === 'unanswered' && dir === 1) {
+                userAnswers[currentQIndex] = { status: 'skipped', selected: null };
+            }
+            
+            currentQIndex += dir;
+            if(currentQIndex < 0) currentQIndex = 0;
+            if(currentQIndex >= currentTestQuestions.length) currentQIndex = currentTestQuestions.length - 1;
+            
+            renderQuestion();
+            renderPalette();
+        };
+
+        window.markForReview = () => {
+            userAnswers[currentQIndex].status = 'review';
+            currentQIndex++;
+            if(currentQIndex >= currentTestQuestions.length) currentQIndex = currentTestQuestions.length - 1;
+            renderQuestion();
+            renderPalette();
+        };
+
+        window.clearResponse = () => {
+            userAnswers[currentQIndex] = { status: 'unanswered', selected: null };
+            renderQuestion();
+        };
+        
+        window.jumpToQ = (idx) => {
+            currentQIndex = idx;
+            renderQuestion();
+            renderPalette();
+        };
+
+        const renderPalette = () => {
+            const pal = document.getElementById('qPalette');
+            pal.innerHTML = '';
+            currentTestQuestions.forEach((q, i) => {
+                const btn = document.createElement('div');
+                btn.className = `q-btn ${userAnswers[i].status} ${i === currentQIndex ? 'current' : ''}`;
+                btn.innerText = i+1;
+                btn.onclick = () => jumpToQ(i);
+                pal.appendChild(btn);
+            });
+        };
+        const updatePalette = () => renderPalette();
+
+        window.submitTestConfirm = () => {
+            if(confirm("Are you sure you want to submit?")) {
+                submitTestFinal();
+            }
+        };
+
+        const submitTestFinal = () => {
+            clearInterval(timerInterval);
+            let score = 0;
+            currentTestQuestions.forEach((q, i) => {
+                if(userAnswers[i].selected == q.ans) score++;
+            });
+
+            // Save Result
+            const resultData = {
+                name: currentUser.name,
+                email: currentUser.email,
+                score: score,
+                total: currentTestQuestions.length,
+                date: Date.now()
+            };
+            push(ref(db, `results/${currentTestId}/${btoa(currentUser.email)}`), resultData);
+
+            // Show Result
+            document.getElementById('testInterface').classList.add('hidden');
+            document.getElementById('resultScreen').classList.remove('hidden');
+            document.getElementById('scoreObtained').innerText = score;
+            document.getElementById('scoreTotal').innerText = currentTestQuestions.length;
+            
+            // Load Toppers on Result Page
+            onValue(ref(db, `results/${currentTestId}`), (snap) => {
+                if(snap.exists()) {
+                    let users = [];
+                    snap.forEach(u => users.push({...u.val(), email: u.key}));
+                    users.sort((a, b) => (b.score/b.total) - (a.score/a.total));
+                    
+                    const list = document.getElementById('resultToppers');
+                    list.innerHTML = '';
+                    users.slice(0, 3).forEach((u, i) => {
+                         const c = document.createElement('div');
+                        c.className = 'topper-card';
+                        c.innerHTML = `
+                            <div class="topper-rank rank-${i+1}">${i+1}</div>
+                            <div><div style="font-weight:bold;">${u.name || 'Student'}</div>
+                            <div style="font-size:0.8rem; color:var(--text-muted);">Score: ${u.score}/${u.total}</div></div>
+                        `;
+                        list.appendChild(c);
+                    });
                  }
             });
         };
 
-        window.startTest = (type) => {
-            const container = document.getElementById('questionContainer');
-            container.innerHTML = '<div class="card"><p>Loading...</p></div>';
-            document.querySelectorAll('.section').forEach(s => s.classList.add('hidden'));
-            document.getElementById('testSection').classList.remove('hidden');
-            document.getElementById('testNameTitle').innerText = type === 'weekly' ? "Weekly Test" : "Practice Test";
-
-            onValue(ref(db, 'questions'), (snapshot) => {
-                if (snapshot.exists()) {
-                    questions = [];
-                    snapshot.forEach((child) => { questions.push(child.val()); });
-                    questions.sort(() => Math.random() - 0.5); 
-                    questions = questions.slice(0, 10); 
-                    currentQ = 0; score = 0; loadQuestion();
-                } else { container.innerHTML = '<div class="card"><p>No questions.</p></div>'; }
-            }, { onlyOnce: true });
+        window.goToDashboard = () => {
+            document.getElementById('resultScreen').classList.add('hidden');
+            document.getElementById('appContainer').classList.remove('hidden');
+            loadDashboard();
         };
 
-        const loadQuestion = () => {
-            const q = questions[currentQ];
-            document.getElementById('questionContainer').innerHTML = `
-                <div class="question-box">
-                    <p style="color:var(--primary); margin-bottom:10px;">Question ${currentQ + 1}/${questions.length}</p>
-                    <h4 style="margin-bottom:15px;">${q.text}</h4>
-                    <button class="option-btn" onclick="selectOption(1, this)">A. ${q.op1}</button>
-                    <button class="option-btn" onclick="selectOption(2, this)">B. ${q.op2}</button>
-                    <button class="option-btn" onclick="selectOption(3, this)">C. ${q.op3}</button>
-                    <button class="option-btn" onclick="selectOption(4, this)">D. ${q.op4}</button>
-                </div>`;
-        };
+        // Init
+        const saved = localStorage.getItem('pUser');
+        if(saved) { currentUser = JSON.parse(saved); showApp(); }
 
-        window.selectOption = (op, btn) => {
-            document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
-            btn.classList.add('selected');
-            questions[currentQ].selected = op;
-        };
-
-        window.changeQuestion = (dir) => {
-            if(dir === 1) {
-                if(!questions[currentQ].selected) return alert("Select option");
-                if(questions[currentQ].selected == questions[currentQ].ans) score++;
-                currentQ++;
-                if(currentQ >= questions.length) return finishTest();
-                loadQuestion();
-            } else { if(currentQ > 0) { currentQ--; loadQuestion(); } }
-        };
-
-        const finishTest = () => {
-            push(ref(db, 'results/' + btoa(currentUser.email)), { testName: "Mock Test", score: score, total: questions.length, date: Date.now() });
-            alert(`Done! Score: ${score}/${questions.length}`);
-            showSection('analysis');
-        };
-
-        const savedUser = localStorage.getItem('pUser');
-        if(savedUser) { window.currentUser = JSON.parse(savedUser); showApp(); }
     </script>
 </body>
 </html>
+                            
