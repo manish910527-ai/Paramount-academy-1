@@ -4,123 +4,119 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - Paramount</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Roboto&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Roboto&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root { --bg-body: #0b1221; --bg-card: #151d2e; --primary: #38bdf8; --text-main: #f1f5f9; --border: #334155; --success: #4ade80; }
+        :root { --bg-body: #0b1221; --bg-card: #151d2e; --primary: #38bdf8; --text-main: #f1f5f9; --border: #334155; --danger: #ef4444; }
         body { font-family: 'Roboto', sans-serif; background: var(--bg-body); color: var(--text-main); margin: 0; }
         h1, h2, h3 { font-family: 'Poppins', sans-serif; }
+        .hidden { display: none !important; } /* FIX FOR YOUR GLITCH */
         .container { max-width: 800px; margin: 0 auto; padding: 20px; }
-        .card { background: var(--bg-card); padding: 20px; border-radius: 10px; border: 1px solid var(--border); margin-bottom: 15px; }
-        .input-group { margin-bottom: 10px; }
+        
+        .auth-box { max-width: 400px; margin: 100px auto; background: var(--bg-card); padding: 40px; border-radius: 15px; border: 1px solid var(--border); text-align: center; }
+        .input-group { margin-bottom: 15px; }
         .input-group input, select, textarea { width: 100%; padding: 10px; background: #0b1221; border: 1px solid var(--border); border-radius: 6px; color: #fff; }
-        .btn { padding: 10px 20px; border: none; border-radius: 6px; background: var(--primary); color: #000; font-weight: bold; cursor: pointer; margin-top:5px; }
-        .btn-sm { padding: 5px 10px; font-size: 0.8rem; }
-        .btn-del { background: #f87171; color: white; }
-        .header { background: #151d2e; padding: 15px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-        .tab { padding: 8px 15px; background: #0b1221; border: 1px solid var(--border); border-radius: 20px; cursor: pointer; color: #ccc; display: inline-block; margin: 2px; }
+        .btn { padding: 10px 20px; border: none; border-radius: 6px; background: var(--primary); color: #000; font-weight: bold; cursor: pointer; margin-top:5px; width: 100%; }
+        .btn-sm { width: auto; padding: 5px 10px; font-size: 0.8rem; }
+        
+        .header { background: var(--bg-card); padding: 15px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        .tabs { margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 5px; }
+        .tab { padding: 8px 15px; background: #0b1221; border: 1px solid var(--border); border-radius: 20px; cursor: pointer; color: #ccc; }
         .tab.active { background: var(--primary); color: #000; }
+        
+        .card { background: var(--bg-card); padding: 20px; border-radius: 10px; border: 1px solid var(--border); margin-bottom: 15px; }
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th, td { padding: 8px; border-bottom: 1px solid var(--border); text-align: left; font-size: 0.9rem; }
+        th, td { padding: 8px; border-bottom: 1px solid var(--border); text-align: left; font-size: 0.85rem; }
     </style>
 </head>
 <body>
 
-    <!-- Login -->
-    <div id="authScreen" class="container" style="margin-top:100px;">
-        <div class="card" style="text-align:center;">
-            <h2 style="margin-bottom:20px; color:var(--primary);">Admin Login</h2>
-            <div class="input-group"><input type="text" id="adminUser" placeholder="Admin ID"></div>
+    <!-- LOGIN SCREEN -->
+    <div id="authScreen">
+        <div class="auth-box">
+            <img src="https://i.postimg.cc/281Ys5Fb/logos-png-removebg-preview.png" style="height:60px; margin-bottom:10px; border-radius:50%;" alt="Logo">
+            <h2 style="margin-bottom: 20px; color: var(--primary);">Admin Login</h2>
+            <div class="input-group"><input type="text" id="adminId" placeholder="Admin ID"></div>
             <div class="input-group"><input type="password" id="adminPass" placeholder="Password"></div>
             <button class="btn" onclick="login()">Login</button>
         </div>
     </div>
 
-    <!-- Dashboard -->
+    <!-- DASHBOARD SCREEN (Initially Hidden) -->
     <div id="dashScreen" class="hidden">
         <div class="header">
-            <h3 style="color:var(--primary);">Admin Panel</h3>
-            <button class="btn btn-sm" style="background:#333; color:#fff;" onclick="logout()">Logout</button>
+            <h3 style="color: var(--primary);">Admin Panel</h3>
+            <button class="btn btn-sm" style="width:auto; background:#333; color:#fff;" onclick="logout()">Logout</button>
         </div>
         <div class="container">
-            <div style="margin-bottom:15px;">
-                <span class="tab active" onclick="showTab('sat')">Saturday Test</span>
-                <span class="tab" onclick="showTab('sectional')">Sectional Tests</span>
-                <span class="tab" onclick="showTab('students')">Students</span>
-                <span class="tab" onclick="showTab('pdf')">PDFs</span>
+            <div class="tabs">
+                <div class="tab active" onclick="showTab('sat')">Saturday Test</div>
+                <div class="tab" onclick="showTab('sec')">Sectional</div>
+                <div class="tab" onclick="showTab('students')">Students</div>
+                <div class="tab" onclick="showTab('pdf')">PDF</div>
             </div>
 
-            <!-- Saturday Test Config -->
+            <!-- 7,8,9. SATURDAY TEST CONFIG -->
             <div id="satTab" class="card">
-                <h3 style="margin-bottom:10px; color:var(--primary);">Saturday Test Setup</h3>
-                <div class="input-group"><input type="text" id="satName" placeholder="Test Name"></div>
+                <h3 style="margin-bottom:15px; color:var(--primary);">Saturday Test Settings</h3>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                    <div class="input-group"><input type="text" id="satName" placeholder="Test Name"></div>
+                    <div class="input-group"><input type="number" id="satDur" placeholder="Duration (Min)"></div>
+                </div>
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
                     <div class="input-group"><input type="date" id="satDate"></div>
                     <div class="input-group"><input type="time" id="satTime"></div>
                 </div>
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
                     <div class="input-group">
-                        <select id="satShift">
-                            <option>Morning</option>
-                            <option>Afternoon</option>
-                            <option>Evening</option>
-                        </select>
+                        <select id="satShift"><option>Morning</option><option>Afternoon</option><option>Evening</option></select>
                     </div>
                     <div class="input-group">
-                        <select id="satBatch">
-                            <option>All Batch</option>
-                            <option>New Batch</option>
-                            <option>Old Batch</option>
-                        </select>
+                        <select id="satBatch"><option>All</option><option>New Batch</option><option>Old Batch</option></select>
                     </div>
                 </div>
-                <div class="input-group"><input type="number" id="satDuration" placeholder="Duration (Minutes)"></div>
                 <div class="input-group">
-                    <label style="font-size:0.8rem; color:var(--text-main);">Test Active:</label>
-                    <input type="checkbox" id="satActive" style="width:auto;">
+                    <label>Active: <input type="checkbox" id="satActive" style="width:auto;"></label>
                 </div>
-                <button class="btn" onclick="saveSatSettings()">Save Settings</button>
+                <button class="btn" onclick="saveSat()">Save Settings</button>
+                
                 <hr style="margin:15px 0; border-color:var(--border);">
-                <h4>Upload Questions for Saturday</h4>
-                <div class="input-group"><input type="file" id="satCsv" accept=".csv"></div>
-                <button class="btn" style="background:var(--success);" onclick="uploadCSV('saturday')">Upload CSV</button>
-                
-                <!-- Question List -->
-                <div id="satQList"></div>
+                <h4>Manage Questions</h4>
+                <div class="input-group"><input type="file" id="satFile" accept=".csv"></div>
+                <button class="btn" style="background:var(--primary);" onclick="uploadQ('saturday')">Upload CSV</button>
+                <div id="satQList" style="margin-top:10px;"></div>
             </div>
 
-            <!-- Sectional Tests -->
-            <div id="sectionalTab" class="card hidden">
-                <h3 style="margin-bottom:10px; color:var(--primary);">Create Sectional Test</h3>
-                <div class="input-group">
-                    <select id="secSubject">
-                        <option>Maths</option><option>Reasoning</option><option>English</option><option>GK</option><option>Science</option>
-                    </select>
+            <!-- 4,6,10. SECTIONAL TESTS -->
+            <div id="secTab" class="card hidden">
+                <h3 style="margin-bottom:15px; color:var(--primary);">Create Sectional Test</h3>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                    <div class="input-group">
+                        <select id="secSub"><option>Maths</option><option>Reasoning</option><option>GK</option><option>Science</option><option>English</option></select>
+                    </div>
+                    <div class="input-group"><input type="text" id="secName" placeholder="Test Name"></div>
                 </div>
-                <div class="input-group"><input type="text" id="secName" placeholder="Test Name (e.g., Mock 1)"></div>
-                <div class="input-group"><input type="number" id="secDuration" placeholder="Duration (Minutes)"></div>
-                <button class="btn" onclick="createSectionalTest()">Create Test</button>
-                
-                <div id="sectionalList" style="margin-top:20px;"></div>
+                <div class="input-group"><input type="number" id="secDur" placeholder="Duration (Min)"></div>
+                <button class="btn" style="background:var(--primary);" onclick="createSec()">Create Test</button>
+
+                <div id="secList" style="margin-top:20px;"></div>
             </div>
 
-            <!-- Students -->
+            <!-- 3. STUDENTS DATA -->
             <div id="studentsTab" class="card hidden">
-                <h3 style="margin-bottom:10px; color:var(--primary);">Registered Students</h3>
-                <table id="studentTable"><thead><tr><th>Name</th><th>Email</th><th>Batch</th></tr></thead><tbody></tbody></table>
+                <h3 style="margin-bottom:15px; color:var(--primary);">Registered Students</h3>
+                <table id="studTable"><thead><tr><th>Name</th><th>Email</th><th>Batch</th></tr></thead><tbody></tbody></table>
             </div>
 
-            <!-- PDFs -->
+            <!-- 5. PDF SECTION -->
             <div id="pdfTab" class="card hidden">
-                <h3 style="margin-bottom:10px; color:var(--primary);">Upload PDFs</h3>
+                <h3 style="margin-bottom:15px; color:var(--primary);">Upload PDFs</h3>
                 <div class="input-group">
-                    <select id="pdfSubject">
-                        <option>Maths</option><option>Reasoning</option><option>English</option><option>GK</option><option>Science</option>
-                    </select>
+                    <select id="pdfSub"><option>Maths</option><option>Reasoning</option><option>GK</option><option>Science</option><option>English</option></select>
                 </div>
-                <div class="input-group"><input type="text" id="pdfTitle" placeholder="PDF Title"></div>
-                <div class="input-group"><input type="text" id="pdfUrl" placeholder="PDF URL"></div>
-                <button class="btn" onclick="uploadPdf()">Upload</button>
+                <div class="input-group"><input type="text" id="pdfTitle" placeholder="Title"></div>
+                <div class="input-group"><input type="text" id="pdfUrl" placeholder="URL"></div>
+                <button class="btn" onclick="upPdf()">Upload</button>
                 <div id="pdfList" style="margin-top:15px;"></div>
             </div>
         </div>
@@ -128,7 +124,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-        import { getDatabase, ref, set, push, onValue, remove } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
+        import { getDatabase, ref, set, get, child, push, onValue, remove } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBPC07vEL3aeLf4jzV6hfxnvScglW6WGK0",
@@ -143,167 +139,89 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
+        // 2. LOGIN CREDENTIALS
         window.login = () => {
-            const u = document.getElementById('adminUser').value;
+            const u = document.getElementById('adminId').value;
             const p = document.getElementById('adminPass').value;
-            // CREDENTIALS CHANGE
             if(u === "paramount academy khandwa" && p === "Paramount@2016") {
                 localStorage.setItem('isAdmin', 'true');
                 showDash();
-            } else { alert("Wrong Credentials"); }
+            } else alert("Wrong ID/Pass");
         };
 
-        window.logout = () => {
-            localStorage.removeItem('isAdmin');
-            location.reload();
-        };
+        window.logout = () => { localStorage.clear(); location.reload(); };
 
         const showDash = () => {
             document.getElementById('authScreen').classList.add('hidden');
             document.getElementById('dashScreen').classList.remove('hidden');
-            loadStudents();
-            loadSectionalList();
-            loadSatSettings();
-            loadPDFList();
-            loadQuestions('saturday', 'satQList');
+            loadData();
         };
 
         window.showTab = (id) => {
             document.querySelectorAll('.card').forEach(e => e.classList.add('hidden'));
-            document.getElementById(id + 'Tab').classList.remove('hidden');
+            document.getElementById(id+'Tab').classList.remove('hidden');
             document.querySelectorAll('.tab').forEach(e => e.classList.remove('active'));
             event.target.classList.add('active');
         };
 
         // --- SATURDAY TEST ---
-        window.saveSatSettings = () => {
+        window.saveSat = () => {
             const data = {
                 name: document.getElementById('satName').value,
+                duration: document.getElementById('satDur').value,
                 date: document.getElementById('satDate').value,
                 time: document.getElementById('satTime').value,
                 shift: document.getElementById('satShift').value,
                 batch: document.getElementById('satBatch').value,
-                duration: document.getElementById('satDuration').value,
                 isActive: document.getElementById('satActive').checked
             };
             set(ref(db, 'settings/saturdayTest'), data);
             alert("Saved!");
         };
 
-        const loadSatSettings = () => {
-            onValue(ref(db, 'settings/saturdayTest'), (snap) => {
-                if(snap.exists()) {
-                    const d = snap.val();
-                    document.getElementById('satName').value = d.name || '';
-                    document.getElementById('satDate').value = d.date || '';
-                    document.getElementById('satTime').value = d.time || '';
-                    document.getElementById('satDuration').value = d.duration || '';
-                    document.getElementById('satActive').checked = d.isActive || false;
-                }
-            });
-        };
-
-        // --- SECTIONAL TESTS ---
-        window.createSectionalTest = () => {
-            const sub = document.getElementById('secSubject').value;
+        // --- SECTIONAL ---
+        window.createSec = () => {
+            const sub = document.getElementById('secSub').value;
             const name = document.getElementById('secName').value;
-            const dur = document.getElementById('secDuration').value;
-            if(!name || !dur) return alert("Fill details");
-
+            const dur = document.getElementById('secDur').value;
+            if(!name || !dur) return alert("Fill all");
             const newRef = push(ref(db, `tests/${sub}`));
             set(newRef, { name, duration: dur, id: newRef.key });
-            alert("Test Created! Now upload CSV for this test ID: " + newRef.key);
-        };
-
-        const loadSectionalList = () => {
-            const list = document.getElementById('sectionalList');
-            onValue(ref(db, 'tests'), (snap) => {
-                list.innerHTML = '<h4>Existing Tests (Upload CSV below)</h4>';
-                if(snap.exists()) {
-                    snap.forEach(sub => {
-                        const subName = sub.key;
-                        sub.forEach(t => {
-                            const test = t.val();
-                            const div = document.createElement('div');
-                            div.style.cssText = "background:var(--bg-body); padding:10px; margin-top:10px; border-radius:5px; display:flex; justify-content:space-between; align-items:center;";
-                            div.innerHTML = `
-                                <span><b>${subName}</b> - ${test.name} (${test.duration}m)</span>
-                                <div>
-                                    <input type='file' id='file-${test.id}' accept='.csv' style='font-size:0.7rem;'>
-                                    <button class='btn btn-sm' style='padding:2px 5px;' onclick="uploadCSV('${test.id}')">Upload</button>
-                                </div>
-                            `;
-                            list.appendChild(div);
-                        });
-                    });
-                }
-            });
+            alert("Test Created! Upload CSV below.");
         };
 
         // --- CSV UPLOAD ---
-        window.uploadCSV = (testId) => {
-            let fileInput;
-            if(testId === 'saturday') fileInput = document.getElementById('satCsv');
-            else fileInput = document.getElementById(`file-${testId}`);
-
-            if(!fileInput || !fileInput.files[0]) return alert("Select CSV file");
-
+        window.uploadQ = (testId) => {
+            const file = document.getElementById(testId == 'saturday' ? 'satFile' : `file-${testId}`).files[0];
+            if(!file) return alert("Choose file");
+            
             const reader = new FileReader();
             reader.onload = (e) => {
                 const rows = e.target.result.split('\n');
+                const path = testId == 'saturday' ? 'questions/saturday' : `questions/${testId}`;
                 let count = 0;
-                const path = testId === 'saturday' ? 'questions/saturday' : `questions/${testId}`;
-
                 rows.forEach(r => {
                     if(!r.trim()) return;
-                    const cols = r.split(',');
-                    if(cols.length >= 8) {
-                        push(ref(db, path), {
-                            text: cols[2].trim(),
-                            op1: cols[3].trim(), op2: cols[4].trim(),
-                            op3: cols[5].trim(), op4: cols[6].trim(),
-                            ans: cols[7].trim()
-                        });
+                    const c = r.split(',');
+                    if(c.length >= 8) {
+                        push(ref(db, path), { text: c[2].trim(), op1: c[3].trim(), op2: c[4].trim(), op3: c[5].trim(), op4: c[6].trim(), ans: c[7].trim() });
                         count++;
                     }
                 });
-                alert(`${count} Questions Uploaded!`);
-                loadQuestions(testId, testId === 'saturday' ? 'satQList' : `list-${testId}`);
+                alert(`${count} Uploaded!`);
             };
-            reader.readAsText(fileInput.files[0]);
+            reader.readAsText(file);
         };
 
-        // --- QUESTION MANAGEMENT (DELETE) ---
-        const loadQuestions = (testId, containerId) => {
-            const cont = document.getElementById(containerId);
-            const path = testId === 'saturday' ? 'questions/saturday' : `questions/${testId}`;
-            
-            onValue(ref(db, path), (snap) => {
-                cont.innerHTML = '<h4 style="margin-top:15px;">Questions List</h4>';
-                if(snap.exists()) {
-                    snap.forEach(q => {
-                        const d = q.val();
-                        const div = document.createElement('div');
-                        div.style.cssText = "background:var(--bg-body); padding:8px; margin-top:5px; border-radius:5px; display:flex; justify-content:space-between; font-size:0.8rem;";
-                        div.innerHTML = `
-                            <span style="width:90%; overflow:hidden; white-space:nowrap; text-overflow:ellipsis;">${d.text}</span>
-                            <button class='btn-sm btn-del' onclick="delQ('${path}', '${q.key}')">X</button>
-                        `;
-                        cont.appendChild(div);
-                    });
-                }
-            });
-        };
-
+        // --- DELETE QUESTION ---
         window.delQ = (path, key) => {
-            if(confirm("Delete this question?")) {
-                remove(ref(db, `${path}/${key}`));
-            }
+            if(confirm("Delete?")) remove(ref(db, `${path}/${key}`));
         };
 
-        // --- STUDENTS & PDF ---
-        const loadStudents = () => {
-            const tbody = document.getElementById('studentTable').getElementsByTagName('tbody')[0];
+        // --- LOAD DATA ---
+        const loadData = () => {
+            // Students
+            const tbody = document.getElementById('studTable').getElementsByTagName('tbody')[0];
             onValue(ref(db, 'users'), (snap) => {
                 tbody.innerHTML = '';
                 snap.forEach(u => {
@@ -312,34 +230,62 @@
                     tr.innerHTML = `<td>${d.name}</td><td>${d.email}</td><td>${d.exam}</td>`;
                 });
             });
-        };
 
-        window.uploadPdf = () => {
-            const sub = document.getElementById('pdfSubject').value;
-            const title = document.getElementById('pdfTitle').value;
-            const url = document.getElementById('pdfUrl').value;
-            if(!title || !url) return alert("Fill fields");
-            push(ref(db, 'pdfs'), { subject: sub, title, url });
-            alert("Uploaded!");
-        };
-
-        const loadPDFList = () => {
-            const list = document.getElementById('pdfList');
-            onValue(ref(db, 'pdfs'), (snap) => {
-                list.innerHTML = '';
-                if(snap.exists()) {
-                    snap.forEach(p => {
-                        const d = p.val();
+            // Sectional List
+            const secList = document.getElementById('secList');
+            onValue(ref(db, 'tests'), (snap) => {
+                secList.innerHTML = '<h4>Existing Tests</h4>';
+                snap.forEach(sub => {
+                    const subName = sub.key;
+                    sub.forEach(t => {
+                        const test = t.val();
                         const div = document.createElement('div');
-                        div.style.cssText = "margin-top:5px; font-size:0.9rem; border-bottom:1px solid #333; padding:5px;";
-                        div.innerHTML = `<b>${d.subject}</b>: ${d.title}`;
-                        list.appendChild(div);
+                        div.style.cssText = "background:var(--bg-body); padding:10px; border-radius:5px; margin-top:10px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap;";
+                        div.innerHTML = `
+                            <span><b>${subName}</b>: ${test.name} (${test.duration}m)</span>
+                            <div style="display:flex; gap:5px; margin-top:5px;">
+                                <input type='file' id='file-${test.id}' accept='.csv' style='font-size:0.7rem;'>
+                                <button class='btn btn-sm' style="padding:2px 5px;" onclick="uploadQ('${test.id}')">Upload</button>
+                            </div>
+                        `;
+                        secList.appendChild(div);
+                        
+                        // Load Questions List for this test
+                        const qDiv = document.createElement('div');
+                        qDiv.style.cssText = "width:100%; margin-top:5px;";
+                        onValue(ref(db, `questions/${test.id}`), (qSnap) => {
+                            qDiv.innerHTML = '';
+                            if(qSnap.exists()) {
+                                qSnap.forEach(q => {
+                                    const d = q.val();
+                                    const i = document.createElement('div');
+                                    i.style.cssText = "font-size:0.8rem; border-bottom:1px solid #333; padding:2px; display:flex; justify-content:space-between;";
+                                    i.innerHTML = `<span style="overflow:hidden; white-space:nowrap; width:90%;">${d.text}</span><button class='btn-sm' style="background:var(--danger); color:#fff; padding:0 5px; height:20px;" onclick="delQ('questions/${test.id}', '${q.key}')">X</button>`;
+                                    qDiv.appendChild(i);
+                                });
+                            }
+                        });
+                        div.appendChild(qDiv);
+                    });
+                });
+            });
+            
+            // Saturday Questions
+             const satQList = document.getElementById('satQList');
+             onValue(ref(db, 'questions/saturday'), (snap) => {
+                satQList.innerHTML = '';
+                if(snap.exists()) {
+                    snap.forEach(q => {
+                        const d = q.val();
+                        const i = document.createElement('div');
+                        i.style.cssText = "font-size:0.8rem; border-bottom:1px solid #333; padding:2px; display:flex; justify-content:space-between;";
+                        i.innerHTML = `<span style="overflow:hidden; white-space:nowrap; width:90%;">${d.text}</span><button class='btn-sm' style="background:var(--danger); color:#fff; padding:0 5px; height:20px;" onclick="delQ('questions/saturday', '${q.key}')">X</button>`;
+                        satQList.appendChild(i);
                     });
                 }
-            });
+             });
         };
 
-        // Init
         if(localStorage.getItem('isAdmin') === 'true') showDash();
 
     </script>
