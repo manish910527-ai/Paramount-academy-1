@@ -7,94 +7,76 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* --- STRICT CSS RESET & THEME --- */
         :root {
             --bg-body: #0b1221; --bg-card: #151d2e; --primary: #38bdf8; --accent: #818cf8;
             --text-main: #f1f5f9; --text-muted: #94a3b8; --border: #334155;
             --success: #22c55e; --danger: #ef4444; --warning: #f59e0b;
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Roboto', sans-serif; background: var(--bg-body); color: var(--text-main); min-height: 100vh; overflow-x: hidden; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Roboto', sans-serif; background: var(--bg-body); color: var(--text-main); min-height: 100vh; }
         h1, h2, h3, h4 { font-family: 'Poppins', sans-serif; }
-        
-        /* IMPORTANT: Fix for the glitch you saw */
         .hidden { display: none !important; }
-        
         .container { padding: 15px; max-width: 600px; margin: 0 auto; }
         
-        /* BUTTONS */
-        .btn { padding: 12px 24px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; font-family: 'Poppins', sans-serif; }
-        .btn-primary { background: linear-gradient(135deg, var(--primary), var(--accent)); color: white; box-shadow: 0 4px 15px rgba(56, 189, 248, 0.3); }
+        .btn { padding: 12px 24px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; font-family: 'Poppins', sans-serif; }
+        .btn-primary { background: linear-gradient(135deg, var(--primary), var(--accent)); color: white; }
         .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
         .btn-danger { background: var(--danger); color: white; }
         
-        /* INPUTS */
         .input-group { margin-bottom: 15px; }
         .input-group input, .input-group select { width: 100%; padding: 12px; background: var(--bg-body); border: 1px solid var(--border); border-radius: 6px; color: var(--text-main); font-size: 1rem; }
 
-        /* SCREENS */
         .screen-active { display: flex; flex-direction: column; min-height: 100vh; }
         
-        /* 1. LANDING SCREEN */
         .landing-screen { justify-content: center; align-items: center; text-align: center; background: radial-gradient(circle at top, #1e293b, var(--bg-body)); padding: 20px; }
-        .landing-logo { height: 100px; margin-bottom: 20px; border-radius: 50%; box-shadow: 0 0 20px var(--primary); animation: pulse 2s infinite; }
-        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(56, 189, 248, 0.4); } 70% { box-shadow: 0 0 0 20px rgba(56, 189, 248, 0); } 100% { box-shadow: 0 0 0 0 rgba(56, 189, 248, 0); } }
+        .landing-logo { height: 100px; margin-bottom: 20px; border-radius: 50%; box-shadow: 0 0 20px var(--primary); }
         .landing-card { background: var(--bg-card); padding: 30px; border-radius: 20px; border: 1px solid var(--border); width: 100%; max-width: 350px; }
 
-        /* DASHBOARD */
         .header { padding: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); background: var(--bg-card); position: sticky; top: 0; z-index: 50; }
-        .user-info { display: flex; align-items: center; gap: 10px; font-size: 0.9rem; }
         
         .card { background: var(--bg-card); border-radius: 12px; padding: 20px; margin-bottom: 15px; border: 1px solid var(--border); position: relative; overflow: hidden; }
         .card::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--primary); }
 
-        /* 11. INSTRUCTIONS MODAL */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 100; display: flex; align-items: center; justify-content: center; padding: 20px; }
-        .modal-box { background: var(--bg-card); padding: 25px; border-radius: 15px; max-width: 400px; width: 100%; border: 1px solid var(--border); max-height: 90vh; overflow-y: auto; }
-        .inst-item { margin-bottom: 10px; padding-left: 20px; position: relative; font-size: 0.9rem; color: var(--text-muted); }
-        .inst-item::before { content: '•'; position: absolute; left: 0; color: var(--primary); }
+        .modal-box { background: var(--bg-card); padding: 25px; border-radius: 15px; max-width: 400px; width: 100%; border: 1px solid var(--border); }
 
-        /* TEST INTERFACE */
-        .test-header { background: var(--bg-card); padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 10; }
-        .timer-box { font-size: 1.2rem; font-weight: bold; color: var(--warning); font-family: 'Poppins', sans-serif; }
+        .test-header { background: var(--bg-card); padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
+        .timer-box { font-size: 1.2rem; font-weight: bold; color: var(--warning); }
         
-        /* 12-15. QUESTION PALETTE */
         .palette-container { position: fixed; bottom: 0; left: 0; width: 100%; background: #0f172a; border-top: 1px solid var(--border); padding: 10px; z-index: 20; display: grid; grid-template-columns: repeat(10, 1fr); gap: 5px; max-height: 120px; overflow-y: auto; }
-        .q-circle { width: 100%; aspect-ratio: 1; border-radius: 50%; border: 1px solid var(--border); background: var(--bg-body); color: var(--text-muted); font-size: 0.7rem; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; }
-        .q-circle.answered { background: var(--success); border-color: var(--success); color: #000; font-weight: bold; }
-        .q-circle.marked-review { background: var(--warning); border-color: var(--warning); color: #000; font-weight: bold; }
-        .q-circle.skipped { background: var(--danger); border-color: var(--danger); color: #fff; }
-        .q-circle.current { border: 2px solid #fff; transform: scale(1.1); }
+        .q-circle { width: 100%; aspect-ratio: 1; border-radius: 50%; border: 1px solid var(--border); background: var(--bg-body); color: var(--text-muted); font-size: 0.7rem; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        .q-circle.answered { background: var(--success); color: #000; }
+        .q-circle.marked-review { background: var(--warning); color: #000; }
+        .q-circle.skipped { background: var(--danger); color: #fff; }
+        .q-circle.current { border: 2px solid #fff; }
 
-        .option-btn { display: block; width: 100%; padding: 12px; margin-bottom: 8px; background: var(--bg-body); border: 1px solid var(--border); border-radius: 8px; color: var(--text-main); text-align: left; cursor: pointer; font-size: 0.95rem; }
+        .option-btn { display: block; width: 100%; padding: 12px; margin-bottom: 8px; background: var(--bg-body); border: 1px solid var(--border); border-radius: 8px; color: var(--text-main); text-align: left; cursor: pointer; }
         .option-btn.selected { border-color: var(--primary); background: rgba(56, 189, 248, 0.1); }
 
-        /* 18. TOPPERS */
         .topper-card { display: flex; align-items: center; gap: 15px; background: var(--bg-body); padding: 12px; border-radius: 8px; margin-bottom: 10px; }
-        .rank-badge { width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #000; font-size: 0.9rem; }
+        .rank-badge { width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #000; }
         .r1 { background: #FFD700; } .r2 { background: #C0C0C0; } .r3 { background: #CD7F32; }
-
+        
+        /* Nested List UI */
+        .subject-header { font-size: 1.1rem; color: var(--primary); margin-top: 20px; margin-bottom: 5px; border-bottom: 1px solid var(--border); padding-bottom: 5px; }
+        .test-item { background: var(--bg-body); padding: 12px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
     </style>
 </head>
 <body>
 
-    <!-- 1. LANDING SCREEN -->
+    <!-- LANDING -->
     <div id="landingScreen" class="screen-active landing-screen">
-        <img src="https://i.postimg.cc/281Ys5Fb/logos-png-removebg-preview.png" class="landing-logo" alt="Paramount Logo">
+        <img src="https://i.postimg.cc/281Ys5Fb/logos-png-removebg-preview.png" class="landing-logo" alt="Logo">
         <h1 style="margin-bottom: 10px; color: var(--primary);">Paramount Academy</h1>
         <p style="color: var(--text-muted); margin-bottom: 30px;">Khandwa's Premium Coaching</p>
         <div class="landing-card">
-            <button class="btn btn-primary" style="margin-bottom: 15px;" onclick="showSection('authSection')">
-                <i class="fas fa-user-graduate"></i> Student Login
-            </button>
-            <button class="btn btn-outline" onclick="window.location.href='admin.html'">
-                <i class="fas fa-user-shield"></i> Admin Login
-            </button>
+            <button class="btn btn-primary" style="margin-bottom: 15px;" onclick="showSection('authSection')"><i class="fas fa-user-graduate"></i> Student Login</button>
+            <button class="btn btn-outline" onclick="window.location.href='admin.html'"><i class="fas fa-user-shield"></i> Admin Login</button>
         </div>
     </div>
 
-    <!-- STUDENT AUTH -->
-    <div id="authSection" class="hidden screen-active" style="justify-content: center; background: var(--bg-body);">
+    <!-- AUTH -->
+    <div id="authSection" class="hidden screen-active" style="justify-content: center;">
         <div class="container">
             <div style="text-align: center; margin-bottom: 20px;">
                 <img src="https://i.postimg.cc/281Ys5Fb/logos-png-removebg-preview.png" style="height: 60px; border-radius: 50%;" alt="Logo">
@@ -112,11 +94,7 @@
                     <div class="input-group"><input type="email" id="regEmail" placeholder="Email"></div>
                     <div class="input-group"><input type="password" id="regPass" placeholder="Password"></div>
                     <div class="input-group">
-                        <select id="regBatch">
-                            <option value="">Select Batch</option>
-                            <option value="New Batch">New Batch</option>
-                            <option value="Old Batch">Old Batch</option>
-                        </select>
+                        <select id="regBatch"><option value="">Select Batch</option><option value="New Batch">New Batch</option><option value="Old Batch">Old Batch</option></select>
                     </div>
                     <button class="btn btn-primary" onclick="handleRegister()">Register</button>
                     <p style="margin-top: 15px; text-align: center; color: var(--text-muted);">Have ID? <span style="color: var(--primary); cursor: pointer;" onclick="toggleAuth('login')">Login</span></p>
@@ -126,22 +104,21 @@
         </div>
     </div>
 
-    <!-- STUDENT DASHBOARD -->
+    <!-- DASHBOARD -->
     <div id="dashSection" class="hidden">
         <div class="header">
             <div style="display:flex; align-items:center; gap:10px;">
                 <img src="https://i.postimg.cc/281Ys5Fb/logos-png-removebg-preview.png" style="height:35px; border-radius:50%;">
                 <span style="font-weight:bold; color:var(--primary);">Paramount</span>
             </div>
-            <div class="user-info">
-                <span id="dashNameNav">Hi</span>
+            <div style="display:flex; align-items:center; gap:10px;">
+                <span id="dashNameNav" style="font-size:0.9rem;"></span>
                 <i class="fas fa-sign-out-alt" style="cursor:pointer; color:var(--danger);" onclick="logout()"></i>
             </div>
         </div>
         <div class="container" style="padding-bottom: 100px;">
             <h3 style="margin-bottom: 15px;">Welcome, <span id="dashName">Student</span></h3>
 
-            <!-- 7,8,9. SATURDAY TEST CARD -->
             <div id="satTestCard" class="hidden card" style="background: linear-gradient(135deg, #1e293b, #000); border: 1px solid var(--primary); cursor: pointer;" onclick="startInstructions('saturday')">
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                     <div>
@@ -150,39 +127,31 @@
                     </div>
                     <div style="text-align: right;">
                         <div style="font-size: 0.8rem; color: var(--warning);" id="satTime">Time: 10:00 AM</div>
-                        <div style="font-size: 0.7rem; color: var(--success);">Click to Start</div>
                     </div>
                 </div>
             </div>
 
-            <!-- 18. TOPPERS LIST -->
             <div id="toppersContainer" class="card hidden" style="margin-top: 10px;">
                 <h4 style="margin-bottom: 10px; color: var(--warning);"><i class="fas fa-trophy"></i> Toppers (Last Test)</h4>
                 <div id="toppersList"></div>
             </div>
 
-            <!-- 4, 10. SECTIONAL TESTS -->
-            <div style="margin-top: 20px;">
-                <h3 style="margin-bottom: 10px; color: var(--text-muted);">Sectional Tests</h3>
-                <div id="testsList"></div>
-            </div>
+            <!-- TESTS LIST (Grouped) -->
+            <div id="testsList"></div>
         </div>
     </div>
 
-    <!-- 11. INSTRUCTIONS MODAL -->
+    <!-- INSTRUCTIONS -->
     <div id="instModal" class="hidden modal-overlay">
         <div class="modal-box">
             <h3 style="text-align: center; margin-bottom: 15px; color: var(--primary);">Instructions (हिंदी)</h3>
-            <div class="inst-item">कृपया ध्यान दें: परीक्षा निर्धारित समय पर स्वतः समाप्त हो जाएगी।</div>
-            <div class="inst-item">प्रत्येक गलत उत्तर पर नेगेटिव मार्किंग (0.25) लगेगी।</div>
-            <div class="inst-item">आप किसी भी प्रश्न पर 'Mark for Review' कर सकते हैं।</div>
-            <div class="inst-item">
-                <strong>Color Guide:</strong><br>
-                <span style="color:var(--success);">● Green</span>: Answered<br>
-                <span style="color:var(--warning);">● Yellow</span>: Review<br>
-                <span style="color:var(--danger);">● Red</span>: Skipped
-            </div>
-            <div style="text-align: center; margin-top: 20px;">
+            <p style="font-size:0.9rem; color:var(--text-muted); margin-bottom:20px; line-height:1.6;">
+                1. परीक्षा निर्धारित समय पर auto-submit होगी।<br>
+                2. प्रत्येक गलत उत्तर पर negative marking है।<br>
+                3. "Mark for Review" का उपयोग करें।<br>
+                4. Question Palette का उपयोग करके किसी भी प्रश्न पर जाएं।<br>
+            </p>
+            <div style="text-align: center;">
                 <p style="margin-bottom: 10px;">Duration: <b id="modalTime">10</b> Mins</p>
                 <button class="btn btn-primary" onclick="startRealTest()">I Agree & Start</button>
             </div>
@@ -211,17 +180,13 @@
                 <button class="btn btn-outline" onclick="prevQ()">Prev</button>
                 <button class="btn btn-primary" onclick="saveNext()">Save & Next</button>
             </div>
-            <!-- 17. EXIT BUTTON -->
-            <button class="btn btn-danger" style="margin-top: 20px; background: #333; color: #fff;" onclick="exitTest()">
-                <i class="fas fa-door-open"></i> Exit Test
-            </button>
+            <button class="btn btn-danger" style="margin-top: 20px; background: #333; color: #fff;" onclick="exitTest()"><i class="fas fa-door-open"></i> Exit Test</button>
         </div>
 
-        <!-- 12. PALETTE -->
         <div class="palette-container" id="palette"></div>
     </div>
 
-    <!-- 16. RESULT SCREEN -->
+    <!-- RESULT -->
     <div id="resultSection" class="hidden">
         <div class="container" style="text-align: center; padding-top: 50px;">
             <i class="fas fa-check-circle" style="font-size: 4rem; color: var(--success);"></i>
@@ -229,7 +194,6 @@
             <div style="font-size: 3rem; font-weight: bold; color: var(--primary); margin: 20px 0;">
                 <span id="resScore">0</span>/<span id="resTotal">0</span>
             </div>
-            
             <div id="resToppers" style="margin-top: 30px; text-align: left;"></div>
             <button class="btn btn-primary" style="margin-top: 30px;" onclick="goHome()">Go to Dashboard</button>
         </div>
@@ -256,12 +220,11 @@
         let user = null;
         let questions = [];
         let qIndex = 0;
-        let answers = []; // {status: 0=unseen, 1=answered, 2=review, 3=skipped, selected:null}
+        let answers = []; 
         let timerObj = null;
         let timeLeft = 0;
         let currentTestId = "";
 
-        // --- UI LOGIC ---
         window.showSection = (id) => {
             document.querySelectorAll('.screen-active, #dashSection, #testSection, #resultSection, #authSection').forEach(el => el.classList.add('hidden'));
             const el = document.getElementById(id);
@@ -273,7 +236,6 @@
             document.getElementById('registerForm').classList.toggle('hidden', type === 'login');
         };
 
-        // --- AUTH ---
         window.handleLogin = async () => {
             const email = document.getElementById('loginEmail').value;
             const pass = document.getElementById('loginPass').value;
@@ -308,18 +270,11 @@
             loadContent();
         };
 
-        // --- LOAD CONTENT ---
         const loadContent = () => {
-            // 1. Saturday Test Logic
             onValue(ref(db, 'settings/saturdayTest'), (snap) => {
                 const card = document.getElementById('satTestCard');
                 if(snap.exists()) {
                     const d = snap.val();
-                    const now = new Date();
-                    const sDate = new Date(d.date + " " + d.time);
-                    
-                    // Logic: Show if Active and (Time matches or slightly before)
-                    // For simplicity, we show if Active and Batch matches
                     let show = d.isActive;
                     if(d.batch != "All" && d.batch != user.exam) show = false;
                     
@@ -332,28 +287,31 @@
                 }
             });
 
-            // 2. Sectional Tests
+            // GROUPED TESTS LOGIC
             const cont = document.getElementById('testsList');
             onValue(ref(db, 'tests'), (snap) => {
                 cont.innerHTML = '';
                 if(snap.exists()) {
-                    snap.forEach(sub => {
-                        const subName = sub.key;
-                        Object.keys(sub.val()).forEach(testId => {
-                            const t = sub.val()[testId];
+                    snap.forEach(subSnap => {
+                        const subName = subSnap.key;
+                        
+                        // Create Subject Header
+                        const header = document.createElement('h3');
+                        header.className = 'subject-header';
+                        header.innerHTML = `<i class="fas fa-folder-open"></i> ${subName}`;
+                        cont.appendChild(header);
+
+                        // List tests under this subject
+                        subSnap.forEach(testSnap => {
+                            const t = testSnap.val();
                             const div = document.createElement('div');
-                            div.className = 'card';
+                            div.className = 'test-item';
                             div.innerHTML = `
-                                <div style="display:flex; justify-content:space-between; align-items:center;">
-                                    <div>
-                                        <span style="font-size:0.8rem; color:var(--primary);">${subName}</span>
-                                        <h4>${t.name}</h4>
-                                    </div>
-                                    <div style="text-align:right;">
-                                        <span style="font-size:0.8rem; color:var(--text-muted);">${t.duration} Min</span><br>
-                                        <button class="btn btn-primary" style="width:auto; padding:5px 10px; font-size:0.7rem; margin-top:5px;" onclick="startInstructions('${testId}')">Start</button>
-                                    </div>
+                                <div>
+                                    <div style="font-weight:bold;">${t.name}</div>
+                                    <div style="font-size:0.8rem; color:var(--text-muted);">${t.duration} Min</div>
                                 </div>
+                                <button class="btn btn-primary" style="width:auto; padding:5px 15px;" onclick="startInstructions('${t.id}')">Start</button>
                             `;
                             cont.appendChild(div);
                         });
@@ -362,34 +320,26 @@
             });
         };
 
-        // --- TEST LOGIC ---
         window.startInstructions = (testId) => {
             currentTestId = testId;
-            const path = testId == 'saturday' ? 'settings/saturdayTest' : `tests/${testId}`; // Simplified path logic needs refinement for subject
-            
-            // For simplicity, getting duration
             if(testId == 'saturday') {
                  get(ref(db, 'settings/saturdayTest')).then(snap => {
                      document.getElementById('modalTime').innerText = snap.val().duration || 10;
                  });
             } else {
-                // Need to find duration from tests node
                  onValue(ref(db, 'tests'), (snap) => {
                      snap.forEach(sub => {
                          if(sub.val()[testId]) {
-                             document.getElementById('modalTime').innerText = sub.val()[testId].duration;
-        }
-                         });
+                                                   document.getElementById('modalTime').innerText = sub.val()[testId].duration;
+                         }
+                     });
                  }, { onlyOnce: true });
             }
-            
             document.getElementById('instModal').classList.remove('hidden');
         };
 
         window.startRealTest = async () => {
             document.getElementById('instModal').classList.add('hidden');
-            
-            // Load Questions
             const path = currentTestId == 'saturday' ? 'questions/saturday' : `questions/${currentTestId}`;
             const snap = await get(ref(db, path));
             
@@ -399,8 +349,7 @@
                 answers = new Array(questions.length).fill({status: 0, selected: null});
                 qIndex = 0;
 
-                // Timer
-                const dur = parseInt(document.getElementById('modalTime').innerText);
+            const dur = parseInt(document.getElementById('modalTime').innerText);
                 timeLeft = dur * 60;
                 
                 showSection('testSection');
@@ -443,29 +392,17 @@
             updatePalette();
         };
 
-        window.selOpt = (opt) => {
-            answers[qIndex] = {status: 1, selected: opt};
-            renderQuestion();
-        };
-
+        window.selOpt = (opt) => { answers[qIndex] = {status: 1, selected: opt}; renderQuestion(); };
         window.saveNext = () => {
-            // If leaving unanswered, mark skipped
             if(answers[qIndex].status == 0) answers[qIndex].status = 3;
-            
             qIndex++;
             if(qIndex >= questions.length) qIndex = questions.length - 1;
             renderQuestion();
         };
         window.prevQ = () => { qIndex--; if(qIndex<0) qIndex=0; renderQuestion(); };
         window.clearAns = () => { answers[qIndex] = {status: 0, selected: null}; renderQuestion(); };
-        window.markReview = () => {
-            answers[qIndex].status = 2;
-            qIndex++;
-            if(qIndex >= questions.length) qIndex = questions.length - 1;
-            renderQuestion();
-        };
+        window.markReview = () => { answers[qIndex].status = 2; qIndex++; if(qIndex >= questions.length) qIndex = questions.length - 1; renderQuestion(); };
 
-        // 12. Palette
         const renderPalette = () => {
             const p = document.getElementById('palette');
             p.innerHTML = '';
@@ -473,73 +410,52 @@
                 const btn = document.createElement('div');
                 btn.className = `q-circle ${i==qIndex?'current':''}`;
                 btn.innerText = i+1;
-                
-                // Apply colors based on status
                 if(answers[i].status == 1) btn.classList.add('answered');
                 else if(answers[i].status == 2) btn.classList.add('marked-review');
                 else if(answers[i].status == 3) btn.classList.add('skipped');
-                
                 btn.onclick = () => { qIndex = i; renderQuestion(); };
                 p.appendChild(btn);
             });
         };
+
         const updatePalette = () => renderPalette();
 
-        window.submitTest = () => {
-            if(!confirm("Submit Test?")) return;
-            finishTest();
-        };
-
+        window.submitTest = () => { if(confirm("Submit?")) finishTest(); };
         const finishTest = () => {
             clearInterval(timerObj);
             let score = 0;
-            questions.forEach((q, i) => {
-                if(answers[i].selected == q.ans) score++;
-            });
-
-            // Save Result
+            questions.forEach((q, i) => { if(answers[i].selected == q.ans) score++; });
             push(ref(db, `results/${currentTestId}`), { name: user.name, email: user.email, score, total: questions.length, date: Date.now() });
 
-            // Show Result
             showSection('resultSection');
             document.getElementById('resScore').innerText = score;
             document.getElementById('resTotal').innerText = questions.length;
 
-            // Load Toppers
             onValue(ref(db, `results/${currentTestId}`), (snap) => {
                 if(snap.exists()) {
                     let arr = [];
                     snap.forEach(d => arr.push(d.val()));
                     arr.sort((a,b) => (b.score/b.total) - (a.score/a.total));
-                    
                     const cont = document.getElementById('resToppers');
                     cont.innerHTML = '<h4 style="margin-bottom:10px;">Toppers</h4>';
                     arr.slice(0, 3).forEach((u, i) => {
                         cont.innerHTML += `
                             <div class="topper-card">
-                                <div class="rank-badge r${i+1}">${i+1}</div>
-                                <div><b>${u.name}</b></div>
+                            <div><b>${u.name}</b></div>
                                 <div style="margin-left:auto; color:var(--primary);">${u.score}/${u.total}</div>
                             </div>
                         `;
                     });
-                                    }
+                }
             });
         };
 
-        window.exitTest = () => {
-            if(confirm("Are you sure? Your progress will be lost.")) {
-                clearInterval(timerObj);
-                showSection('dashSection');
-            }
-        };
-
+        window.exitTest = () => { if(confirm("Exit?")) { clearInterval(timerObj); showSection('dashSection'); } };
         window.goHome = () => showSection('dashSection');
 
-        // Init
         const saved = localStorage.getItem('pUser');
         if(saved) { user = JSON.parse(saved); showDash(); }
 
     </script>
 </body>
-</html>
+</html>    
