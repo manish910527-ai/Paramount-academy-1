@@ -10,7 +10,7 @@
         :root { --bg-body: #0b1221; --bg-card: #151d2e; --primary: #38bdf8; --text-main: #f1f5f9; --border: #334155; --danger: #ef4444; }
         body { font-family: 'Roboto', sans-serif; background: var(--bg-body); color: var(--text-main); margin: 0; }
         h1, h2, h3 { font-family: 'Poppins', sans-serif; }
-        .hidden { display: none !important; } /* FIX FOR YOUR GLITCH */
+        .hidden { display: none !important; }
         .container { max-width: 800px; margin: 0 auto; padding: 20px; }
         
         .auth-box { max-width: 400px; margin: 100px auto; background: var(--bg-card); padding: 40px; border-radius: 15px; border: 1px solid var(--border); text-align: center; }
@@ -31,7 +31,6 @@
 </head>
 <body>
 
-    <!-- LOGIN SCREEN -->
     <div id="authScreen">
         <div class="auth-box">
             <img src="https://i.postimg.cc/281Ys5Fb/logos-png-removebg-preview.png" style="height:60px; margin-bottom:10px; border-radius:50%;" alt="Logo">
@@ -42,7 +41,6 @@
         </div>
     </div>
 
-    <!-- DASHBOARD SCREEN (Initially Hidden) -->
     <div id="dashScreen" class="hidden">
         <div class="header">
             <h3 style="color: var(--primary);">Admin Panel</h3>
@@ -56,7 +54,6 @@
                 <div class="tab" onclick="showTab('pdf')">PDF</div>
             </div>
 
-            <!-- 7,8,9. SATURDAY TEST CONFIG -->
             <div id="satTab" class="card">
                 <h3 style="margin-bottom:15px; color:var(--primary);">Saturday Test Settings</h3>
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
@@ -81,13 +78,12 @@
                 <button class="btn" onclick="saveSat()">Save Settings</button>
                 
                 <hr style="margin:15px 0; border-color:var(--border);">
-                <h4>Manage Questions</h4>
+                <h4>Manage Questions (CSV)</h4>
                 <div class="input-group"><input type="file" id="satFile" accept=".csv"></div>
                 <button class="btn" style="background:var(--primary);" onclick="uploadQ('saturday')">Upload CSV</button>
-                <div id="satQList" style="margin-top:10px;"></div>
+                <div id="satQList" style="margin-top:10px; max-height:200px; overflow-y:auto;"></div>
             </div>
 
-            <!-- 4,6,10. SECTIONAL TESTS -->
             <div id="secTab" class="card hidden">
                 <h3 style="margin-bottom:15px; color:var(--primary);">Create Sectional Test</h3>
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
@@ -102,13 +98,11 @@
                 <div id="secList" style="margin-top:20px;"></div>
             </div>
 
-            <!-- 3. STUDENTS DATA -->
             <div id="studentsTab" class="card hidden">
                 <h3 style="margin-bottom:15px; color:var(--primary);">Registered Students</h3>
                 <table id="studTable"><thead><tr><th>Name</th><th>Email</th><th>Batch</th></tr></thead><tbody></tbody></table>
             </div>
 
-            <!-- 5. PDF SECTION -->
             <div id="pdfTab" class="card hidden">
                 <h3 style="margin-bottom:15px; color:var(--primary);">Upload PDFs</h3>
                 <div class="input-group">
@@ -139,7 +133,6 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // 2. LOGIN CREDENTIALS
         window.login = () => {
             const u = document.getElementById('adminId').value;
             const p = document.getElementById('adminPass').value;
@@ -164,7 +157,6 @@
             event.target.classList.add('active');
         };
 
-        // --- SATURDAY TEST ---
         window.saveSat = () => {
             const data = {
                 name: document.getElementById('satName').value,
@@ -179,7 +171,6 @@
             alert("Saved!");
         };
 
-        // --- SECTIONAL ---
         window.createSec = () => {
             const sub = document.getElementById('secSub').value;
             const name = document.getElementById('secName').value;
@@ -190,37 +181,45 @@
             alert("Test Created! Upload CSV below.");
         };
 
-        // --- CSV UPLOAD ---
+        // --- FIXED CSV UPLOAD (SKIPS HEADER) ---
         window.uploadQ = (testId) => {
-            const file = document.getElementById(testId == 'saturday' ? 'satFile' : `file-${testId}`).files[0];
-            if(!file) return alert("Choose file");
+            const fileInput = document.getElementById(testId == 'saturday' ? 'satFile' : `file-${testId}`);
+            if(!fileInput.files[0]) return alert("Choose file");
             
             const reader = new FileReader();
             reader.onload = (e) => {
                 const rows = e.target.result.split('\n');
                 const path = testId == 'saturday' ? 'questions/saturday' : `questions/${testId}`;
                 let count = 0;
-                rows.forEach(r => {
-                    if(!r.trim()) return;
-                    const c = r.split(',');
+                
+                rows.forEach((row, index) => {
+                    // SKIP FIRST ROW (HEADER)
+                    if(index === 0) return; 
+                    
+                    if(!row.trim()) return;
+                    const c = row.split(',');
                     if(c.length >= 8) {
-                        push(ref(db, path), { text: c[2].trim(), op1: c[3].trim(), op2: c[4].trim(), op3: c[5].trim(), op4: c[6].trim(), ans: c[7].trim() });
+                        push(ref(db, path), { 
+                            text: c[2].trim(), 
+                            op1: c[3].trim(), 
+                            op2: c[4].trim(), 
+                            op3: c[5].trim(), 
+                            op4: c[6].trim(), 
+                            ans: c[7].trim() 
+                        });
                         count++;
                     }
                 });
-                alert(`${count} Uploaded!`);
+                alert(`${count} Questions Uploaded!`);
             };
-            reader.readAsText(file);
+            reader.readAsText(fileInput.files[0]);
         };
 
-        // --- DELETE QUESTION ---
         window.delQ = (path, key) => {
             if(confirm("Delete?")) remove(ref(db, `${path}/${key}`));
         };
 
-        // --- LOAD DATA ---
         const loadData = () => {
-            // Students
             const tbody = document.getElementById('studTable').getElementsByTagName('tbody')[0];
             onValue(ref(db, 'users'), (snap) => {
                 tbody.innerHTML = '';
@@ -231,7 +230,6 @@
                 });
             });
 
-            // Sectional List
             const secList = document.getElementById('secList');
             onValue(ref(db, 'tests'), (snap) => {
                 secList.innerHTML = '<h4>Existing Tests</h4>';
@@ -250,7 +248,6 @@
                         `;
                         secList.appendChild(div);
                         
-                        // Load Questions List for this test
                         const qDiv = document.createElement('div');
                         qDiv.style.cssText = "width:100%; margin-top:5px;";
                         onValue(ref(db, `questions/${test.id}`), (qSnap) => {
@@ -260,7 +257,7 @@
                                     const d = q.val();
                                     const i = document.createElement('div');
                                     i.style.cssText = "font-size:0.8rem; border-bottom:1px solid #333; padding:2px; display:flex; justify-content:space-between;";
-                                    i.innerHTML = `<span style="overflow:hidden; white-space:nowrap; width:90%;">${d.text}</span><button class='btn-sm' style="background:var(--danger); color:#fff; padding:0 5px; height:20px;" onclick="delQ('questions/${test.id}', '${q.key}')">X</button>`;
+                                    i.innerHTML = `<span style="overflow:hidden; width:90%;">${d.text}</span><button class='btn-sm' style="background:var(--danger); color:#fff; padding:0 5px; height:20px;" onclick="delQ('questions/${test.id}', '${q.key}')">X</button>`;
                                     qDiv.appendChild(i);
                                 });
                             }
@@ -270,7 +267,6 @@
                 });
             });
             
-            // Saturday Questions
              const satQList = document.getElementById('satQList');
              onValue(ref(db, 'questions/saturday'), (snap) => {
                 satQList.innerHTML = '';
@@ -279,7 +275,7 @@
                         const d = q.val();
                         const i = document.createElement('div');
                         i.style.cssText = "font-size:0.8rem; border-bottom:1px solid #333; padding:2px; display:flex; justify-content:space-between;";
-                        i.innerHTML = `<span style="overflow:hidden; white-space:nowrap; width:90%;">${d.text}</span><button class='btn-sm' style="background:var(--danger); color:#fff; padding:0 5px; height:20px;" onclick="delQ('questions/saturday', '${q.key}')">X</button>`;
+                        i.innerHTML = `<span style="overflow:hidden; width:90%;">${d.text}</span><button class='btn-sm' style="background:var(--danger); color:#fff; padding:0 5px; height:20px;" onclick="delQ('questions/saturday', '${q.key}')">X</button>`;
                         satQList.appendChild(i);
                     });
                 }
@@ -290,4 +286,4 @@
 
     </script>
 </body>
-    </html>
+</html>
