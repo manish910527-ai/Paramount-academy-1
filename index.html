@@ -10,7 +10,7 @@
         :root {
             --bg-body: #0b1221; --bg-card: #151d2e; --primary: #38bdf8; --accent: #818cf8;
             --text-main: #f1f5f9; --text-muted: #94a3b8; --border: #334155;
-            --success: #22c55e; --danger: #ef4444; --warning: #f59e0b;
+            --success: #22c55e; --danger: #ef4444; --warning: #f59e0b; --purple: #a855f7;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Roboto', sans-serif; background: var(--bg-body); color: var(--text-main); min-height: 100vh; }
@@ -38,16 +38,61 @@
         
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
-        /* Test UI */
-        .test-header { background: var(--bg-card); padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; }
-        .timer-box { font-size: 1.2rem; font-weight: bold; color: var(--warning); }
-        .palette-container { position: fixed; bottom: 0; left: 0; width: 100%; background: #0f172a; border-top: 1px solid var(--border); padding: 10px; z-index: 20; display: grid; grid-template-columns: repeat(10, 1fr); gap: 5px; max-height: 120px; overflow-y: auto; }
-        .q-circle { width: 100%; aspect-ratio: 1; border-radius: 50%; border: 1px solid var(--border); background: var(--bg-body); color: var(--text-muted); font-size: 0.7rem; display: flex; align-items: center; justify-content: center; cursor: pointer; }
-        .q-circle.answered { background: var(--success); color: #000; }
-        .q-circle.marked-review { background: var(--warning); color: #000; }
-        .q-circle.skipped { background: var(--danger); color: #fff; }
-        .option-btn { display: block; width: 100%; padding: 12px; margin-bottom: 8px; background: var(--bg-body); border: 1px solid var(--border); border-radius: 8px; color: var(--text-main); text-align: left; cursor: pointer; }
-        .option-btn.selected { border-color: var(--primary); background: rgba(56, 189, 248, 0.1); }
+        /* --- TEST INTERFACE STYLES --- */
+        .test-container { display: flex; height: 100vh; width: 100%; }
+        
+        /* Main Question Area */
+        .main-content { flex: 1; height: 100%; overflow-y: auto; display: flex; flex-direction: column; }
+        .test-header { background: var(--bg-card); padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 10; }
+        .timer-box { font-size: 1.2rem; font-weight: bold; color: var(--warning); font-family: 'Poppins', sans-serif; }
+
+        /* Palette Sidebar/Modal */
+        .palette-panel {
+            width: 300px; background: var(--bg-card); border-left: 1px solid var(--border);
+            height: 100%; display: flex; flex-direction: column; position: fixed; right: 0; top: 0;
+            transform: translateX(100%); transition: transform 0.3s ease; z-index: 200;
+        }
+        .palette-panel.open { transform: translateX(0); }
+        
+        /* Desktop View: Always Visible */
+        @media (min-width: 900px) {
+            .palette-panel { transform: translateX(0); position: relative; border-left: 1px solid var(--border); }
+            .palette-toggle-btn { display: none; }
+            .main-content { width: calc(100% - 300px); }
+        }
+
+        /* Palette Grid & Colors */
+        .q-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; padding: 15px; overflow-y: auto; flex: 1; }
+        .q-box { width: 100%; aspect-ratio: 1; border-radius: 6px; border: 1px solid var(--border); background: var(--bg-body); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 0.9rem; font-weight: 600; transition: 0.2s; position: relative;}
+        
+        /* Standard Color States */
+        .q-box.not-visited { background: transparent; border-color: #64748b; color: #64748b; }
+        .q-box.not-answered { background: var(--danger); border-color: var(--danger); color: white; }
+        .q-box.answered { background: var(--success); border-color: var(--success); color: white; }
+        .q-box.review { background: var(--purple); border-color: var(--purple); color: white; }
+        .q-box.answered-review { background: var(--purple); border-color: var(--purple); color: white; }
+        .q-box.answered-review::after { content: ''; position: absolute; width: 8px; height: 8px; background: var(--success); border-radius: 50%; bottom: 2px; right: 2px; }
+        
+        .q-box.current { border: 2px solid var(--text-main); transform: scale(1.1); box-shadow: 0 0 10px rgba(255,255,255,0.2); }
+
+        /* Stats Legend */
+        .legend { display: flex; flex-wrap: wrap; gap: 10px; padding: 15px; border-bottom: 1px solid var(--border); background: #0f172a; }
+        .legend-item { display: flex; align-items: center; gap: 5px; font-size: 0.75rem; color: var(--text-muted); }
+        .legend-dot { width: 12px; height: 12px; border-radius: 2px; }
+
+        /* Option Buttons */
+        .option-btn { display: block; width: 100%; padding: 12px; margin-bottom: 8px; background: var(--bg-body); border: 1px solid var(--border); border-radius: 8px; color: var(--text-main); text-align: left; cursor: pointer; transition: 0.2s; }
+        .option-btn:hover { border-color: var(--primary); }
+        .option-btn.selected { background: rgba(56, 189, 248, 0.15); border-color: var(--primary); color: var(--primary); font-weight: 600; }
+
+        /* Mobile Toggle Button */
+        .palette-toggle-btn {
+            position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px;
+            background: var(--primary); border-radius: 50%; border: none; color: #000;
+            font-size: 1.5rem; box-shadow: 0 4px 15px rgba(56, 189, 248, 0.4); z-index: 150; display: flex; align-items: center; justify-content: center;
+        }
+        @media (min-width: 900px) { .palette-toggle-btn { display: none; } }
+
     </style>
 </head>
 <body>
@@ -102,12 +147,9 @@
         </div>
 
         <div class="container" style="padding-bottom: 50px;">
-            
-            <!-- HOME SCREEN (Subjects List) -->
             <div id="homeScreen">
                 <div id="bannerBox" style="margin-bottom: 15px;"></div>
                 <div id="satCardBox"></div>
-                
                 <h3 style="margin-bottom: 15px; margin-top: 20px;">Subjects</h3>
                 <div class="grid-2" id="subjectList">
                     <div class="card" onclick="openSubject('Maths')"><h3 style="color:var(--primary)">Maths</h3></div>
@@ -117,51 +159,71 @@
                     <div class="card" onclick="openSubject('Science')"><h3 style="color:var(--primary)">Science</h3></div>
                 </div>
             </div>
-
-            <!-- SUBJECT DETAIL (Topics List) -->
             <div id="subjectScreen" class="hidden">
-                <h3 id="subjectTitle">Maths</h3>
-                <p style="color:var(--text-muted); margin-bottom:15px;">Select Topic</p>
+                <h3 id="subjectTitle">Maths</h3><p style="color:var(--text-muted); margin-bottom:15px;">Select Topic</p>
                 <div id="topicsList"></div>
-                
-                <!-- Full Length Tests for Subject -->
                 <h4 style="margin-top:20px; color:var(--warning);">Full Length Tests</h4>
                 <div id="fullLengthList"></div>
             </div>
-
-            <!-- TOPIC DETAIL (Tests List) -->
             <div id="topicScreen" class="hidden">
-                <h3 id="topicTitle">Algebra</h3>
-                <div id="testsList"></div>
+                <h3 id="topicTitle">Algebra</h3><div id="testsList"></div>
             </div>
-
         </div>
     </div>
 
-    <!-- TEST INTERFACE (Same as before) -->
+    <!-- TEST SECTION -->
     <div id="testSection" class="hidden">
-        <div class="test-header">
-            <div><div style="font-weight:bold;" id="testNameH">Test</div><div style="font-size:0.75rem; color:var(--text-muted);" id="qStatus">1/10</div></div>
-            <div class="timer-box" id="timer">00:00</div>
-            <button class="btn btn-primary" style="width:auto; padding:5px 10px; font-size:0.8rem;" onclick="submitTest()">Submit</button>
-        </div>
-        <div class="container" style="padding-bottom: 130px; padding-top: 20px;">
-            <div id="questionBox"></div>
-            <div style="margin-top: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                <button class="btn btn-outline" style="font-size:0.8rem;" onclick="markReview()"><i class="fas fa-bookmark"></i> Review</button>
-                <button class="btn btn-outline" style="font-size:0.8rem;" onclick="clearAns()"><i class="fas fa-eraser"></i> Clear</button>
+        <div class="test-container">
+            <!-- Main Content -->
+            <div class="main-content">
+                <div class="test-header">
+                    <div>
+                        <div style="font-weight:bold; font-size:0.9rem;" id="testNameH">Test</div>
+                        <div style="font-size:0.75rem; color:var(--text-muted);" id="qStatus">1/10</div>
+                    </div>
+                    <div class="timer-box" id="timer">00:00</div>
+                    <button class="btn btn-primary" style="width:auto; padding:5px 10px; font-size:0.8rem;" onclick="submitTest()">Submit</button>
+                </div>
+                
+                <div class="container" style="padding-bottom: 30px; padding-top: 20px; flex:1;">
+                    <div id="questionBox"></div>
+                    
+                    <div style="margin-top: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <button class="btn btn-outline" style="font-size:0.8rem;" onclick="markReview()"><i class="fas fa-bookmark"></i> Review</button>
+                        <button class="btn btn-outline" style="font-size:0.8rem;" onclick="clearAns()"><i class="fas fa-eraser"></i> Clear</button>
+                    </div>
+                    <div style="margin-top: 10px; display: flex; gap: 10px;">
+                        <button class="btn btn-outline" onclick="prevQ()">Prev</button>
+                        <button class="btn btn-primary" onclick="saveNext()">Save & Next</button>
+                    </div>
+                </div>
             </div>
-            <div style="margin-top: 10px; display: flex; gap: 10px;">
-                <button class="btn btn-outline" onclick="prevQ()">Prev</button>
-                <button class="btn btn-primary" onclick="saveNext()">Save & Next</button>
+
+            <!-- Palette Panel (Sidebar) -->
+            <div id="palettePanel" class="palette-panel">
+                <div style="padding:15px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+                    <h4 style="color:var(--primary);">Questions</h4>
+                    <i class="fas fa-times" style="cursor:pointer;" onclick="togglePalette()"></i>
+                </div>
+                
+                <!-- Stats Legend -->
+                <div class="legend" id="statsLegend">
+                    <!-- Filled by JS -->
+                </div>
+
+                <div class="q-grid" id="qGrid"></div>
             </div>
         </div>
-        <div class="palette-container" id="palette"></div>
+        
+        <!-- Mobile Toggle Button -->
+        <button class="palette-toggle-btn" onclick="togglePalette()">
+            <i class="fas fa-th"></i>
+        </button>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-        import { getDatabase, ref, set, get, child, push, onValue } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
+        import { getDatabase, ref, set, get, child, push } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBPC07vEL3aeLf4jzV6hfxnvScglW6WGK0",
@@ -175,18 +237,18 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
+        const dbRef = ref(db);
 
         let user = null;
         let questions = [];
         let qIndex = 0;
-        let answers = [];
+        let answers = []; // {status: 0=Unvisited, 1=Answered, 2=NotAnswered, 3=Review, 4=AnsweredReview, selected:null}
         let timerObj = null;
         let timeLeft = 0;
         let currentTestId = "";
-        
         let currentSubject = "";
         let currentTopic = "";
-        let navStack = []; // To handle back button
+        let navStack = [];
 
         window.showSection = (id) => {
             document.querySelectorAll('.screen-active, #appSection, #testSection').forEach(el => el.classList.add('hidden'));
@@ -231,7 +293,6 @@
             loadHome();
         };
 
-        // --- NAVIGATION LOGIC ---
         window.openSubject = (sub) => {
             currentSubject = sub;
             document.getElementById('subjectTitle').innerText = sub;
@@ -256,11 +317,9 @@
         window.goBack = () => {
             navStack.pop();
             const prev = navStack[navStack.length - 1];
-            
             document.getElementById('homeScreen').classList.add('hidden');
             document.getElementById('subjectScreen').classList.add('hidden');
             document.getElementById('topicScreen').classList.add('hidden');
-
             if(prev === 'home') {
                 document.getElementById('homeScreen').classList.remove('hidden');
                 document.getElementById('backBtn').style.display = 'none';
@@ -271,15 +330,10 @@
             }
         };
 
-        // --- LOAD DATA ---
-        const dbRef = ref(db);
-        
         const loadHome = () => {
-            // Banner
             onValue(ref(db, 'settings/banner'), (s) => {
-                if(s.exists()) document.getElementById('bannerBox').innerHTML = `<img src="${s.val()}" style="width:100%; border-radius:10px; border:1px solid var(--border);">`;
+                if(s.exists()) document.getElementById('bannerBox').innerHTML = `<img src="${s.val()}" style="width:100%; border-radius:10px;">`;
             });
-            // Saturday
             onValue(ref(db, 'settings/saturdayTest'), (s) => {
                 if(s.exists() && s.val().isActive) {
                     const d = s.val();
@@ -287,7 +341,7 @@
                          document.getElementById('satCardBox').innerHTML = `
                             <div class="card" style="background:linear-gradient(135deg, #000, #1e293b); border:1px solid var(--primary);" onclick="startInstructions('saturday', '${d.duration}')">
                                 <h3 style="color:var(--primary)"><i class="fas fa-bolt"></i> ${d.name}</h3>
-                                <p style="font-size:0.8rem; color:var(--text-muted);">${d.date} | ${d.time} | ${d.batch}</p>
+                                <p style="font-size:0.8rem; color:var(--text-muted);">${d.date} | ${d.time}</p>
                             </div>`;
                     }
                 }
@@ -298,24 +352,14 @@
             const list = document.getElementById('topicsList');
             const fullList = document.getElementById('fullLengthList');
             list.innerHTML = ''; fullList.innerHTML = '';
-
-            // Load Topics
             onValue(ref(db, `topics/${sub}`), (snap) => {
-                if(snap.exists()) {
-                    Object.keys(snap.val()).forEach(t => {
-                        list.innerHTML += `<div class="card" onclick="openTopic('${t}')">${t}</div>`;
-                    });
-                }
+                if(snap.exists()) Object.keys(snap.val()).forEach(t => list.innerHTML += `<div class="card" onclick="openTopic('${t}')">${t}</div>`);
             });
-            
-            // Load Full Length Tests
              onValue(ref(db, `tests/${sub}/Full Length`), (snap) => {
-                if(snap.exists()) {
-                    snap.forEach(t => {
-                        const d = t.val();
-                        fullList.innerHTML += `<div class="card" onclick="startInstructions('${d.id}', '${d.duration}')">${d.name} <span style="float:right; font-size:0.8rem; color:var(--text-muted);">${d.duration}m</span></div>`;
-                    });
-                }
+                if(snap.exists()) snap.forEach(t => {
+                    const d = t.val();
+                    fullList.innerHTML += `<div class="card" onclick="startInstructions('${d.id}', '${d.duration}')">${d.name} <span style="float:right; font-size:0.8rem;">${d.duration}m</span></div>`;
+                });
             });
         };
 
@@ -326,14 +370,9 @@
                 if(snap.exists()) {
                     snap.forEach(t => {
                         const d = t.val();
-                        list.innerHTML += `<div class="card" onclick="startInstructions('${d.id}', '${d.duration}')">
-                            <span>${d.name}</span>
-                            <button class="btn btn-primary" style="width:auto; padding:5px 10px; float:right;">Start</button>
-                        </div>`;
+                        list.innerHTML += `<div class="card" onclick="startInstructions('${d.id}', '${d.duration}')"><span>${d.name}</span><button class="btn btn-primary" style="width:auto; padding:5px 10px; float:right;">Start</button></div>`;
                     });
-                } else {
-                    list.innerHTML = "<p style='color:var(--text-muted);'>No tests yet.</p>";
-                }
+                } else list.innerHTML = "<p style='color:var(--text-muted);'>No tests.</p>";
             });
         };
 
@@ -346,18 +385,24 @@
         const startRealTest = async (dur) => {
             const path = currentTestId == 'saturday' ? 'questions/saturday' : `questions/${currentTestId}`;
             const snap = await get(ref(db, path));
+            
             if(snap.exists()) {
                 questions = [];
                 snap.forEach(q => questions.push(q.val()));
-                answers = new Array(questions.length).fill({status: 0, selected: null});
+                if(questions.length === 0) { alert("No questions found."); return; }
+
+                // Status: 0=Unvisited, 1=Answered, 2=NotAnswered, 3=Review, 4=AnsweredReview
+                answers = new Array(questions.length).fill(null).map(() => ({status: 0, selected: null}));
+                
                 qIndex = 0;
                 timeLeft = dur * 60;
                 
                 showSection('testSection');
+                document.getElementById('testNameH').innerText = `Test (${questions.length} Qs)`;
                 startTimer();
                 renderQuestion();
-                renderPalette();
-            } else alert("No questions found.");
+                updatePaletteAndStats();
+            } else { alert("No questions found."); }
         };
 
         const startTimer = () => {
@@ -383,27 +428,94 @@
                 <button class="option-btn ${answers[qIndex].selected==3?'selected':''}" onclick="selOpt(3)">C. ${q.op3}</button>
                 <button class="option-btn ${answers[qIndex].selected==4?'selected':''}" onclick="selOpt(4)">D. ${q.op4}</button>
             `;
-            updatePalette();
+            updatePaletteAndStats();
         };
 
-        window.selOpt = (opt) => { answers[qIndex] = {status: 1, selected: opt}; renderQuestion(); };
-        window.saveNext = () => { if(answers[qIndex].status == 0) answers[qIndex].status = 3; qIndex++; if(qIndex >= questions.length) qIndex = questions.length - 1; renderQuestion(); };
-        window.prevQ = () => { qIndex--; if(qIndex<0) qIndex=0; renderQuestion(); };
-        window.clearAns = () => { answers[qIndex] = {status: 0, selected: null}; renderQuestion(); };
-        window.markReview = () => { answers[qIndex].status = 2; qIndex++; if(qIndex >= questions.length) qIndex = questions.length - 1; renderQuestion(); };
+        window.selOpt = (opt) => { 
+            answers[qIndex].selected = opt; 
+            // Don't change status to Green yet, wait for Save & Next
+            renderQuestion(); 
+        };
 
-        const renderPalette = () => {
-            const p = document.getElementById('palette');
-            p.innerHTML = '';
+        window.saveNext = () => {
+            // Update Status for CURRENT question before moving
+            if(answers[qIndex].selected) {
+                answers[qIndex].status = 1; // Answered (Green)
+            } else {
+                answers[qIndex].status = 2; // Not Answered (Red)
+            }
+            
+            qIndex++;
+            if(qIndex >= questions.length) qIndex = questions.length - 1;
+            renderQuestion();
+        };
+
+        window.prevQ = () => {
+            qIndex--;
+            if(qIndex < 0) qIndex = 0;
+            renderQuestion();
+        };
+
+        window.clearAns = () => { 
+            answers[qIndex].selected = null;
+            answers[qIndex].status = 0; // Reset to Not Visited
+            renderQuestion(); 
+        };
+        
+        window.markReview = () => {
+            if(answers[qIndex].selected) {
+                answers[qIndex].status = 4; // Answered & Review (Purple with Green Dot)
+            } else {
+                answers[qIndex].status = 3; // Review (Purple)
+            }
+            qIndex++;
+            if(qIndex >= questions.length) qIndex = questions.length - 1;
+            renderQuestion();
+        };
+
+        // --- PALETTE & STATS ---
+        window.togglePalette = () => {
+            document.getElementById('palettePanel').classList.toggle('open');
+        };
+        
+        const updatePaletteAndStats = () => {
+            const grid = document.getElementById('qGrid');
+            const legend = document.getElementById('statsLegend');
+            
+            let stats = { visited: 0, notAnswered: 0, answered: 0, review: 0, ar: 0 };
+            
+            let html = '';
             questions.forEach((q, i) => {
-                const btn = document.createElement('div');
-                btn.className = `q-circle ${answers[i].status==1?'answered':''} ${answers[i].status==2?'marked-review':''} ${answers[i].status==3?'skipped':''}`;
-                btn.innerText = i+1;
-                btn.onclick = () => { qIndex = i; renderQuestion(); };
-                p.appendChild(btn);
+                let cls = '';
+                if(answers[i].status === 0) cls = 'not-visited';
+                else if(answers[i].status === 1) { cls = 'answered'; stats.answered++; }
+                else if(answers[i].status === 2) { cls = 'not-answered'; stats.notAnswered++; }
+                else if(answers[i].status === 3) { cls = 'review'; stats.review++; }
+                else if(answers[i].status === 4) { cls = 'answered-review'; stats.ar++; }
+                
+                if(answers[i].status !== 0) stats.visited++;
+
+                html += `<div class="q-box ${cls} ${i==qIndex?'current':''}" onclick="jumpTo(${i})">${i+1}</div>`;
             });
+            grid.innerHTML = html;
+
+            // Update Legend
+            stats.notAnswered = stats.visited - stats.answered - stats.review - stats.ar; // Recalculate accurate skipped
+            
+            legend.innerHTML = `
+                <div class="legend-item"><div class="legend-dot" style="background:var(--success)"></div> Answered (${stats.answered + stats.ar})</div>
+                <div class="legend-item"><div class="legend-dot" style="background:var(--danger)"></div> Not Answered (${stats.notAnswered})</div>
+                <div class="legend-item"><div class="legend-dot" style="background:var(--purple)"></div> Review (${stats.review + stats.ar})</div>
+                <div class="legend-item"><div class="legend-dot" style="border:1px solid gray; background:transparent"></div> Unvisited (${questions.length - stats.visited})</div>
+            `;
         };
-        const updatePalette = () => renderPalette();
+
+        window.jumpTo = (idx) => {
+            qIndex = idx;
+            renderQuestion();
+            // Close palette on mobile after selection
+            if(window.innerWidth < 900) togglePalette();
+        };
 
         window.submitTest = () => {
             if(!confirm("Submit?")) return;
@@ -412,7 +524,7 @@
             questions.forEach((q, i) => { if(answers[i].selected == q.ans) score++; });
             push(ref(db, `results/${currentTestId}`), { name: user.name, email: user.email, score, total: questions.length });
             alert(`Submitted! Score: ${score}/${questions.length}`);
-            goBack(); // Back to dashboard
+            goBack();
         };
 
         const saved = localStorage.getItem('pUser');
@@ -421,3 +533,5 @@
     </script>
 </body>
 </html>
+            
+        
