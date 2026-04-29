@@ -1,0 +1,1606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Paramount Academy Khandwa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--bg:#0a0a0a;--bg2:#111;--card:#1a1a1a;--card2:rgba(255,255,255,0.05);--gold:#d4af37;--gold2:#f4d03f;--gold3:#c5a028;--text:#fff;--text2:#b0b0b0;--text3:#888;--success:#2ecc71;--error:#e74c3c;--info:#3498db;--glass:rgba(255,255,255,0.05);--blur:blur(10px);--shadow:0 8px 32px rgba(212,175,55,0.1);--transition:all 0.3s ease}
+html,body{height:100%;overflow:hidden;font-family:'Roboto',sans-serif;background:var(--bg);color:var(--text)}
+h1,h2,h3,h4,h5,h6{font-family:'Poppins',sans-serif}
+input,select,textarea,button{font-family:'Roboto',sans-serif;outline:none}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg2)}::-webkit-scrollbar-thumb{background:var(--gold3);border-radius:4px}
+
+/* AUTH SCREENS */
+.auth-container{display:flex;justify-content:center;align-items:center;min-height:100vh;background:linear-gradient(135deg,#0a0a0a 0%,#1a1a2e 50%,#0a0a0a 100%);padding:20px}
+.auth-box{width:100%;max-width:420px;background:var(--card);border:1px solid rgba(212,175,55,0.2);border-radius:20px;padding:40px 30px;backdrop-filter:var(--blur);box-shadow:var(--shadow)}
+.auth-logo{text-align:center;margin-bottom:30px}
+.auth-logo i{font-size:48px;color:var(--gold);display:block;margin-bottom:10px}
+.auth-logo h1{font-size:22px;font-weight:700;color:var(--gold)}
+.auth-logo p{font-size:13px;color:var(--text2);margin-top:4px}
+.form-group{margin-bottom:18px}
+.form-group label{display:block;font-size:13px;color:var(--text2);margin-bottom:6px;font-weight:500}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:12px 16px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;color:var(--text);font-size:14px;transition:var(--transition)}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--gold);box-shadow:0 0 15px rgba(212,175,55,0.15)}
+.form-group select option{background:var(--card);color:var(--text)}
+.form-row{display:flex;gap:12px}
+.form-row .form-group{flex:1}
+.exam-options{display:flex;gap:10px;flex-wrap:wrap}
+.exam-opt{flex:1;min-width:80px}
+.exam-opt input{display:none}
+.exam-opt label{display:block;text-align:center;padding:10px 8px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;cursor:pointer;font-size:13px;font-weight:500;transition:var(--transition)}
+.exam-opt input:checked+label{background:rgba(212,175,55,0.15);border-color:var(--gold);color:var(--gold)}
+.btn{padding:12px 24px;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;transition:var(--transition);display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.btn-gold{background:linear-gradient(135deg,var(--gold),var(--gold3));color:#000;width:100%}
+.btn-gold:hover{box-shadow:0 0 25px rgba(212,175,55,0.4);transform:translateY(-2px)}
+.btn-outline{background:transparent;border:1px solid var(--gold);color:var(--gold)}
+.btn-outline:hover{background:rgba(212,175,55,0.1)}
+.btn-sm{padding:8px 16px;font-size:12px;border-radius:8px}
+.btn-danger{background:var(--error);color:#fff}
+.auth-link{text-align:center;margin-top:20px;font-size:13px;color:var(--text2)}
+.auth-link a{color:var(--gold);text-decoration:none;font-weight:500}
+.auth-tabs{display:flex;margin-bottom:25px;background:rgba(255,255,255,0.05);border-radius:10px;overflow:hidden}
+.auth-tab{flex:1;padding:10px;text-align:center;font-size:13px;font-weight:600;cursor:pointer;transition:var(--transition);color:var(--text2)}
+.auth-tab.active{background:linear-gradient(135deg,var(--gold),var(--gold3));color:#000}
+.hidden{display:none!important}
+
+/* MAIN APP */
+.app-container{display:flex;height:100vh;overflow:hidden}
+.sidebar{width:260px;background:var(--bg2);border-right:1px solid rgba(212,175,55,0.1);display:flex;flex-direction:column;transition:var(--transition);overflow-y:auto;flex-shrink:0}
+.sidebar.collapsed{width:70px}
+.sidebar-header{padding:20px;text-align:center;border-bottom:1px solid rgba(255,255,255,0.05)}
+.sidebar-header h2{font-size:16px;color:var(--gold);font-weight:700}
+.sidebar-header p{font-size:11px;color:var(--text3);margin-top:2px}
+.sidebar.collapsed .sidebar-header h2,.sidebar.collapsed .sidebar-header p,.sidebar.collapsed .menu-text{display:none}
+.sidebar-menu{flex:1;padding:10px 0}
+.menu-item{display:flex;align-items:center;padding:12px 20px;cursor:pointer;transition:var(--transition);color:var(--text2);font-size:14px;gap:12px;border-left:3px solid transparent}
+.menu-item:hover{background:rgba(212,175,55,0.05);color:var(--text)}
+.menu-item.active{background:rgba(212,175,55,0.1);color:var(--gold);border-left-color:var(--gold)}
+.menu-item i{width:20px;text-align:center;font-size:16px}
+.sidebar.collapsed .menu-item{padding:12px;justify-content:center}
+.sidebar-footer{padding:15px 20px;border-top:1px solid rgba(255,255,255,0.05)}
+.user-info{display:flex;align-items:center;gap:10px}
+.user-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold3));display:flex;align-items:center;justify-content:center;font-weight:700;color:#000;font-size:14px}
+.user-details{flex:1;overflow:hidden}
+.user-details h4{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.user-details p{font-size:11px;color:var(--text3)}
+.sidebar.collapsed .user-details{display:none}
+
+.main-content{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.top-bar{display:flex;align-items:center;padding:12px 20px;background:var(--bg2);border-bottom:1px solid rgba(255,255,255,0.05);gap:15px}
+.top-bar .toggle-btn{background:none;border:none;color:var(--text2);font-size:18px;cursor:pointer}
+.top-bar .page-title{font-size:18px;font-weight:600;flex:1}
+.top-bar .coins-badge{display:flex;align-items:center;gap:5px;background:rgba(212,175,55,0.15);padding:6px 12px;border-radius:20px;font-size:13px;color:var(--gold);font-weight:600}
+.top-bar .notif-btn{position:relative;background:none;border:none;color:var(--text2);font-size:18px;cursor:pointer}
+.notif-badge{position:absolute;top:-5px;right:-5px;background:var(--error);color:#fff;font-size:9px;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700}
+.content-area{flex:1;overflow-y:auto;padding:20px}
+
+/* BOTTOM NAV (Mobile) */
+.bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--bg2);border-top:1px solid rgba(255,255,255,0.05);z-index:100;padding:5px 0 env(safe-area-inset-bottom)}
+.bottom-nav-items{display:flex;justify-content:space-around}
+.bottom-nav-item{display:flex;flex-direction:column;align-items:center;padding:8px 4px;cursor:pointer;color:var(--text3);font-size:10px;gap:3px;transition:var(--transition)}
+.bottom-nav-item i{font-size:18px}
+.bottom-nav-item.active{color:var(--gold)}
+
+/* CARDS */
+.card{background:var(--card);border:1px solid rgba(255,255,255,0.05);border-radius:16px;padding:20px;transition:var(--transition);margin-bottom:16px}
+.card:hover{border-color:rgba(212,175,55,0.2);box-shadow:var(--shadow);transform:translateY(-2px)}
+.card-gold{border-color:rgba(212,175,55,0.3)}
+.section-title{font-size:18px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.section-title i{color:var(--gold)}
+
+/* DASHBOARD */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:20px}
+.stat-card{background:var(--card);border:1px solid rgba(255,255,255,0.05);border-radius:14px;padding:16px;text-align:center;transition:var(--transition)}
+.stat-card:hover{border-color:rgba(212,175,55,0.3);transform:translateY(-3px)}
+.stat-card i{font-size:24px;color:var(--gold);margin-bottom:8px}
+.stat-card h3{font-size:24px;font-weight:700;color:var(--gold)}
+.stat-card p{font-size:11px;color:var(--text3);margin-top:4px}
+.subjects-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-bottom:20px}
+.subject-card{background:var(--card);border:1px solid rgba(255,255,255,0.05);border-radius:14px;padding:20px 14px;text-align:center;cursor:pointer;transition:var(--transition)}
+.subject-card:hover{border-color:var(--gold);box-shadow:0 0 20px rgba(212,175,55,0.15);transform:translateY(-3px)}
+.subject-card i{font-size:28px;color:var(--gold);margin-bottom:10px}
+.subject-card h4{font-size:13px;font-weight:600}
+.subject-card p{font-size:11px;color:var(--text3);margin-top:4px}
+
+/* TEST HUB */
+.test-filters{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.filter-btn{padding:8px 16px;border-radius:20px;border:1px solid rgba(255,255,255,0.1);background:transparent;color:var(--text2);font-size:12px;cursor:pointer;transition:var(--transition)}
+.filter-btn.active{background:rgba(212,175,55,0.15);border-color:var(--gold);color:var(--gold)}
+.test-card{background:var(--card);border:1px solid rgba(255,255,255,0.05);border-radius:14px;padding:18px;margin-bottom:12px;transition:var(--transition)}
+.test-card:hover{border-color:rgba(212,175,55,0.2)}
+.test-card-header{display:flex;justify-content:space-between;align-items:start;margin-bottom:10px}
+.test-card-header h4{font-size:15px;font-weight:600}
+.test-badge{padding:3px 10px;border-radius:12px;font-size:10px;font-weight:600}
+.badge-sectional{background:rgba(52,152,219,0.2);color:var(--info)}
+.badge-mock{background:rgba(212,175,55,0.2);color:var(--gold)}
+.badge-weekly{background:rgba(46,204,113,0.2);color:var(--success)}
+.test-meta{display:flex;gap:15px;font-size:12px;color:var(--text3);margin-bottom:12px;flex-wrap:wrap}
+.test-meta span{display:flex;align-items:center;gap:4px}
+.test-meta i{color:var(--gold);font-size:11px}
+
+/* TEST ENGINE */
+.test-engine{position:fixed;top:0;left:0;right:0;bottom:0;background:var(--bg);z-index:200;display:flex;flex-direction:column}
+.test-header{display:flex;align-items:center;padding:12px 16px;background:var(--bg2);border-bottom:1px solid rgba(255,255,255,0.05);gap:12px}
+.test-header .timer{font-size:18px;font-weight:700;color:var(--gold);flex:1;text-align:center}
+.test-header .timer.warning{color:var(--error);animation:pulse 1s infinite}
+.test-header .q-count{font-size:13px;color:var(--text2)}
+.test-body{flex:1;overflow-y:auto;padding:20px}
+.question-container{max-width:700px;margin:0 auto}
+.question-text{font-size:16px;font-weight:500;line-height:1.6;margin-bottom:24px;padding:20px;background:var(--card);border-radius:14px;border:1px solid rgba(255,255,255,0.05)}
+.options-list{display:flex;flex-direction:column;gap:10px}
+.option-btn{display:flex;align-items:center;gap:12px;padding:14px 18px;background:var(--card);border:2px solid rgba(255,255,255,0.08);border-radius:12px;cursor:pointer;transition:var(--transition);font-size:14px}
+.option-btn:hover{border-color:rgba(212,175,55,0.3)}
+.option-btn.selected{border-color:var(--gold);background:rgba(212,175,55,0.1)}
+.option-letter{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,0.05);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0}
+.option-btn.selected .option-letter{background:var(--gold);color:#000}
+.test-footer{padding:12px 16px;background:var(--bg2);border-top:1px solid rgba(255,255,255,0.05);display:flex;align-items:center;gap:10px}
+.test-footer .nav-btn{padding:10px 20px;border-radius:10px;border:1px solid rgba(255,255,255,0.1);background:transparent;color:var(--text);cursor:pointer;font-size:13px;transition:var(--transition)}
+.test-footer .nav-btn:hover{border-color:var(--gold);color:var(--gold)}
+.test-footer .nav-btn:disabled{opacity:0.3;cursor:not-allowed}
+.q-palette-btn{padding:8px 16px;border-radius:8px;background:rgba(212,175,55,0.15);border:1px solid var(--gold);color:var(--gold);cursor:pointer;font-size:12px;font-weight:600}
+.q-palette{display:none;padding:20px;max-width:700px;margin:0 auto}
+.q-palette.show{display:block}
+.q-palette-grid{display:grid;grid-template-columns:repeat(10,1fr);gap:6px}
+.q-pal-item{width:100%;aspect-ratio:1;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;cursor:pointer;border:1px solid rgba(255,255,255,0.1);transition:var(--transition)}
+.q-pal-item.answered{background:rgba(46,204,113,0.2);border-color:var(--success);color:var(--success)}
+.q-pal-item.visited{background:rgba(212,175,55,0.15);border-color:var(--gold);color:var(--gold)}
+.q-pal-item.current{background:var(--gold);color:#000;border-color:var(--gold)}
+.q-pal-item.unvisited{background:rgba(255,255,255,0.03);color:var(--text3)}
+
+/* RESULT SCREEN */
+.result-container{max-width:700px;margin:0 auto;padding:20px}
+.result-header{text-align:center;padding:30px 0}
+.result-score{font-size:64px;font-weight:800;color:var(--gold);line-height:1}
+.result-score span{font-size:24px;color:var(--text3)}
+.result-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:20px 0}
+.result-stat{padding:16px;border-radius:12px;text-align:center}
+.result-stat.correct{background:rgba(46,204,113,0.1);border:1px solid rgba(46,204,113,0.3)}
+.result-stat.wrong{background:rgba(231,76,60,0.1);border:1px solid rgba(231,76,60,0.3)}
+.result-stat.skipped{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1)}
+.result-stat h3{font-size:24px;font-weight:700}
+.result-stat p{font-size:11px;color:var(--text3);margin-top:4px}
+.review-item{background:var(--card);border:1px solid rgba(255,255,255,0.05);border-radius:14px;padding:16px;margin-bottom:12px}
+.review-item .q-text{font-size:14px;margin-bottom:10px;line-height:1.5}
+.review-item .ans-info{font-size:13px;display:flex;gap:20px;flex-wrap:wrap}
+.review-item .ans-info span{display:flex;align-items:center;gap:5px}
+.review-item .ans-info .correct-ans{color:var(--success)}
+.review-item .ans-info .user-ans{color:var(--info)}
+.review-item .ans-info .wrong-ans{color:var(--error)}
+.review-item .explanation{margin-top:10px;padding:10px;background:rgba(212,175,55,0.05);border-radius:8px;font-size:13px;color:var(--text2);border-left:3px solid var(--gold)}
+
+/* PDF LIST */
+.pdf-card{background:var(--card);border:1px solid rgba(255,255,255,0.05);border-radius:14px;padding:16px;margin-bottom:12px;display:flex;align-items:center;gap:14px}
+.pdf-card i{font-size:32px;color:var(--error);flex-shrink:0}
+.pdf-card-info{flex:1}
+.pdf-card-info h4{font-size:14px;font-weight:600;margin-bottom:4px}
+.pdf-card-info p{font-size:12px;color:var(--text3)}
+.pdf-card-actions{display:flex;gap:8px}
+
+/* CURRENT AFFAIRS */
+.affair-card{background:var(--card);border:1px solid rgba(255,255,255,0.05);border-radius:14px;padding:18px;margin-bottom:12px;cursor:pointer;transition:var(--transition)}
+.affair-card:hover{border-color:rgba(212,175,55,0.2)}
+.affair-card h4{font-size:15px;font-weight:600;margin-bottom:8px}
+.affair-card .date-badge{font-size:11px;color:var(--gold);margin-bottom:8px;display:flex;align-items:center;gap:5px}
+.affair-card .content-preview{font-size:13px;color:var(--text2);line-height:1.5}
+.affair-card .full-content{display:none;margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.05);font-size:14px;line-height:1.7;color:var(--text2)}
+.affair-card.expanded .full-content{display:block}
+
+/* LEADERBOARD */
+.leaderboard-item{display:flex;align-items:center;padding:14px 16px;background:var(--card);border:1px solid rgba(255,255,255,0.05);border-radius:12px;margin-bottom:8px;gap:14px;transition:var(--transition)}
+.leaderboard-item:hover{border-color:rgba(212,175,55,0.2)}
+.leaderboard-item .rank{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0;background:rgba(255,255,255,0.05)}
+.leaderboard-item .rank.gold{background:linear-gradient(135deg,#d4af37,#f4d03f);color:#000}
+.leaderboard-item .rank.silver{background:linear-gradient(135deg,#c0c0c0,#e8e8e8);color:#000}
+.leaderboard-item .rank.bronze{background:linear-gradient(135deg,#cd7f32,#e8a849);color:#000}
+.leaderboard-item .name{flex:1;font-size:14px;font-weight:500}
+.leaderboard-item .score{font-size:14px;font-weight:700;color:var(--gold)}
+.leaderboard-item.self{border-color:rgba(212,175,55,0.4);background:rgba(212,175,55,0.05)}
+
+/* ANALYTICS */
+.analytics-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:20px}
+.progress-bar-container{margin-bottom:16px}
+.progress-bar-label{display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px}
+.progress-bar{height:8px;background:rgba(255,255,255,0.05);border-radius:4px;overflow:hidden}
+.progress-bar-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--gold),var(--gold2));transition:width 1s ease}
+.chart-container{background:var(--card);border:1px solid rgba(255,255,255,0.05);border-radius:14px;padding:20px;margin-bottom:16px}
+.chart-container canvas{width:100%;max-height:250px}
+.weak-topic{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:rgba(231,76,60,0.08);border:1px solid rgba(231,76,60,0.2);border-radius:10px;margin-bottom:8px}
+.weak-topic span{font-size:13px}
+.weak-topic .accuracy{color:var(--error);font-weight:600;font-size:12px}
+
+/* DAILY QUIZ */
+.quiz-card{background:var(--card);border:1px solid rgba(212,175,55,0.2);border-radius:16px;padding:24px;text-align:center}
+.quiz-card .streak-fire{font-size:48px;margin-bottom:10px}
+.quiz-card .streak-count{font-size:14px;color:var(--gold);font-weight:600;margin-bottom:20px}
+.quiz-question{font-size:16px;font-weight:500;margin-bottom:20px;line-height:1.5;text-align:left}
+.quiz-options{display:flex;flex-direction:column;gap:10px;margin-bottom:20px}
+.quiz-result{font-size:18px;font-weight:700;margin-top:16px}
+.quiz-result.correct{color:var(--success)}
+.quiz-result.wrong{color:var(--error)}
+.quiz-coins{font-size:13px;color:var(--gold);margin-top:8px}
+
+/* DOUBT SOLVER */
+.doubt-input{display:flex;gap:10px;margin-bottom:20px}
+.doubt-input input{flex:1;padding:12px 16px;background:var(--card);border:1px solid rgba(255,255,255,0.1);border-radius:12px;color:var(--text);font-size:14px}
+.doubt-response{background:var(--card);border:1px solid rgba(212,175,55,0.2);border-radius:14px;padding:20px;min-height:100px;line-height:1.6;font-size:14px;color:var(--text2)}
+.doubt-response .typing{display:inline-block}
+.typing-dots span{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--gold);margin:0 2px;animation:typingBounce 1.4s infinite}
+.typing-dots span:nth-child(2){animation-delay:0.2s}
+.typing-dots span:nth-child(3){animation-delay:0.4s}
+
+/* PROFILE */
+.profile-header{text-align:center;padding:30px 0}
+.profile-avatar{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold3));display:inline-flex;align-items:center;justify-content:center;font-size:32px;font-weight:700;color:#000;margin-bottom:12px}
+.profile-header h3{font-size:20px;font-weight:700}
+.profile-header p{font-size:13px;color:var(--text3)}
+.profile-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:20px 0}
+.profile-stat{text-align:center;padding:14px;background:var(--card);border-radius:12px;border:1px solid rgba(255,255,255,0.05)}
+.profile-stat h4{font-size:20px;font-weight:700;color:var(--gold)}
+.profile-stat p{font-size:11px;color:var(--text3);margin-top:4px}
+.profile-info{background:var(--card);border-radius:14px;padding:20px;border:1px solid rgba(255,255,255,0.05)}
+.profile-info-row{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.03);font-size:14px}
+.profile-info-row:last-child{border:none}
+.profile-info-row .label{color:var(--text3)}
+
+/* NOTIFICATIONS */
+.notif-panel{position:fixed;top:0;right:-360px;width:360px;max-width:100%;height:100vh;background:var(--bg2);z-index:300;transition:var(--transition);border-left:1px solid rgba(255,255,255,0.05);display:flex;flex-direction:column}
+.notif-panel.open{right:0}
+.notif-panel-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid rgba(255,255,255,0.05)}
+.notif-panel-header h3{font-size:16px;font-weight:600}
+.notif-panel-body{flex:1;overflow-y:auto;padding:12px}
+.notif-item{display:flex;gap:12px;padding:14px;background:var(--card);border-radius:12px;margin-bottom:8px;border:1px solid rgba(255,255,255,0.05)}
+.notif-item i{font-size:18px;color:var(--gold);flex-shrink:0;margin-top:2px}
+.notif-item-content h4{font-size:13px;font-weight:600;margin-bottom:3px}
+.notif-item-content p{font-size:12px;color:var(--text3);line-height:1.4}
+.notif-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:299;display:none}
+.notif-overlay.show{display:block}
+
+/* MODAL */
+.modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:400;display:flex;align-items:center;justify-content:center;padding:20px}
+.modal-box{background:var(--card);border:1px solid rgba(212,175,55,0.2);border-radius:20px;padding:30px;max-width:420px;width:100%;backdrop-filter:var(--blur);box-shadow:var(--shadow)}
+.modal-box h3{font-size:18px;font-weight:700;margin-bottom:12px;text-align:center}
+.modal-box p{font-size:14px;color:var(--text2);margin-bottom:20px;text-align:center;line-height:1.5}
+.modal-actions{display:flex;gap:10px;justify-content:center}
+
+/* TOAST */
+.toast{position:fixed;top:20px;right:20px;padding:14px 20px;border-radius:12px;font-size:13px;font-weight:500;z-index:500;animation:slideInRight 0.3s ease;box-shadow:0 8px 24px rgba(0,0,0,0.3)}
+.toast.success{background:rgba(46,204,113,0.9);color:#fff}
+.toast.error{background:rgba(231,76,60,0.9);color:#fff}
+.toast.info{background:rgba(52,152,219,0.9);color:#fff}
+
+/* SEARCH */
+.search-box{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid rgba(255,255,255,0.05);border-radius:12px;padding:10px 16px;margin-bottom:16px}
+.search-box i{color:var(--text3)}
+.search-box input{flex:1;background:none;border:none;color:var(--text);font-size:14px}
+.search-box input::placeholder{color:var(--text3)}
+
+/* EMPTY STATE */
+.empty-state{text-align:center;padding:40px 20px}
+.empty-state i{font-size:48px;color:var(--text3);margin-bottom:16px}
+.empty-state h3{font-size:16px;color:var(--text2);margin-bottom:8px}
+.empty-state p{font-size:13px;color:var(--text3)}
+
+/* LOADING */
+.loader{display:flex;justify-content:center;padding:40px}
+.loader-spinner{width:40px;height:40px;border:3px solid rgba(212,175,55,0.2);border-top-color:var(--gold);border-radius:50%;animation:spin 0.8s linear infinite}
+
+/* STREAK FIRE */
+@keyframes fireFlicker{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.1)}}
+.fire-icon{display:inline-block;animation:fireFlicker 0.5s ease infinite}
+
+/* ANIMATIONS */
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideInRight{from{opacity:0;transform:translateX(50px)}to{opacity:1;transform:translateX(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes typingBounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
+@keyframes countUp{from{opacity:0;transform:scale(0.5)}to{opacity:1;transform:scale(1)}}
+.fade-in{animation:fadeIn 0.4s ease}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .sidebar{display:none}
+  .bottom-nav{display:block}
+  .content-area{padding:16px;padding-bottom:80px}
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .subjects-grid{grid-template-columns:repeat(2,1fr)}
+  .result-stats{grid-template-columns:repeat(3,1fr)}
+  .q-palette-grid{grid-template-columns:repeat(6,1fr)}
+  .top-bar .page-title{font-size:15px}
+  .auth-box{padding:30px 20px}
+  .notif-panel{width:100%;right:-100%}
+  .test-header{flex-wrap:wrap}
+  .form-row{flex-direction:column;gap:0}
+  .analytics-grid{grid-template-columns:1fr}
+}
+@media(max-width:400px){
+  .stats-grid{grid-template-columns:1fr 1fr}
+  .subjects-grid{grid-template-columns:1fr 1fr}
+  .result-score{font-size:48px}
+  .result-stats{grid-template-columns:1fr 1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- AUTH SCREEN -->
+<div id="authScreen" class="auth-container">
+  <div class="auth-box">
+    <div class="auth-logo">
+      <i class="fas fa-crown"></i>
+      <h1>Paramount Academy</h1>
+      <p>Khandwa - Excellence in Competitive Exams</p>
+    </div>
+    <div class="auth-tabs">
+      <div class="auth-tab active" onclick="showAuthTab('login')">Login</div>
+      <div class="auth-tab" onclick="showAuthTab('register')">Register</div>
+    </div>
+    <!-- LOGIN FORM -->
+    <form id="loginForm" onsubmit="handleLogin(event)">
+      <div class="form-group">
+        <label><i class="fas fa-envelope"></i> Email</label>
+        <input type="email" id="loginEmail" placeholder="Enter your email" required>
+      </div>
+      <div class="form-group">
+        <label><i class="fas fa-lock"></i> Password</label>
+        <input type="password" id="loginPassword" placeholder="Enter your password" required>
+      </div>
+      <button type="submit" class="btn btn-gold"><i class="fas fa-sign-in-alt"></i> Login</button>
+      <div class="auth-link">Don't have an account? <a href="#" onclick="showAuthTab('register')">Register here</a></div>
+    </form>
+    <!-- REGISTER FORM -->
+    <form id="registerForm" class="hidden" onsubmit="handleRegister(event)">
+      <div class="form-group">
+        <label><i class="fas fa-user"></i> Full Name</label>
+        <input type="text" id="regName" placeholder="Enter your full name" required>
+      </div>
+      <div class="form-group">
+        <label><i class="fas fa-envelope"></i> Email</label>
+        <input type="email" id="regEmail" placeholder="Enter your email" required>
+      </div>
+      <div class="form-group">
+        <label><i class="fas fa-lock"></i> Password</label>
+        <input type="password" id="regPassword" placeholder="Create a password (min 6 chars)" minlength="6" required>
+      </div>
+      <div class="form-group">
+        <label><i class="fas fa-map-marker-alt"></i> State</label>
+        <select id="regState" required>
+          <option value="">Select State</option>
+          <option>Madhya Pradesh</option><option>Uttar Pradesh</option><option>Maharashtra</option>
+          <option>Rajasthan</option><option>Bihar</option><option>Gujarat</option>
+          <option>Chhattisgarh</option><option>Jharkhand</option><option>Punjab</option>
+          <option>Haryana</option><option>Delhi</option><option>Karnataka</option>
+          <option>Tamil Nadu</option><option>West Bengal</option><option>Andhra Pradesh</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label><i class="fas fa-graduation-cap"></i> Exam Category</label>
+        <div class="exam-options">
+          <div class="exam-opt"><input type="radio" name="examCat" id="catSSC" value="SSC" required><label for="catSSC">SSC</label></div>
+          <div class="exam-opt"><input type="radio" name="examCat" id="catRailway" value="Railway"><label for="catRailway">Railway</label></div>
+          <div class="exam-opt"><input type="radio" name="examCat" id="catMP" value="MP"><label for="catMP">MP</label></div>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-gold"><i class="fas fa-user-plus"></i> Register</button>
+      <div class="auth-link">Already have an account? <a href="#" onclick="showAuthTab('login')">Login here</a></div>
+    </form>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="appScreen" class="app-container hidden">
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <h2><i class="fas fa-crown"></i> Paramount</h2>
+      <p>Academy Khandwa</p>
+    </div>
+    <nav class="sidebar-menu">
+      <div class="menu-item active" data-page="dashboard" onclick="navigateTo('dashboard')"><i class="fas fa-home"></i><span class="menu-text">Dashboard</span></div>
+      <div class="menu-item" data-page="tests" onclick="navigateTo('tests')"><i class="fas fa-file-alt"></i><span class="menu-text">Test Hub</span></div>
+      <div class="menu-item" data-page="materials" onclick="navigateTo('materials')"><i class="fas fa-book"></i><span class="menu-text">Study Materials</span></div>
+      <div class="menu-item" data-page="affairs" onclick="navigateTo('affairs')"><i class="fas fa-newspaper"></i><span class="menu-text">Current Affairs</span></div>
+      <div class="menu-item" data-page="analytics" onclick="navigateTo('analytics')"><i class="fas fa-chart-bar"></i><span class="menu-text">Performance</span></div>
+      <div class="menu-item" data-page="leaderboard" onclick="navigateTo('leaderboard')"><i class="fas fa-trophy"></i><span class="menu-text">Leaderboard</span></div>
+      <div class="menu-item" data-page="quiz" onclick="navigateTo('quiz')"><i class="fas fa-clock"></i><span class="menu-text">Daily Quiz</span></div>
+      <div class="menu-item" data-page="doubts" onclick="navigateTo('doubts')"><i class="fas fa-comments"></i><span class="menu-text">Doubt Solver</span></div>
+      <div class="menu-item" data-page="profile" onclick="navigateTo('profile')"><i class="fas fa-user-circle"></i><span class="menu-text">Profile</span></div>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <div class="user-avatar" id="sidebarAvatar">P</div>
+        <div class="user-details">
+          <h4 id="sidebarName">User</h4>
+          <p id="sidebarExam">SSC</p>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main-content">
+    <header class="top-bar">
+      <button class="toggle-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+      <h2 class="page-title" id="pageTitle">Dashboard</h2>
+      <div class="coins-badge"><i class="fas fa-coins"></i> <span id="topCoins">0</span></div>
+      <button class="notif-btn" onclick="toggleNotifPanel()">
+        <i class="fas fa-bell"></i>
+        <span class="notif-badge hidden" id="notifBadge">0</span>
+      </button>
+    </header>
+
+    <div class="content-area" id="contentArea">
+      <!-- PAGES WILL BE RENDERED HERE -->
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav" id="bottomNav">
+  <div class="bottom-nav-items">
+    <div class="bottom-nav-item active" data-page="dashboard" onclick="navigateTo('dashboard')"><i class="fas fa-home"></i><span>Home</span></div>
+    <div class="bottom-nav-item" data-page="tests" onclick="navigateTo('tests')"><i class="fas fa-file-alt"></i><span>Tests</span></div>
+    <div class="bottom-nav-item" data-page="materials" onclick="navigateTo('materials')"><i class="fas fa-book"></i><span>Study</span></div>
+    <div class="bottom-nav-item" data-page="analytics" onclick="navigateTo('analytics')"><i class="fas fa-chart-bar"></i><span>Stats</span></div>
+    <div class="bottom-nav-item" data-page="profile" onclick="navigateTo('profile')"><i class="fas fa-user-circle"></i><span>Profile</span></div>
+  </div>
+</div>
+
+<!-- NOTIFICATION PANEL -->
+<div class="notif-overlay" id="notifOverlay" onclick="toggleNotifPanel()"></div>
+<div class="notif-panel" id="notifPanel">
+  <div class="notif-panel-header">
+    <h3><i class="fas fa-bell"></i> Notifications</h3>
+    <button style="background:none;border:none;color:var(--text2);font-size:18px;cursor:pointer" onclick="toggleNotifPanel()"><i class="fas fa-times"></i></button>
+  </div>
+  <div class="notif-panel-body" id="notifList">
+    <div class="empty-state"><i class="fas fa-bell-slash"></i><h3>No notifications</h3></div>
+  </div>
+</div>
+
+<!-- TEST ENGINE -->
+<div class="test-engine hidden" id="testEngine"></div>
+
+<!-- TOAST CONTAINER -->
+<div id="toastContainer"></div>
+
+<!-- MODAL CONTAINER -->
+<div id="modalContainer"></div>
+
+<script>
+// ==================== FIREBASE INIT ====================
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
+  projectId: "YOUR_PROJECT",
+  storageBucket: "YOUR_PROJECT.appspot.com",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+// ==================== APP STATE ====================
+let currentUser = null;
+let currentPage = 'dashboard';
+let testState = null;
+let quizAnswered = false;
+let notifications = [];
+let notifPanelOpen = false;
+
+// ==================== AUTH ====================
+function showAuthTab(tab) {
+  document.querySelectorAll('.auth-tab').forEach((t,i) => {
+    t.classList.toggle('active', (tab==='login'&&i===0)||(tab==='register'&&i===1));
+  });
+  document.getElementById('loginForm').classList.toggle('hidden', tab!=='login');
+  document.getElementById('registerForm').classList.toggle('hidden', tab!=='register');
+}
+
+function handleRegister(e) {
+  e.preventDefault();
+  const name = document.getElementById('regName').value.trim();
+  const email = document.getElementById('regEmail').value.trim();
+  const password = document.getElementById('regPassword').value;
+  const state = document.getElementById('regState').value;
+  const examCat = document.querySelector('input[name="examCat"]:checked');
+  if (!examCat) { showToast('Please select exam category','error'); return; }
+  const uid = email.replace(/[.#$\[\]@]/g, '_');
+  db.ref('users/' + uid).once('value').then(snap => {
+    if (snap.exists()) { showToast('Email already registered','error'); return; }
+    return db.ref('users/' + uid).set({
+      name, email, password, state, examCategory: examCat.value,
+      streak: 0, coins: 0, createdAt: Date.now()
+    });
+  }).then(() => {
+    if (arguments[0] !== false) {
+      showToast('Registration successful! Please login.','success');
+      showAuthTab('login');
+    }
+  }).catch(err => showToast(err.message,'error'));
+}
+
+function handleLogin(e) {
+  e.preventDefault();
+  const email = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  const uid = email.replace(/[.#$\[\]@]/g, '_');
+  db.ref('users/' + uid).once('value').then(snap => {
+    if (!snap.exists()) { showToast('Account not found. Please register.','error'); return; }
+    const user = snap.val();
+    if (user.password !== password) { showToast('Incorrect password','error'); return; }
+    currentUser = { uid, ...user };
+    localStorage.setItem('paUser', JSON.stringify(currentUser));
+    updateStreak();
+    showApp();
+  }).catch(err => showToast(err.message,'error'));
+}
+
+function checkSession() {
+  const saved = localStorage.getItem('paUser');
+  if (saved) { currentUser = JSON.parse(saved); showApp(); }
+}
+
+function logout() {
+  localStorage.removeItem('paUser');
+  currentUser = null;
+  document.getElementById('appScreen').classList.add('hidden');
+  document.getElementById('authScreen').classList.remove('hidden');
+  document.getElementById('loginEmail').value = '';
+  document.getElementById('loginPassword').value = '';
+}
+
+function showApp() {
+  document.getElementById('authScreen').classList.add('hidden');
+  document.getElementById('appScreen').classList.remove('hidden');
+  document.getElementById('sidebarAvatar').textContent = currentUser.name.charAt(0).toUpperCase();
+  document.getElementById('sidebarName').textContent = currentUser.name;
+  document.getElementById('sidebarExam').textContent = currentUser.examCategory;
+  loadCoins();
+  loadNotifications();
+  navigateTo('dashboard');
+}
+
+function updateStreak() {
+  const today = new Date().toDateString();
+  const streakRef = db.ref('user_streaks/' + currentUser.uid);
+  streakRef.once('value').then(snap => {
+    const data = snap.val() || { currentStreak: 0, longestStreak: 0, lastActiveDate: '', coins: 0 };
+    if (data.lastActiveDate !== today) {
+      const yesterday = new Date(Date.now() - 86400000).toDateString();
+      if (data.lastActiveDate === yesterday) { data.currentStreak++; }
+      else if (data.lastActiveDate !== today) { data.currentStreak = 1; }
+      data.longestStreak = Math.max(data.longestStreak, data.currentStreak);
+      data.lastActiveDate = today;
+      streakRef.set(data);
+    }
+    currentUser.streak = data.currentStreak;
+    currentUser.coins = data.coins || 0;
+    localStorage.setItem('paUser', JSON.stringify(currentUser));
+  });
+}
+
+function loadCoins() {
+  db.ref('user_streaks/' + currentUser.uid).once('value').then(snap => {
+    const data = snap.val() || {};
+    document.getElementById('topCoins').textContent = data.coins || 0;
+  });
+}
+
+function addCoins(amount) {
+  const ref = db.ref('user_streaks/' + currentUser.uid);
+  ref.once('value').then(snap => {
+    const data = snap.val() || { currentStreak: 0, longestStreak: 0, lastActiveDate: new Date().toDateString(), coins: 0 };
+    data.coins = (data.coins || 0) + amount;
+    ref.set(data);
+    document.getElementById('topCoins').textContent = data.coins;
+    showToast('+' + amount + ' coins earned!', 'success');
+  });
+}
+
+// ==================== NAVIGATION ====================
+function navigateTo(page) {
+  currentPage = page;
+  document.querySelectorAll('.menu-item').forEach(m => m.classList.toggle('active', m.dataset.page === page));
+  document.querySelectorAll('.bottom-nav-item').forEach(m => m.classList.toggle('active', m.dataset.page === page));
+  const titles = {dashboard:'Dashboard',tests:'Test Hub',materials:'Study Materials',affairs:'Current Affairs',analytics:'Performance',leaderboard:'Leaderboard',quiz:'Daily Quiz',doubts:'Doubt Solver',profile:'Profile'};
+  document.getElementById('pageTitle').textContent = titles[page] || page;
+  renderPage(page);
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('collapsed');
+}
+
+function toggleNotifPanel() {
+  notifPanelOpen = !notifPanelOpen;
+  document.getElementById('notifPanel').classList.toggle('open', notifPanelOpen);
+  document.getElementById('notifOverlay').classList.toggle('show', notifPanelOpen);
+}
+
+// ==================== RENDER PAGES ====================
+function renderPage(page) {
+  const area = document.getElementById('contentArea');
+  area.innerHTML = '<div class="loader"><div class="loader-spinner"></div></div>';
+  switch(page) {
+    case 'dashboard': renderDashboard(); break;
+    case 'tests': renderTests(); break;
+    case 'materials': renderMaterials(); break;
+    case 'affairs': renderAffairs(); break;
+    case 'analytics': renderAnalytics(); break;
+    case 'leaderboard': renderLeaderboard(); break;
+    case 'quiz': renderQuiz(); break;
+    case 'doubts': renderDoubts(); break;
+    case 'profile': renderProfile(); break;
+    default: area.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-circle"></i><h3>Page not found</h3></div>';
+  }
+}
+
+// ==================== DASHBOARD ====================
+function renderDashboard() {
+  const area = document.getElementById('contentArea');
+  const u = currentUser;
+  area.innerHTML = `
+  <div class="fade-in">
+    <div style="margin-bottom:24px">
+      <h2 style="font-size:22px;font-weight:700">Welcome, ${u.name}! 👋</h2>
+      <p style="color:var(--text2);margin-top:4px">Let's continue your ${u.examCategory} preparation</p>
+      <span style="display:inline-block;margin-top:8px;padding:4px 14px;background:rgba(212,175,55,0.15);border:1px solid var(--gold);border-radius:20px;font-size:12px;color:var(--gold);font-weight:600">${u.examCategory} Exam</span>
+    </div>
+    <div class="stats-grid" id="dashStats"></div>
+    <div class="section-title"><i class="fas fa-book-open"></i> Subjects</div>
+    <div class="subjects-grid">
+      <div class="subject-card" onclick="navigateTo('tests')"><i class="fas fa-calculator"></i><h4>Maths</h4><p>Quantitative Aptitude</p></div>
+      <div class="subject-card" onclick="navigateTo('tests')"><i class="fas fa-brain"></i><h4>Reasoning</h4><p>Logical Reasoning</p></div>
+      <div class="subject-card" onclick="navigateTo('tests')"><i class="fas fa-language"></i><h4>English</h4><p>Grammar & Vocabulary</p></div>
+      <div class="subject-card" onclick="navigateTo('tests')"><i class="fas fa-globe-asia"></i><h4>GS / GK</h4><p>General Knowledge</p></div>
+      <div class="subject-card" onclick="navigateTo('affairs')"><i class="fas fa-newspaper"></i><h4>Current Affairs</h4><p>Daily Updates</p></div>
+    </div>
+    <div class="section-title"><i class="fas fa-calendar-alt"></i> Upcoming Tests</div>
+    <div id="upcomingTests"></div>
+    <div class="section-title" style="margin-top:20px"><i class="fas fa-bell"></i> Recent Notifications</div>
+    <div id="recentNotifs"></div>
+  </div>`;
+  loadDashboardStats();
+  loadUpcomingTests();
+  loadRecentNotifs();
+}
+
+function loadDashboardStats() {
+  const uid = currentUser.uid;
+  Promise.all([
+    db.ref('results').orderByChild('userId').equalTo(uid).once('value'),
+    db.ref('user_streaks/' + uid).once('value')
+  ]).then(([resSnap, streakSnap]) => {
+    const results = resSnap.val() || {};
+    const resArr = Object.values(results);
+    const totalTests = resArr.length;
+    const avgScore = totalTests > 0 ? Math.round(resArr.reduce((s,r) => s + (r.score/r.totalMarks*100), 0) / totalTests) : 0;
+    const streakData = streakSnap.val() || {};
+    const streak = streakData.currentStreak || 0;
+    const coins = streakData.coins || 0;
+    document.getElementById('dashStats').innerHTML = `
+      <div class="stat-card"><i class="fas fa-file-alt"></i><h3>${totalTests}</h3><p>Tests Taken</p></div>
+      <div class="stat-card"><i class="fas fa-percentage"></i><h3>${avgScore}%</h3><p>Avg Score</p></div>
+      <div class="stat-card"><i class="fas fa-fire"></i><h3>${streak}</h3><p>Day Streak</p></div>
+      <div class="stat-card"><i class="fas fa-coins"></i><h3>${coins}</h3><p>Coins</p></div>`;
+  });
+}
+
+function loadUpcomingTests() {
+  const el = document.getElementById('upcomingTests');
+  const now = Date.now();
+  db.ref('tests').orderByChild('isActive').equalTo(true).limitToLast(10).once('value').then(snap => {
+    const tests = snap.val() || {};
+    const arr = Object.entries(tests).filter(([,t]) => {
+      if (t.examCategory && t.examCategory !== currentUser.examCategory && t.examCategory !== 'All') return false;
+      return t.scheduledDate ? new Date(t.scheduledDate).getTime() >= now - 86400000 : true;
+    }).sort((a,b) => (b[1].scheduledDate||b[1].createdAt||0) - (a[1].scheduledDate||a[1].createdAt||0)).slice(0,4);
+    if (!arr.length) { el.innerHTML = '<div class="empty-state"><i class="fas fa-calendar-times"></i><h3>No upcoming tests</h3></div>'; return; }
+    el.innerHTML = arr.map(([,t]) => `
+      <div class="test-card">
+        <div class="test-card-header">
+          <h4>${t.title}</h4>
+          <span class="test-badge badge-${t.type==='weekly'?'weekly':t.type==='mock'?'mock':'sectional'}">${t.type||'Sectional'}</span>
+        </div>
+        <div class="test-meta">
+          <span><i class="fas fa-clock"></i> ${t.duration} min</span>
+          <span><i class="fas fa-list-ol"></i> ${t.questionCount||0} Qs</span>
+          <span><i class="fas fa-star"></i> ${t.totalMarks} marks</span>
+          ${t.subject ? `<span><i class="fas fa-tag"></i> ${t.subject}</span>` : ''}
+        </div>
+        <button class="btn btn-gold btn-sm" onclick="startTest('${t.testId||''}')"><i class="fas fa-play"></i> Start Test</button>
+      </div>`).join('');
+  });
+}
+
+function loadRecentNotifs() {
+  const el = document.getElementById('recentNotifs');
+  db.ref('notifications').orderByChild('createdAt').limitToLast(5).once('value').then(snap => {
+    const notifs = snap.val() || {};
+    const arr = Object.values(notifs).filter(n => !n.targetExam || n.targetExam === currentUser.examCategory || n.targetExam === 'All').reverse();
+    if (!arr.length) { el.innerHTML = '<div class="empty-state"><i class="fas fa-bell-slash"></i><h3>No notifications</h3></div>'; return; }
+    el.innerHTML = arr.map(n => `
+      <div class="notif-item">
+        <i class="fas fa-${n.type==='test'?'file-alt':n.type==='pdf'?'file-pdf':'bullhorn'}"></i>
+        <div class="notif-item-content"><h4>${n.title}</h4><p>${n.message}</p></div>
+      </div>`).join('');
+  });
+}
+
+// ==================== TEST HUB ====================
+function renderTests() {
+  const area = document.getElementById('contentArea');
+  area.innerHTML = `
+  <div class="fade-in">
+    <div class="search-box"><i class="fas fa-search"></i><input type="text" id="testSearch" placeholder="Search tests..." oninput="filterTests()"></div>
+    <div class="test-filters">
+      <button class="filter-btn active" data-filter="all" onclick="setTestFilter('all',this)">All</button>
+      <button class="filter-btn" data-filter="sectional" onclick="setTestFilter('sectional',this)">Sectional</button>
+      <button class="filter-btn" data-filter="mock" onclick="setTestFilter('mock',this)">Full Mock</button>
+      <button class="filter-btn" data-filter="weekly" onclick="setTestFilter('weekly',this)">Weekly</button>
+    </div>
+    <div class="test-filters" style="margin-top:8px">
+      <button class="filter-btn active" data-subject="all" onclick="setSubjectFilter('all',this)">All Subjects</button>
+      <button class="filter-btn" data-subject="Maths" onclick="setSubjectFilter('Maths',this)">Maths</button>
+      <button class="filter-btn" data-subject="Reasoning" onclick="setSubjectFilter('Reasoning',this)">Reasoning</button>
+      <button class="filter-btn" data-subject="English" onclick="setSubjectFilter('English',this)">English</button>
+      <button class="filter-btn" data-subject="GS" onclick="setSubjectFilter('GS',this)">GS/GK</button>
+    </div>
+    <div id="testList"><div class="loader"><div class="loader-spinner"></div></div></div>
+  </div>`;
+  loadTests();
+}
+
+let testTypeFilter = 'all';
+let testSubjectFilter = 'all';
+function setTestFilter(f, el) { testTypeFilter = f; el.parentElement.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active')); el.classList.add('active'); filterTests(); }
+function setSubjectFilter(f, el) { testSubjectFilter = f; el.parentElement.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active')); el.classList.add('active'); filterTests(); }
+
+let allTests = [];
+function loadTests() {
+  db.ref('tests').once('value').then(snap => {
+    const tests = snap.val() || {};
+    allTests = Object.entries(tests).map(([id,t]) => ({...t, testId: id})).filter(t => t.isActive !== false);
+    filterTests();
+  });
+}
+
+function filterTests() {
+  const search = (document.getElementById('testSearch')?.value || '').toLowerCase();
+  let filtered = allTests.filter(t => {
+    if (testTypeFilter !== 'all' && t.type !== testTypeFilter) return false;
+    if (testSubjectFilter !== 'all' && t.subject !== testSubjectFilter) return false;
+    if (t.examCategory && t.examCategory !== currentUser.examCategory && t.examCategory !== 'All') return false;
+    if (search && !t.title.toLowerCase().includes(search)) return false;
+    return true;
+  });
+  const el = document.getElementById('testList');
+  if (!filtered.length) { el.innerHTML = '<div class="empty-state"><i class="fas fa-file-alt"></i><h3>No tests found</h3></div>'; return; }
+  el.innerHTML = filtered.map(t => `
+    <div class="test-card">
+      <div class="test-card-header">
+        <h4>${t.title}</h4>
+        <span class="test-badge badge-${t.type==='weekly'?'weekly':t.type==='mock'?'mock':'sectional'}">${t.type||'Sectional'}</span>
+      </div>
+      <div class="test-meta">
+        <span><i class="fas fa-clock"></i> ${t.duration} min</span>
+        <span><i class="fas fa-list-ol"></i> ${t.questionCount||0} Qs</span>
+        <span><i class="fas fa-star"></i> ${t.totalMarks} marks</span>
+        ${t.subject ? `<span><i class="fas fa-tag"></i> ${t.subject}</span>` : ''}
+        ${t.negativeMarking ? `<span><i class="fas fa-minus-circle"></i> -${t.negativeMarking} neg</span>` : ''}
+      </div>
+      <button class="btn btn-gold btn-sm" onclick="startTest('${t.testId}')"><i class="fas fa-play"></i> Start Test</button>
+    </div>`).join('');
+}
+
+// ==================== TEST ENGINE ====================
+function startTest(testId) {
+  db.ref('questions').orderByChild('testId').equalTo(testId).once('value').then(qSnap => {
+    db.ref('tests/' + testId).once('value').then(tSnap => {
+      const test = tSnap.val();
+      const questions = qSnap.val() || {};
+      let qArr = Object.entries(questions).map(([id,q]) => ({...q, qId: id}));
+      if (!qArr.length) { showToast('No questions in this test yet','error'); return; }
+      // Shuffle questions
+      for (let i = qArr.length - 1; i > 0; i--) { const j = Math.floor(Math.random()*(i+1)); [qArr[i],qArr[j]] = [qArr[j],qArr[i]]; }
+      testState = {
+        testId, test,
+        questions: qArr,
+        currentIndex: 0,
+        answers: {},
+        visited: new Set([0]),
+        timeLeft: (test.duration || 30) * 60,
+        timerInterval: null,
+        startTime: Date.now()
+      };
+      renderTestEngine();
+    });
+  });
+}
+
+function renderTestEngine() {
+  const engine = document.getElementById('testEngine');
+  engine.classList.remove('hidden');
+  engine.innerHTML = `
+    <div class="test-header">
+      <button class="nav-btn" onclick="confirmExitTest()" style="border:1px solid var(--error);color:var(--error)"><i class="fas fa-times"></i></button>
+      <div class="timer" id="testTimer">${formatTime(testState.timeLeft)}</div>
+      <span class="q-count" id="qCount">${testState.currentIndex+1}/${testState.questions.length}</span>
+    </div>
+    <div class="test-body" id="testBody"></div>
+    <div class="q-palette" id="qPalette"></div>
+    <div class="test-footer">
+      <button class="nav-btn" id="prevBtn" onclick="prevQuestion()"><i class="fas fa-chevron-left"></i> Previous</button>
+      <button class="q-palette-btn" onclick="togglePalette()"><i class="fas fa-th"></i> Questions</button>
+      <button class="nav-btn" id="nextBtn" onclick="nextQuestion()">Next <i class="fas fa-chevron-right"></i></button>
+      <button class="btn btn-gold btn-sm" onclick="confirmSubmit()" style="margin-left:auto"><i class="fas fa-paper-plane"></i> Submit</button>
+    </div>`;
+  showQuestion(0);
+  startTimer();
+}
+
+function showQuestion(idx) {
+  testState.currentIndex = idx;
+  testState.visited.add(idx);
+  const q = testState.questions[idx];
+  const selected = testState.answers[idx];
+  const body = document.getElementById('testBody');
+  document.getElementById('qCount').textContent = `${idx+1}/${testState.questions.length}`;
+  document.getElementById('prevBtn').disabled = idx === 0;
+  document.getElementById('nextBtn').disabled = idx === testState.questions.length - 1;
+  body.innerHTML = `
+    <div class="question-container fade-in">
+      <div class="question-text"><strong>Q${idx+1}.</strong> ${q.questionText}</div>
+      <div class="options-list">
+        ${['A','B','C','D'].map(letter => `
+          <div class="option-btn ${selected===letter?'selected':''}" onclick="selectOption('${letter}')">
+            <span class="option-letter">${letter}</span>
+            <span>${q['option'+letter]||q['option'+letter.toLowerCase()]||''}</span>
+          </div>`).join('')}
+      </div>
+    </div>`;
+  // Hide palette
+  document.getElementById('qPalette').classList.remove('show');
+}
+
+function selectOption(letter) {
+  if (testState.answers[testState.currentIndex] === letter) {
+    delete testState.answers[testState.currentIndex];
+  } else {
+    testState.answers[testState.currentIndex] = letter;
+  }
+  showQuestion(testState.currentIndex);
+}
+
+function prevQuestion() { if (testState.currentIndex > 0) showQuestion(testState.currentIndex - 1); }
+function nextQuestion() { if (testState.currentIndex < testState.questions.length - 1) showQuestion(testState.currentIndex + 1); }
+
+function togglePalette() {
+  const pal = document.getElementById('qPalette');
+  pal.classList.toggle('show');
+  if (pal.classList.contains('show')) {
+    pal.innerHTML = `<div class="q-palette-grid">${testState.questions.map((_,i) => {
+      let cls = 'unvisited';
+      if (i === testState.currentIndex) cls = 'current';
+      else if (testState.answers[i] !== undefined) cls = 'answered';
+      else if (testState.visited.has(i)) cls = 'visited';
+      return `<div class="q-pal-item ${cls}" onclick="showQuestion(${i})">${i+1}</div>`;
+    }).join('')}</div>`;
+  }
+}
+
+function startTimer() {
+  clearInterval(testState.timerInterval);
+  testState.timerInterval = setInterval(() => {
+    testState.timeLeft--;
+    const el = document.getElementById('testTimer');
+    if (el) {
+      el.textContent = formatTime(testState.timeLeft);
+      if (testState.timeLeft <= 300) el.classList.add('warning');
+    }
+    if (testState.timeLeft <= 0) { clearInterval(testState.timerInterval); submitTest(); }
+  }, 1000);
+}
+
+function formatTime(s) {
+  const m = Math.floor(s/60), sec = s%60;
+  return `${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
+}
+
+function confirmSubmit() {
+  const unanswered = testState.questions.length - Object.keys(testState.answers).length;
+  showModal('Submit Test?', `You have ${unanswered} unanswered question(s). Are you sure you want to submit?`,
+    [{text:'Cancel',cls:'btn-outline',action:closeModal},{text:'Submit',cls:'btn-gold',action:submitTest}]);
+}
+
+function confirmExitTest() {
+  showModal('Exit Test?', 'Your progress will be lost. Are you sure?',
+    [{text:'Cancel',cls:'btn-outline',action:closeModal},{text:'Exit',cls:'btn-danger',action:exitTest}]);
+}
+
+function submitTest() {
+  closeModal();
+  clearInterval(testState.timerInterval);
+  const q = testState.questions;
+  const a = testState.answers;
+  let correct = 0, wrong = 0, skipped = 0;
+  const negMark = parseFloat(testState.test.negativeMarking) || 0;
+  const posMark = testState.test.totalMarks / (testState.test.questionCount || q.length);
+  const answersObj = {};
+  q.forEach((question, i) => {
+    const userAns = a[i];
+    answersObj[i] = { userAnswer: userAns || 'skipped', correctAnswer: question.correctAnswer };
+    if (!userAns) { skipped++; }
+    else if (userAns === question.correctAnswer) { correct++; }
+    else { wrong++; }
+  });
+  const score = Math.max(0, (correct * posMark) - (wrong * negMark));
+  const timeTaken = Math.round((Date.now() - testState.startTime) / 1000);
+  // Save result
+  const resultData = {
+    userId: currentUser.uid, userName: currentUser.name, testId: testState.testId,
+    testTitle: testState.test.title, examCategory: currentUser.examCategory,
+    subject: testState.test.subject || '', score: Math.round(score*100)/100,
+    totalMarks: testState.test.totalMarks, correct, wrong, skipped, timeTaken,
+    answers: answersObj, completedAt: Date.now()
+  };
+  db.ref('results').push(resultData);
+  // Save leaderboard entry
+  db.ref('leaderboard').push({
+    userId: currentUser.uid, userName: currentUser.name, testId: testState.testId,
+    score: Math.round(score*100)/100, totalMarks: testState.test.totalMarks,
+    examCategory: currentUser.examCategory, subject: testState.test.subject || '',
+    completedAt: Date.now()
+  });
+  // Add coins for test completion
+  addCoins(testState.test.type === 'weekly' ? 20 : 5);
+  showResult(resultData, q);
+}
+
+function showResult(result, questions) {
+  const engine = document.getElementById('testEngine');
+  const pct = Math.round(result.score / result.totalMarks * 100);
+  engine.innerHTML = `
+  <div class="test-body" style="padding-bottom:20px">
+    <div class="result-container fade-in">
+      <div class="result-header">
+        <h2 style="font-size:16px;color:var(--text2);margin-bottom:8px">${result.testTitle}</h2>
+        <div class="result-score" style="animation:countUp 0.5s ease">${result.score}<span> / ${result.totalMarks}</span></div>
+        <p style="color:var(--text2);margin-top:8px">${pct}% Score</p>
+      </div>
+      <div class="result-stats">
+        <div class="result-stat correct"><h3 style="color:var(--success)">${result.correct}</h3><p>Correct</p></div>
+        <div class="result-stat wrong"><h3 style="color:var(--error)">${result.wrong}</h3><p>Wrong</p></div>
+        <div class="result-stat skipped"><h3>${result.skipped}</h3><p>Skipped</p></div>
+      </div>
+      <div style="text-align:center;margin:16px 0;font-size:13px;color:var(--text2)">
+        <i class="fas fa-clock"></i> Time taken: ${formatTime(result.timeTaken)}
+      </div>
+      <div class="section-title"><i class="fas fa-list-check"></i> Question Review</div>
+      ${questions.map((q, i) => {
+        const userAns = result.answers[i]?.userAnswer || 'skipped';
+        const isCorrect = userAns === q.correctAnswer;
+        const isSkipped = userAns === 'skipped';
+        return `<div class="review-item">
+          <div class="q-text"><strong>Q${i+1}.</strong> ${q.questionText}</div>
+          <div class="ans-info">
+            <span class="correct-ans"><i class="fas fa-check-circle"></i> Correct: ${q.correctAnswer}</span>
+            ${!isSkipped ? `<span class="${isCorrect?'user-ans':'wrong-ans'}"><i class="fas fa-${isCorrect?'check':'times'}-circle"></i> Your: ${userAns}</span>` : '<span class="wrong-ans"><i class="fas fa-minus-circle"></i> Skipped</span>'}
+          </div>
+          ${q.explanation ? `<div class="explanation"><i class="fas fa-lightbulb" style="color:var(--gold)"></i> ${q.explanation}</div>` : ''}
+        </div>`;
+      }).join('')}
+      <div style="text-align:center;margin-top:20px">
+        <button class="btn btn-gold" onclick="exitTest()"><i class="fas fa-arrow-left"></i> Back to Tests</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function exitTest() {
+  clearInterval(testState?.timerInterval);
+  testState = null;
+  document.getElementById('testEngine').classList.add('hidden');
+  navigateTo('tests');
+}
+
+// ==================== STUDY MATERIALS ====================
+function renderMaterials() {
+  const area = document.getElementById('contentArea');
+  area.innerHTML = `
+  <div class="fade-in">
+    <div class="search-box"><i class="fas fa-search"></i><input type="text" id="pdfSearch" placeholder="Search materials..." oninput="filterPDFs()"></div>
+    <div class="test-filters">
+      <button class="filter-btn active" onclick="setPdfFilter('all',this)">All</button>
+      <button class="filter-btn" onclick="setPdfFilter('Maths',this)">Maths</button>
+      <button class="filter-btn" onclick="setPdfFilter('Reasoning',this)">Reasoning</button>
+      <button class="filter-btn" onclick="setPdfFilter('English',this)">English</button>
+      <button class="filter-btn" onclick="setPdfFilter('GS',this)">GS/GK</button>
+    </div>
+    <div id="pdfList"><div class="loader"><div class="loader-spinner"></div></div></div>
+  </div>`;
+  loadPDFs();
+}
+
+let pdfFilter = 'all';
+function setPdfFilter(f, el) { pdfFilter = f; el.parentElement.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active')); el.classList.add('active'); filterPDFs(); }
+let allPdfs = [];
+function loadPDFs() {
+  db.ref('pdfs').once('value').then(snap => {
+    allPdfs = Object.values(snap.val() || {}).filter(p => !p.examCategory || p.examCategory === currentUser.examCategory || p.examCategory === 'All');
+    filterPDFs();
+  });
+}
+function filterPDFs() {
+  const search = (document.getElementById('pdfSearch')?.value || '').toLowerCase();
+  let filtered = allPdfs.filter(p => {
+    if (pdfFilter !== 'all' && p.subject !== pdfFilter) return false;
+    if (search && !p.title.toLowerCase().includes(search)) return false;
+    return true;
+  }).sort((a,b) => (b.uploadedAt||0) - (a.uploadedAt||0));
+  const el = document.getElementById('pdfList');
+  if (!filtered.length) { el.innerHTML = '<div class="empty-state"><i class="fas fa-book-open"></i><h3>No study materials found</h3></div>'; return; }
+  el.innerHTML = filtered.map(p => `
+    <div class="pdf-card">
+      <i class="fas fa-file-pdf"></i>
+      <div class="pdf-card-info">
+        <h4>${p.title}</h4>
+        <p>${p.subject} &bull; ${new Date(p.uploadedAt).toLocaleDateString()}</p>
+      </div>
+      <div class="pdf-card-actions">
+        <a href="${p.url}" target="_blank" class="btn btn-outline btn-sm"><i class="fas fa-eye"></i></a>
+        <a href="${p.url}" download class="btn btn-gold btn-sm"><i class="fas fa-download"></i></a>
+      </div>
+    </div>`).join('');
+}
+
+// ==================== CURRENT AFFAIRS ====================
+function renderAffairs() {
+  const area = document.getElementById('contentArea');
+  area.innerHTML = `
+  <div class="fade-in">
+    <div class="test-filters">
+      <button class="filter-btn active" onclick="setAffairFilter('all',this)">All</button>
+      <button class="filter-btn" onclick="setAffairFilter('National',this)">National</button>
+      <button class="filter-btn" onclick="setAffairFilter('International',this)">International</button>
+      <button class="filter-btn" onclick="setAffairFilter('Sports',this)">Sports</button>
+      <button class="filter-btn" onclick="setAffairFilter('Economy',this)">Economy</button>
+    </div>
+    <div id="affairsList"><div class="loader"><div class="loader-spinner"></div></div></div>
+  </div>`;
+  loadAffairs();
+}
+
+let affairFilter = 'all';
+function setAffairFilter(f, el) { affairFilter = f; el.parentElement.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active')); el.classList.add('active'); loadAffairs(); }
+
+function loadAffairs() {
+  db.ref('current_affairs').orderByChild('date').limitToLast(50).once('value').then(snap => {
+    const affairs = Object.values(snap.val() || {}).filter(a => affairFilter === 'all' || a.category === affairFilter).reverse();
+    const el = document.getElementById('affairsList');
+    if (!affairs.length) { el.innerHTML = '<div class="empty-state"><i class="fas fa-newspaper"></i><h3>No current affairs</h3></div>'; return; }
+    el.innerHTML = affairs.map(a => `
+      <div class="affair-card" onclick="this.classList.toggle('expanded')">
+        <h4>${a.title}</h4>
+        <div class="date-badge"><i class="fas fa-calendar"></i> ${a.date || new Date(a.createdAt).toLocaleDateString()} ${a.category ? '&bull; ' + a.category : ''}</div>
+        <div class="content-preview">${(a.content||'').substring(0,120)}...</div>
+        <div class="full-content">${a.content||''}</div>
+      </div>`).join('');
+  });
+}
+
+// ==================== PERFORMANCE ANALYTICS ====================
+function renderAnalytics() {
+  const area = document.getElementById('contentArea');
+  area.innerHTML = `<div class="fade-in">
+    <div class="section-title"><i class="fas fa-chart-bar"></i> Overall Performance</div>
+    <div class="analytics-grid" id="analyticsStats"></div>
+    <div class="section-title"><i class="fas fa-chart-line"></i> Subject Performance</div>
+    <div id="subjectPerf"></div>
+    <div class="section-title"><i class="fas fa-exclamation-triangle"></i> Weak Topics</div>
+    <div id="weakTopics"></div>
+    <div class="section-title"><i class="fas fa-history"></i> Recent Results</div>
+    <div id="recentResults"></div>
+    <div class="chart-container"><canvas id="perfChart"></canvas></div>
+  </div>`;
+  loadAnalytics();
+}
+
+function loadAnalytics() {
+  db.ref('results').orderByChild('userId').equalTo(currentUser.uid).once('value').then(snap => {
+    const results = Object.values(snap.val() || {});
+    const total = results.length;
+    const avgScore = total ? Math.round(results.reduce((s,r) => s + (r.score/r.totalMarks*100), 0) / total) : 0;
+    const bestScore = total ? Math.round(Math.max(...results.map(r => r.score/r.totalMarks*100))) : 0;
+    const totalTime = results.reduce((s,r) => s + (r.timeTaken||0), 0);
+    document.getElementById('analyticsStats').innerHTML = `
+      <div class="stat-card"><i class="fas fa-file-alt"></i><h3>${total}</h3><p>Total Tests</p></div>
+      <div class="stat-card"><i class="fas fa-percentage"></i><h3>${avgScore}%</h3><p>Avg Score</p></div>
+      <div class="stat-card"><i class="fas fa-trophy"></i><h3>${bestScore}%</h3><p>Best Score</p></div>
+      <div class="stat-card"><i class="fas fa-clock"></i><h3>${Math.round(totalTime/60)}m</h3><p>Total Time</p></div>`;
+
+    // Subject performance
+    const subjectData = {};
+    results.forEach(r => {
+      const sub = r.subject || 'General';
+      if (!subjectData[sub]) subjectData[sub] = { total: 0, scoreSum: 0 };
+      subjectData[sub].total++;
+      subjectData[sub].scoreSum += r.score / r.totalMarks * 100;
+    });
+    document.getElementById('subjectPerf').innerHTML = Object.entries(subjectData).map(([sub, data]) => {
+      const avg = Math.round(data.scoreSum / data.total);
+      return `<div class="progress-bar-container">
+        <div class="progress-bar-label"><span>${sub}</span><span style="color:var(--gold)">${avg}%</span></div>
+        <div class="progress-bar"><div class="progress-bar-fill" style="width:${avg}%"></div></div>
+      </div>`;
+    }).join('') || '<div class="empty-state"><i class="fas fa-chart-line"></i><h3>No data yet</h3></div>';
+
+    // Weak topics - analyze wrong answers
+    const topicAccuracy = {};
+    results.forEach(r => {
+      if (r.answers) {
+        Object.values(r.answers).forEach(a => {
+          if (a.correctAnswer && a.userAnswer !== a.correctAnswer && a.userAnswer !== 'skipped') {
+            topicAccuracy[a.correctAnswer] = (topicAccuracy[a.correctAnswer] || { correct: 0, wrong: 0 });
+            topicAccuracy[a.correctAnswer].wrong++;
+          }
+        });
+      }
+    });
+    // Also check correct
+    results.forEach(r => {
+      if (r.answers) {
+        Object.values(r.answers).forEach(a => {
+          if (a.correctAnswer && a.userAnswer === a.correctAnswer) {
+            topicAccuracy[a.correctAnswer] = (topicAccuracy[a.correctAnswer] || { correct: 0, wrong: 0 });
+            topicAccuracy[a.correctAnswer].correct++;
+          }
+        });
+      }
+    });
+    const weakArr = Object.entries(topicAccuracy)
+      .map(([topic, d]) => ({ topic, accuracy: Math.round(d.correct / (d.correct + d.wrong) * 100) }))
+      .filter(t => t.accuracy < 50)
+      .sort((a,b) => a.accuracy - b.accuracy)
+      .slice(0, 5);
+    document.getElementById('weakTopics').innerHTML = weakArr.length ? weakArr.map(w =>
+      `<div class="weak-topic"><span><i class="fas fa-exclamation-circle" style="color:var(--error);margin-right:8px"></i>${w.topic}</span><span class="accuracy">${w.accuracy}%</span></div>`
+    ).join('') : '<div class="empty-state"><i class="fas fa-thumbs-up"></i><h3>Great! No weak topics detected</h3></div>';
+
+    // Recent results
+    const recent = results.sort((a,b) => (b.completedAt||0) - (a.completedAt||0)).slice(0, 5);
+    document.getElementById('recentResults').innerHTML = recent.length ? recent.map(r => `
+      <div class="test-card">
+        <div class="test-card-header"><h4>${r.testTitle}</h4><span style="color:var(--gold);font-weight:700">${Math.round(r.score/r.totalMarks*100)}%</span></div>
+        <div class="test-meta">
+          <span><i class="fas fa-check" style="color:var(--success)"></i> ${r.correct}</span>
+          <span><i class="fas fa-times" style="color:var(--error)"></i> ${r.wrong}</span>
+          <span><i class="fas fa-minus"></i> ${r.skipped}</span>
+          <span><i class="fas fa-clock"></i> ${formatTime(r.timeTaken)}</span>
+        </div>
+      </div>`).join('') : '<div class="empty-state"><i class="fas fa-file-alt"></i><h3>No results yet</h3></div>';
+
+    // Simple chart
+    drawPerfChart(results);
+  });
+}
+
+function drawPerfChart(results) {
+  const canvas = document.getElementById('perfChart');
+  if (!canvas || !results.length) return;
+  const ctx = canvas.getContext('2d');
+  const sorted = results.sort((a,b) => (a.completedAt||0) - (b.completedAt||0)).slice(-10);
+  const w = canvas.width = canvas.parentElement.clientWidth - 40;
+  const h = canvas.height = 200;
+  const padding = 40;
+  const barW = Math.min(40, (w - padding*2) / sorted.length - 10);
+  const maxScore = 100;
+  ctx.clearRect(0,0,w,h);
+  // Background
+  ctx.fillStyle = '#1a1a1a';
+  ctx.fillRect(0,0,w,h);
+  // Grid
+  ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+  for (let i = 0; i <= 4; i++) {
+    const y = padding + (h - padding*2) * i / 4;
+    ctx.beginPath(); ctx.moveTo(padding, y); ctx.lineTo(w-padding, y); ctx.stroke();
+  }
+  // Bars
+  sorted.forEach((r, i) => {
+    const pct = r.score / r.totalMarks * 100;
+    const x = padding + i * ((w - padding*2) / sorted.length) + ((w - padding*2) / sorted.length - barW) / 2;
+    const barH = (h - padding*2) * pct / maxScore;
+    const gradient = ctx.createLinearGradient(x, h - padding - barH, x, h - padding);
+    gradient.addColorStop(0, '#f4d03f');
+    gradient.addColorStop(1, '#c5a028');
+    ctx.fillStyle = gradient;
+    ctx.beginPath();
+    ctx.roundRect(x, h - padding - barH, barW, barH, [4,4,0,0]);
+    ctx.fill();
+  });
+  // Labels
+  ctx.fillStyle = '#888';
+  ctx.font = '10px Roboto';
+  ctx.textAlign = 'center';
+  sorted.forEach((r, i) => {
+    const x = padding + i * ((w - padding*2) / sorted.length) + ((w - padding*2) / sorted.length) / 2;
+    ctx.fillText(new Date(r.completedAt).toLocaleDateString('en',{day:'numeric',month:'short'}), x, h - 10);
+  });
+}
+
+// ==================== LEADERBOARD ====================
+function renderLeaderboard() {
+  const area = document.getElementById('contentArea');
+  area.innerHTML = `
+  <div class="fade-in">
+    <div class="test-filters">
+      <button class="filter-btn active" onclick="setLbFilter('all',this)">Overall</button>
+      <button class="filter-btn" onclick="setLbFilter('SSC',this)">SSC</button>
+      <button class="filter-btn" onclick="setLbFilter('Railway',this)">Railway</button>
+      <button class="filter-btn" onclick="setLbFilter('MP',this)">MP</button>
+    </div>
+    <div id="lbList"><div class="loader"><div class="loader-spinner"></div></div></div>
+  </div>`;
+  loadLeaderboard();
+}
+
+let lbFilter = 'all';
+function setLbFilter(f, el) { lbFilter = f; el.parentElement.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active')); el.classList.add('active'); loadLeaderboard(); }
+
+function loadLeaderboard() {
+  db.ref('leaderboard').once('value').then(snap => {
+    const entries = Object.values(snap.val() || {});
+    let filtered = lbFilter === 'all' ? entries : entries.filter(e => e.examCategory === lbFilter);
+    // Aggregate by user
+    const userScores = {};
+    filtered.forEach(e => {
+      if (!userScores[e.userId]) userScores[e.userId] = { userId: e.userId, userName: e.userName, totalScore: 0, tests: 0 };
+      userScores[e.userId].totalScore += e.score;
+      userScores[e.userId].tests++;
+    });
+    const sorted = Object.values(userScores).sort((a,b) => b.totalScore - a.totalScore);
+    const el = document.getElementById('lbList');
+    if (!sorted.length) { el.innerHTML = '<div class="empty-state"><i class="fas fa-trophy"></i><h3>No leaderboard data</h3></div>'; return; }
+    el.innerHTML = sorted.map((u, i) => {
+      const rank = i + 1;
+      const rankClass = rank === 1 ? 'gold' : rank === 2 ? 'silver' : rank === 3 ? 'bronze' : '';
+      const isSelf = u.userId === currentUser.uid;
+      return `<div class="leaderboard-item ${isSelf?'self':''}">
+        <div class="rank ${rankClass}">${rank}</div>
+        <div class="name">${u.userName} ${isSelf?'<span style="color:var(--gold);font-size:11px">(You)</span>':''}</div>
+        <div class="score">${Math.round(u.totalScore)}</div>
+      </div>`;
+    }).join('');
+  });
+}
+
+// ==================== DAILY QUIZ ====================
+function renderQuiz() {
+  const area = document.getElementById('contentArea');
+  quizAnswered = false;
+  area.innerHTML = `<div class="fade-in">
+    <div class="quiz-card" id="quizCard">
+      <div class="streak-fire"><i class="fas fa-fire fire-icon" style="color:#ff6b35"></i></div>
+      <div class="streak-count" id="streakDisplay">Loading streak...</div>
+      <div class="section-title" style="justify-content:center"><i class="fas fa-clock"></i> Today's Quiz</div>
+      <div id="quizContent"><div class="loader"><div class="loader-spinner"></div></div></div>
+    </div>
+  </div>`;
+  loadStreak();
+  loadDailyQuiz();
+}
+
+function loadStreak() {
+  db.ref('user_streaks/' + currentUser.uid).once('value').then(snap => {
+    const data = snap.val() || {};
+    document.getElementById('streakDisplay').innerHTML = `<span class="fire-icon">🔥</span> ${data.currentStreak || 0} Day Streak`;
+  });
+}
+
+function loadDailyQuiz() {
+  const today = new Date().toISOString().split('T')[0];
+  db.ref('daily_quiz').orderByChild('date').equalTo(today).limitToFirst(1).once('value').then(snap => {
+    const data = snap.val();
+    if (!data) {
+      // Try getting any quiz
+      db.ref('daily_quiz').limitToLast(1).once('value').then(snap2 => {
+        const d2 = snap2.val();
+        if (!d2) { document.getElementById('quizContent').innerHTML = '<div class="empty-state"><i class="fas fa-clock"></i><h3>No quiz today</h3><p>Check back later!</p></div>'; return; }
+        const q = Object.values(d2)[0];
+        renderQuizQuestion(q);
+      });
+      return;
+    }
+    const q = Object.values(data)[0];
+    renderQuizQuestion(q);
+  });
+}
+
+function renderQuizQuestion(q) {
+  document.getElementById('quizContent').innerHTML = `
+    <div class="quiz-question">${q.question}</div>
+    <div class="quiz-options">
+      ${['A','B','C','D'].map(l => `
+        <div class="option-btn" onclick="answerQuiz('${l}','${q.correctAnswer}',this)">
+          <span class="option-letter">${l}</span>
+          <span>${q['option'+l]||q['option'+l.toLowerCase()]||''}</span>
+        </div>`).join('')}
+    </div>
+    <div id="quizResult"></div>`;
+}
+
+function answerQuiz(selected, correct, el) {
+  if (quizAnswered) return;
+  quizAnswered = true;
+  const isCorrect = selected === correct;
+  // Highlight answers
+  document.querySelectorAll('.quiz-options .option-btn').forEach(btn => {
+    const letter = btn.querySelector('.option-letter').textContent;
+    if (letter === correct) { btn.classList.add('selected'); btn.style.borderColor = 'var(--success)'; btn.style.background = 'rgba(46,204,113,0.1)'; }
+    if (letter === selected && !isCorrect) { btn.style.borderColor = 'var(--error)'; btn.style.background = 'rgba(231,76,60,0.1)'; }
+    btn.style.pointerEvents = 'none';
+  });
+  const resultEl = document.getElementById('quizResult');
+  if (isCorrect) {
+    resultEl.innerHTML = `<div class="quiz-result correct"><i class="fas fa-check-circle"></i> Correct!</div><div class="quiz-coins"><i class="fas fa-coins"></i> +10 coins earned!</div>`;
+    addCoins(10);
+  } else {
+    resultEl.innerHTML = `<div class="quiz-result wrong"><i class="fas fa-times-circle"></i> Wrong! Answer: ${correct}</div>`;
+  }
+  // Update streak
+  const ref = db.ref('user_streaks/' + currentUser.uid);
+  ref.once('value').then(snap => {
+    const data = snap.val() || {};
+    data.currentStreak = (data.currentStreak || 0) + (isCorrect ? 0 : 0); // streak based on daily activity, already updated on login
+    data.lastQuizDate = new Date().toISOString().split('T')[0];
+    ref.set(data);
+  });
+}
+
+// ==================== DOUBT SOLVER ====================
+function renderDoubts() {
+  const area = document.getElementById('contentArea');
+  area.innerHTML = `
+  <div class="fade-in">
+    <div class="section-title"><i class="fas fa-robot"></i> AI Doubt Solver</div>
+    <p style="color:var(--text2);margin-bottom:16px;font-size:13px">Ask any question and get instant help with your preparation!</p>
+    <div class="doubt-input">
+      <input type="text" id="doubtInput" placeholder="Type your doubt here..." onkeypress="if(event.key==='Enter')askDoubt()">
+      <button class="btn btn-gold btn-sm" onclick="askDoubt()"><i class="fas fa-paper-plane"></i></button>
+    </div>
+    <div class="doubt-response" id="doubtResponse">
+      <div style="text-align:center;color:var(--text3)"><i class="fas fa-lightbulb" style="font-size:24px;color:var(--gold);display:block;margin-bottom:8px"></i>Ask me anything about Maths, Reasoning, English, or GS!</div>
+    </div>
+    <div class="section-title" style="margin-top:24px"><i class="fas fa-history"></i> Your Previous Doubts</div>
+    <div id="doubtHistory"><div class="loader"><div class="loader-spinner"></div></div></div>
+  </div>`;
+  loadDoubtHistory();
+}
+
+function askDoubt() {
+  const input = document.getElementById('doubtInput');
+  const question = input.value.trim();
+  if (!question) return;
+  input.value = '';
+  const responseEl = document.getElementById('doubtResponse');
+  // Show typing animation
+  responseEl.innerHTML = '<div class="typing-dots"><span></span><span></span><span></span></div>';
+  // Generate response based on keywords
+  setTimeout(() => {
+    const response = generateDoubtResponse(question);
+    responseEl.innerHTML = `<div style="margin-bottom:8px;font-weight:600;color:var(--gold)"><i class="fas fa-robot"></i> AI Response:</div>${response}</div>`;
+    // Save to Firebase
+    db.ref('doubts').push({
+      userId: currentUser.uid, userName: currentUser.name,
+      question, answer: response, status: 'answered', createdAt: Date.now()
+    });
+  }, 1500);
+}
+
+function generateDoubtResponse(q) {
+  const lower = q.toLowerCase();
+  if (lower.match(/math|calcul|algebra|equation|number|arithmet|percentage|profit|loss|ratio|average|speed|time|work|interest/)) {
+    return `<p>Great math question! Here's my approach:</p>
+    <ol style="padding-left:20px;color:var(--text2);line-height:1.8">
+      <li><strong>Understand the problem:</strong> Read carefully and identify what's given and what's asked.</li>
+      <li><strong>Identify the formula:</strong> For topics like "${lower.includes('percentage')?'Percentages':lower.includes('profit')?'Profit & Loss':lower.includes('speed')?'Speed, Time & Distance':'Algebra'}", recall the relevant formula.</li>
+      <li><strong>Substitute values:</strong> Put the given values into the formula.</li>
+      <li><strong>Solve step by step:</strong> Don't rush. Calculate one step at a time.</li>
+      <li><strong>Verify:</strong> Check if the answer makes sense logically.</li>
+    </ol>
+    <p style="margin-top:10px;color:var(--gold)"><i class="fas fa-lightbulb"></i> Tip: Practice at least 20 questions daily on this topic for mastery!</p>`;
+  }
+  if (lower.match(/reason|logic|puzzle|series|pattern|coding|decode|blood|direction|rank/)) {
+    return `<p>Interesting reasoning question! Let me help:</p>
+    <ol style="padding-left:20px;color:var(--text2);line-height:1.8">
+      <li><strong>Analyze the pattern:</strong> Look for relationships between elements — numerical, alphabetical, or logical.</li>
+      <li><strong>Check common patterns:</strong> Arithmetic progression, geometric progression, alternating series, or combined operations.</li>
+      <li><strong>Draw diagrams:</strong> For topics like "${lower.includes('direction')?'Directions':lower.includes('blood')?'Blood Relations':'Coding-Decoding'}", visual representation helps immensely.</li>
+      <li><strong>Eliminate options:</strong> Use the process of elimination to narrow down choices.</li>
+    </ol>
+    <p style="margin-top:10px;color:var(--gold)"><i class="fas fa-lightbulb"></i> Tip: Reasoning improves with practice. Try our sectional tests!</p>`;
+  }
+  if (lower.match(/english|grammar|vocab|tense|voice|narration|error|sentence|comprehension|synonym|antonym/)) {
+    return `<p>Good English question! Here's how to approach it:</p>
+    <ol style="padding-left:20px;color:var(--text2);line-height:1.8">
+      <li><strong>Grammar Rules:</strong> For "${lower.includes('tense')?'Tenses':lower.includes('voice')?'Voice':lower.includes('error')?'Error Detection':'Grammar'}" questions, recall the fundamental rules first.</li>
+      <li><strong>Read carefully:</strong> Many English questions test your attention to detail.</li>
+      <li><strong>Vocabulary:</strong> Build your word power — learn 10 new words daily with usage.</li>
+      <li><strong>Practice comprehension:</strong> Read the passage twice before answering.</li>
+    </ol>
+    <p style="margin-top:10px;color:var(--gold)"><i class="fas fa-lightbulb"></i> Tip: Read English newspapers daily for vocabulary and comprehension improvement!</p>`;
+  }
+  if (lower.match(/gk|general|history|geograph|polity|econom|science|constitut|current/)) {
+    return `<p>Good GK question! Here's a study strategy:</p>
+    <ol style="padding-left:20px;color:var(--text2);line-height:1.8">
+      <li><strong>Organize by category:</strong> History, Geography, Polity, Economics, Science — study one at a time.</li>
+      <li><strong>Use mnemonics:</strong> Create memory aids for dates, facts, and sequences.</li>
+      <li><strong>Current Affairs:</strong> Stay updated with daily news. Check our Current Affairs section!</li>
+      <li><strong>Revision:</strong> GK requires frequent revision. Use flashcards or our quiz feature.</li>
+    </ol>
+    <p style="margin-top:10px;color:var(--gold)"><i class="fas fa-lightbulb"></i> Tip: Focus more on Indian Polity and History for SSC/Railway exams!</p>`;
+  }
+  return `<p>Thank you for your question! Here are some general study tips:</p>
+  <ol style="padding-left:20px;color:var(--text2);line-height:1.8">
+    <li><strong>Break it down:</strong> Divide complex topics into smaller, manageable parts.</li>
+    <li><strong>Practice regularly:</strong> Consistent practice is key to competitive exam success.</li>
+    <li><strong>Take mock tests:</strong> Our test series is designed to simulate real exam conditions.</li>
+    <li><strong>Analyze mistakes:</strong> Every wrong answer is a learning opportunity.</li>
+    <li><strong>Stay consistent:</strong> Study daily, even if just for 1-2 hours.</li>
+  </ol>
+  <p style="margin-top:10px;color:var(--gold)"><i class="fas fa-lightbulb"></i> Tip: Try our full-length mock tests for comprehensive preparation!</p>`;
+}
+
+function loadDoubtHistory() {
+  db.ref('doubts').orderByChild('userId').equalTo(currentUser.uid).limitToLast(10).once('value').then(snap => {
+    const doubts = Object.values(snap.val() || {}).reverse();
+    const el = document.getElementById('doubtHistory');
+    if (!doubts.length) { el.innerHTML = '<div class="empty-state"><i class="fas fa-comments"></i><h3>No previous doubts</h3></div>'; return; }
+    el.innerHTML = doubts.map(d => `
+      <div class="card" style="margin-bottom:10px">
+        <div style="font-size:14px;font-weight:500;margin-bottom:6px"><i class="fas fa-question-circle" style="color:var(--gold)"></i> ${d.question}</div>
+        <div style="font-size:12px;color:var(--text3)">${new Date(d.createdAt).toLocaleDateString()}</div>
+      </div>`).join('');
+  });
+}
+
+// ==================== PROFILE ====================
+function renderProfile() {
+  const u = currentUser;
+  const area = document.getElementById('contentArea');
+  area.innerHTML = `
+  <div class="fade-in">
+    <div class="profile-header">
+      <div class="profile-avatar">${u.name.charAt(0).toUpperCase()}</div>
+      <h3>${u.name}</h3>
+      <p>${u.email}</p>
+      <span style="display:inline-block;margin-top:8px;padding:4px 14px;background:rgba(212,175,55,0.15);border:1px solid var(--gold);border-radius:20px;font-size:12px;color:var(--gold);font-weight:600">${u.examCategory} Exam</span>
+    </div>
+    <div class="profile-stats" id="profileStats"></div>
+    <div class="profile-info">
+      <div class="profile-info-row"><span class="label">Full Name</span><span id="profName">${u.name}</span></div>
+      <div class="profile-info-row"><span class="label">Email</span><span>${u.email}</span></div>
+      <div class="profile-info-row"><span class="label">State</span><span id="profState">${u.state}</span></div>
+      <div class="profile-info-row"><span class="label">Exam Category</span><span id="profExam">${u.examCategory}</span></div>
+      <div class="profile-info-row"><span class="label">Member Since</span><span>${new Date(u.createdAt).toLocaleDateString()}</span></div>
+    </div>
+    <div style="margin-top:20px">
+      <button class="btn btn-outline" style="width:100%;margin-bottom:10px" onclick="showEditProfile()"><i class="fas fa-edit"></i> Edit Profile</button>
+      <button class="btn btn-danger" style="width:100%" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+    </div>
+  </div>`;
+  loadProfileStats();
+}
+
+function loadProfileStats() {
+  Promise.all([
+    db.ref('results').orderByChild('userId').equalTo(currentUser.uid).once('value'),
+    db.ref('user_streaks/' + currentUser.uid).once('value')
+  ]).then(([resSnap, streakSnap]) => {
+    const results = Object.values(resSnap.val() || {});
+    const streakData = streakSnap.val() || {};
+    const el = document.getElementById('profileStats');
+    if (el) el.innerHTML = `
+      <div class="profile-stat"><h4>${results.length}</h4><p>Tests</p></div>
+      <div class="profile-stat"><h4>${streakData.currentStreak || 0}</h4><p>Streak</p></div>
+      <div class="profile-stat"><h4>${streakData.coins || 0}</h4><p>Coins</p></div>`;
+  });
+}
+
+function showEditProfile() {
+  showModal('Edit Profile', `
+    <div class="form-group" style="text-align:left"><label>Name</label><input type="text" id="editName" value="${currentUser.name}"></div>
+    <div class="form-group" style="text-align:left"><label>State</label>
+      <select id="editState"><option value="">Select</option>
+        ${['Madhya Pradesh','Uttar Pradesh','Maharashtra','Rajasthan','Bihar','Gujarat','Chhattisgarh','Jharkhand','Punjab','Haryana','Delhi','Karnataka','Tamil Nadu','West Bengal','Andhra Pradesh','Other'].map(s => `<option ${currentUser.state===s?'selected':''}>${s}</option>`).join('')}
+      </select>
+    </div>
+    <div class="form-group" style="text-align:left"><label>Exam Category</label>
+      <select id="editExam"><option ${currentUser.examCategory==='SSC'?'selected':''}>SSC</option><option ${currentUser.examCategory==='Railway'?'selected':''}>Railway</option><option ${currentUser.examCategory==='MP'?'selected':''}>MP</option></select>
+    </div>`,
+    [{text:'Cancel',cls:'btn-outline',action:closeModal},{text:'Save',cls:'btn-gold',action:saveProfile}]
+  );
+}
+
+function saveProfile() {
+  const name = document.getElementById('editName').value.trim();
+  const state = document.getElementById('editState').value;
+  const exam = document.getElementById('editExam').value;
+  if (!name) { showToast('Name is required','error'); return; }
+  db.ref('users/' + currentUser.uid).update({ name, state, examCategory: exam }).then(() => {
+    currentUser.name = name;
+    currentUser.state = state;
+    currentUser.examCategory = exam;
+    localStorage.setItem('paUser', JSON.stringify(currentUser));
+    document.getElementById('sidebarAvatar').textContent = name.charAt(0).toUpperCase();
+    document.getElementById('sidebarName').textContent = name;
+    document.getElementById('sidebarExam').textContent = exam;
+    closeModal();
+    showToast('Profile updated!','success');
+    renderProfile();
+  });
+}
+
+// ==================== NOTIFICATIONS ====================
+function loadNotifications() {
+  db.ref('notifications').orderByChild('createdAt').limitToLast(20).once('value').then(snap => {
+    notifications = Object.values(snap.val() || {}).filter(n => !n.targetExam || n.targetExam === currentUser.examCategory || n.targetExam === 'All').reverse();
+    const badge = document.getElementById('notifBadge');
+    const unread = notifications.length;
+    if (unread > 0) { badge.textContent = unread > 9 ? '9+' : unread; badge.classList.remove('hidden'); }
+    renderNotifPanel();
+  });
+}
+
+function renderNotifPanel() {
+  const el = document.getElementById('notifList');
+  if (!notifications.length) { el.innerHTML = '<div class="empty-state"><i class="fas fa-bell-slash"></i><h3>No notifications</h3></div>'; return; }
+  el.innerHTML = notifications.map(n => `
+    <div class="notif-item">
+      <i class="fas fa-${n.type==='test'?'file-alt':n.type==='pdf'?'file-pdf':'bullhorn'}"></i>
+      <div class="notif-item-content"><h4>${n.title}</h4><p>${n.message}</p></div>
+    </div>`).join('');
+}
+
+// ==================== MODAL ====================
+function showModal(title, content, actions) {
+  const container = document.getElementById('modalContainer');
+  container.innerHTML = `
+    <div class="modal-overlay">
+      <div class="modal-box">
+        <h3>${title}</h3>
+        ${typeof content === 'string' && !content.includes('<div') ? `<p>${content}</p>` : content}
+        <div class="modal-actions">
+          ${actions.map(a => `<button class="btn ${a.cls} btn-sm" onclick="(${a.action})()">${a.text}</button>`).join('')}
+        </div>
+      </div>
+    </div>`;
+}
+
+function closeModal() { document.getElementById('modalContainer').innerHTML = ''; }
+
+// ==================== TOAST ====================
+function showToast(msg, type='info') {
+  const container = document.getElementById('toastContainer');
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.innerHTML = `<i class="fas fa-${type==='success'?'check-circle':type==='error'?'exclamation-circle':'info-circle'}"></i> ${msg}`;
+  container.appendChild(toast);
+  setTimeout(() => toast.remove(), 3000);
+}
+
+// ==================== INIT ====================
+checkSession();
+</script>
+</body>
+</html>

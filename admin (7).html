@@ -1,0 +1,1530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Paramount Academy - Admin Panel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--bg:#0a0a0a;--bg2:#111;--card:#1a1a1a;--card2:rgba(255,255,255,0.05);--gold:#d4af37;--gold2:#f4d03f;--gold3:#c5a028;--text:#fff;--text2:#b0b0b0;--text3:#888;--success:#2ecc71;--error:#e74c3c;--info:#3498db;--glass:rgba(255,255,255,0.05);--blur:blur(10px);--shadow:0 8px 32px rgba(212,175,55,0.1);--transition:all 0.3s ease}
+html,body{height:100%;overflow:hidden;font-family:'Roboto',sans-serif;background:var(--bg);color:var(--text)}
+h1,h2,h3,h4,h5,h6{font-family:'Poppins',sans-serif}
+input,select,textarea,button{font-family:'Roboto',sans-serif;outline:none}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg2)}::-webkit-scrollbar-thumb{background:var(--gold3);border-radius:4px}
+a{text-decoration:none;color:var(--gold)}
+
+/* AUTH */
+.auth-container{display:flex;justify-content:center;align-items:center;min-height:100vh;background:linear-gradient(135deg,#0a0a0a 0%,#1a1a2e 50%,#0a0a0a 100%);padding:20px}
+.auth-box{width:100%;max-width:420px;background:var(--card);border:1px solid rgba(212,175,55,0.2);border-radius:20px;padding:40px 30px;backdrop-filter:var(--blur);box-shadow:var(--shadow)}
+.auth-logo{text-align:center;margin-bottom:30px}
+.auth-logo i{font-size:48px;color:var(--gold);display:block;margin-bottom:10px}
+.auth-logo h1{font-size:20px;font-weight:700;color:var(--gold)}
+.auth-logo p{font-size:13px;color:var(--text2);margin-top:4px}
+.form-group{margin-bottom:16px}
+.form-group label{display:block;font-size:13px;color:var(--text2);margin-bottom:6px;font-weight:500}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:11px 14px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;color:var(--text);font-size:14px;transition:var(--transition)}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--gold);box-shadow:0 0 15px rgba(212,175,55,0.15)}
+.form-group select option{background:var(--card);color:var(--text)}
+.form-group textarea{min-height:80px;resize:vertical}
+.form-row{display:flex;gap:12px}
+.form-row .form-group{flex:1}
+.btn{padding:10px 20px;border:none;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;transition:var(--transition);display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.btn-gold{background:linear-gradient(135deg,var(--gold),var(--gold3));color:#000}
+.btn-gold:hover{box-shadow:0 0 25px rgba(212,175,55,0.4);transform:translateY(-1px)}
+.btn-outline{background:transparent;border:1px solid rgba(255,255,255,0.15);color:var(--text2)}
+.btn-outline:hover{border-color:var(--gold);color:var(--gold)}
+.btn-sm{padding:7px 14px;font-size:12px;border-radius:8px}
+.btn-xs{padding:5px 10px;font-size:11px;border-radius:6px}
+.btn-danger{background:var(--error);color:#fff}
+.btn-danger:hover{background:#c0392b}
+.btn-success{background:var(--success);color:#fff}
+.btn-info{background:var(--info);color:#fff}
+.hidden{display:none!important}
+
+/* APP LAYOUT */
+.app-container{display:flex;height:100vh;overflow:hidden}
+.sidebar{width:260px;background:var(--bg2);border-right:1px solid rgba(212,175,55,0.1);display:flex;flex-direction:column;transition:var(--transition);overflow-y:auto;flex-shrink:0}
+.sidebar.collapsed{width:68px}
+.sidebar-header{padding:18px 16px;text-align:center;border-bottom:1px solid rgba(255,255,255,0.05)}
+.sidebar-header h2{font-size:15px;color:var(--gold);font-weight:700;white-space:nowrap;overflow:hidden}
+.sidebar-header p{font-size:11px;color:var(--text3);margin-top:2px}
+.sidebar.collapsed .sidebar-header h2,.sidebar.collapsed .sidebar-header p,.sidebar.collapsed .menu-text{display:none}
+.sidebar-menu{flex:1;padding:8px 0}
+.menu-item{display:flex;align-items:center;padding:11px 18px;cursor:pointer;transition:var(--transition);color:var(--text2);font-size:13px;gap:11px;border-left:3px solid transparent;white-space:nowrap}
+.menu-item:hover{background:rgba(212,175,55,0.05);color:var(--text)}
+.menu-item.active{background:rgba(212,175,55,0.1);color:var(--gold);border-left-color:var(--gold)}
+.menu-item i{width:18px;text-align:center;font-size:15px;flex-shrink:0}
+.sidebar.collapsed .menu-item{padding:11px;justify-content:center}
+.sidebar-footer{padding:12px 18px;border-top:1px solid rgba(255,255,255,0.05)}
+.admin-info{display:flex;align-items:center;gap:10px}
+.admin-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold3));display:flex;align-items:center;justify-content:center;font-weight:700;color:#000;font-size:13px;flex-shrink:0}
+.admin-details h4{font-size:12px;font-weight:600}
+.admin-details p{font-size:10px;color:var(--text3)}
+.sidebar.collapsed .admin-details{display:none}
+
+.main-content{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.top-bar{display:flex;align-items:center;padding:12px 20px;background:var(--bg2);border-bottom:1px solid rgba(255,255,255,0.05);gap:12px}
+.toggle-btn{background:none;border:none;color:var(--text2);font-size:18px;cursor:pointer}
+.page-title{font-size:17px;font-weight:600;flex:1}
+.top-bar-right{display:flex;align-items:center;gap:12px}
+.content-area{flex:1;overflow-y:auto;padding:20px}
+
+/* CARDS & STATS */
+.card{background:var(--card);border:1px solid rgba(255,255,255,0.05);border-radius:14px;padding:18px;transition:var(--transition);margin-bottom:14px}
+.card:hover{border-color:rgba(212,175,55,0.15)}
+.section-title{font-size:17px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.section-title i{color:var(--gold)}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:20px}
+.stat-card{background:var(--card);border:1px solid rgba(255,255,255,0.05);border-radius:14px;padding:18px;text-align:center;transition:var(--transition)}
+.stat-card:hover{border-color:rgba(212,175,55,0.2);transform:translateY(-2px)}
+.stat-card i{font-size:22px;color:var(--gold);margin-bottom:6px}
+.stat-card h3{font-size:26px;font-weight:700;color:var(--gold)}
+.stat-card p{font-size:11px;color:var(--text3);margin-top:3px}
+
+/* TABLES */
+.data-table{width:100%;border-collapse:collapse;font-size:13px}
+.data-table thead{background:rgba(212,175,55,0.1)}
+.data-table th{padding:10px 12px;text-align:left;color:var(--gold);font-weight:600;font-size:12px;white-space:nowrap}
+.data-table td{padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.03);color:var(--text2);vertical-align:middle}
+.data-table tr:hover td{background:rgba(255,255,255,0.02)}
+.table-wrapper{overflow-x:auto;background:var(--card);border:1px solid rgba(255,255,255,0.05);border-radius:14px}
+.badge{padding:3px 10px;border-radius:10px;font-size:10px;font-weight:600;display:inline-block}
+.badge-easy{background:rgba(46,204,113,0.15);color:var(--success)}
+.badge-medium{background:rgba(212,175,55,0.15);color:var(--gold)}
+.badge-hard{background:rgba(231,76,60,0.15);color:var(--error)}
+.badge-ssc{background:rgba(52,152,219,0.15);color:var(--info)}
+.badge-railway{background:rgba(46,204,113,0.15);color:var(--success)}
+.badge-mp{background:rgba(212,175,55,0.15);color:var(--gold)}
+.badge-active{background:rgba(46,204,113,0.15);color:var(--success)}
+.badge-inactive{background:rgba(231,76,60,0.15);color:var(--error)}
+
+/* SEARCH & FILTER */
+.search-box{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid rgba(255,255,255,0.05);border-radius:10px;padding:9px 14px;margin-bottom:14px}
+.search-box i{color:var(--text3)}
+.search-box input{flex:1;background:none;border:none;color:var(--text);font-size:13px}
+.filter-row{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center}
+.filter-row select{padding:7px 12px;background:var(--card);border:1px solid rgba(255,255,255,0.1);border-radius:8px;color:var(--text);font-size:12px}
+.filter-row select option{background:var(--card)}
+
+/* FORM CARDS */
+.form-card{background:var(--card);border:1px solid rgba(255,255,255,0.05);border-radius:14px;padding:20px}
+.form-card h3{font-size:16px;font-weight:600;margin-bottom:16px;color:var(--gold)}
+.form-actions{display:flex;gap:10px;margin-top:16px}
+
+/* TOGGLE SWITCH */
+.toggle{position:relative;width:44px;height:24px;display:inline-block}
+.toggle input{display:none}
+.toggle-slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:rgba(255,255,255,0.1);border-radius:24px;transition:var(--transition)}
+.toggle-slider:before{position:absolute;content:"";height:18px;width:18px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:var(--transition)}
+.toggle input:checked+.toggle-slider{background:var(--gold)}
+.toggle input:checked+.toggle-slider:before{transform:translateX(20px)}
+
+/* MODAL */
+.modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:400;display:flex;align-items:center;justify-content:center;padding:20px;z-index:500}
+.modal-box{background:var(--card);border:1px solid rgba(212,175,55,0.2);border-radius:20px;padding:28px;max-width:550px;width:100%;max-height:90vh;overflow-y:auto;backdrop-filter:var(--blur);box-shadow:var(--shadow)}
+.modal-box h3{font-size:17px;font-weight:700;margin-bottom:16px;color:var(--gold)}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:20px}
+
+/* TOAST */
+.toast{position:fixed;top:20px;right:20px;padding:12px 18px;border-radius:10px;font-size:13px;font-weight:500;z-index:600;animation:slideIn 0.3s ease;box-shadow:0 8px 24px rgba(0,0,0,0.3);max-width:350px}
+.toast.success{background:rgba(46,204,113,0.9);color:#fff}
+.toast.error{background:rgba(231,76,60,0.9);color:#fff}
+.toast.info{background:rgba(52,152,219,0.9);color:#fff}
+
+/* EMPTY & LOADING */
+.empty-state{text-align:center;padding:40px 20px}
+.empty-state i{font-size:40px;color:var(--text3);margin-bottom:12px}
+.empty-state h3{font-size:15px;color:var(--text2);margin-bottom:6px}
+.empty-state p{font-size:12px;color:var(--text3)}
+.loader{display:flex;justify-content:center;padding:40px}
+.loader-spinner{width:36px;height:36px;border:3px solid rgba(212,175,55,0.2);border-top-color:var(--gold);border-radius:50%;animation:spin 0.8s linear infinite}
+.pagination{display:flex;justify-content:center;gap:6px;margin-top:16px}
+.page-btn{padding:6px 12px;background:var(--card);border:1px solid rgba(255,255,255,0.1);border-radius:6px;color:var(--text2);cursor:pointer;font-size:12px;transition:var(--transition)}
+.page-btn.active,.page-btn:hover{background:rgba(212,175,55,0.15);border-color:var(--gold);color:var(--gold)}
+
+/* QUESTION ASSIGN */
+.q-assign-item{display:flex;align-items:center;gap:10px;padding:10px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.05);border-radius:8px;margin-bottom:6px;font-size:13px}
+.q-assign-item input[type=checkbox]{accent-color:var(--gold);width:16px;height:16px}
+.q-assign-item .q-text{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* CHART */
+.chart-container{background:var(--card);border:1px solid rgba(255,255,255,0.05);border-radius:14px;padding:20px;margin-bottom:16px}
+.chart-container canvas{width:100%;max-height:220px}
+
+/* ANIMATIONS */
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideIn{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:translateX(0)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+.fade-in{animation:fadeIn 0.3s ease}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .sidebar{position:fixed;left:-260px;z-index:100;height:100vh;transition:var(--transition)}
+  .sidebar.mobile-open{left:0}
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .form-row{flex-direction:column;gap:0}
+  .data-table{font-size:11px}
+  .data-table th,.data-table td{padding:8px 6px}
+  .modal-box{padding:20px;margin:10px}
+  .content-area{padding:14px}
+}
+</style>
+</head>
+<body>
+
+<!-- AUTH -->
+<div id="authScreen" class="auth-container">
+  <div class="auth-box">
+    <div class="auth-logo">
+      <i class="fas fa-crown"></i>
+      <h1>Paramount Academy</h1>
+      <p>Admin Panel - Khandwa</p>
+    </div>
+    <form onsubmit="handleAdminLogin(event)">
+      <div class="form-group">
+        <label><i class="fas fa-envelope"></i> Admin Email</label>
+        <input type="email" id="adminEmail" placeholder="Enter admin email" required>
+      </div>
+      <div class="form-group">
+        <label><i class="fas fa-lock"></i> Password</label>
+        <input type="password" id="adminPassword" placeholder="Enter password" required>
+      </div>
+      <button type="submit" class="btn btn-gold" style="width:100%"><i class="fas fa-sign-in-alt"></i> Login</button>
+    </form>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="appScreen" class="app-container hidden">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <h2><i class="fas fa-crown"></i> Paramount Admin</h2>
+      <p>Management Panel</p>
+    </div>
+    <nav class="sidebar-menu">
+      <div class="menu-item active" data-page="dashboard" onclick="navigateTo('dashboard')"><i class="fas fa-home"></i><span class="menu-text">Dashboard</span></div>
+      <div class="menu-item" data-page="questions" onclick="navigateTo('questions')"><i class="fas fa-question-circle"></i><span class="menu-text">Questions</span></div>
+      <div class="menu-item" data-page="tests" onclick="navigateTo('tests')"><i class="fas fa-file-alt"></i><span class="menu-text">Tests</span></div>
+      <div class="menu-item" data-page="pdfs" onclick="navigateTo('pdfs')"><i class="fas fa-file-pdf"></i><span class="menu-text">PDFs</span></div>
+      <div class="menu-item" data-page="students" onclick="navigateTo('students')"><i class="fas fa-users"></i><span class="menu-text">Students</span></div>
+      <div class="menu-item" data-page="weekly" onclick="navigateTo('weekly')"><i class="fas fa-calendar-alt"></i><span class="menu-text">Weekly Tests</span></div>
+      <div class="menu-item" data-page="leaderboard" onclick="navigateTo('leaderboard')"><i class="fas fa-trophy"></i><span class="menu-text">Leaderboard</span></div>
+      <div class="menu-item" data-page="notifications" onclick="navigateTo('notifications')"><i class="fas fa-bell"></i><span class="menu-text">Notifications</span></div>
+      <div class="menu-item" data-page="affairs" onclick="navigateTo('affairs')"><i class="fas fa-newspaper"></i><span class="menu-text">Current Affairs</span></div>
+      <div class="menu-item" data-page="dailyquiz" onclick="navigateTo('dailyquiz')"><i class="fas fa-clock"></i><span class="menu-text">Daily Quiz</span></div>
+      <div class="menu-item" data-page="doubts" onclick="navigateTo('doubts')"><i class="fas fa-comments"></i><span class="menu-text">Doubts</span></div>
+      <div class="menu-item" data-page="analytics" onclick="navigateTo('analytics')"><i class="fas fa-chart-bar"></i><span class="menu-text">Analytics</span></div>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="admin-info">
+        <div class="admin-avatar">A</div>
+        <div class="admin-details"><h4>Admin</h4><p>paramount@admin.com</p></div>
+      </div>
+      <button class="btn btn-outline btn-xs" style="width:100%;margin-top:10px" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+    </div>
+  </aside>
+
+  <div class="main-content">
+    <header class="top-bar">
+      <button class="toggle-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+      <h2 class="page-title" id="pageTitle">Dashboard</h2>
+      <div class="top-bar-right">
+        <span style="font-size:12px;color:var(--text3)" id="dateDisplay"></span>
+      </div>
+    </header>
+    <div class="content-area" id="contentArea"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toastContainer"></div>
+<!-- MODAL -->
+<div id="modalContainer"></div>
+
+<script>
+// ==================== FIREBASE INIT ====================
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
+  projectId: "YOUR_PROJECT",
+  storageBucket: "YOUR_PROJECT.appspot.com",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+// ==================== STATE ====================
+let adminUser = null;
+let currentPage = 'dashboard';
+
+// ==================== AUTH ====================
+function handleAdminLogin(e) {
+  e.preventDefault();
+  const email = document.getElementById('adminEmail').value.trim();
+  const password = document.getElementById('adminPassword').value;
+  const uid = email.replace(/[.#$\[\]@]/g, '_');
+  db.ref('admin/' + uid).once('value').then(snap => {
+    if (!snap.exists()) { showToast('Admin not found','error'); return; }
+    const admin = snap.val();
+    if (admin.password !== password) { showToast('Incorrect password','error'); return; }
+    adminUser = { uid, ...admin };
+    localStorage.setItem('paAdmin', JSON.stringify(adminUser));
+    showApp();
+  }).catch(err => showToast(err.message,'error'));
+}
+
+function checkSession() {
+  const saved = localStorage.getItem('paAdmin');
+  if (saved) { adminUser = JSON.parse(saved); showApp(); }
+}
+
+function logout() {
+  localStorage.removeItem('paAdmin');
+  adminUser = null;
+  document.getElementById('appScreen').classList.add('hidden');
+  document.getElementById('authScreen').classList.remove('hidden');
+}
+
+function showApp() {
+  document.getElementById('authScreen').classList.add('hidden');
+  document.getElementById('appScreen').classList.remove('hidden');
+  document.getElementById('dateDisplay').textContent = new Date().toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short',year:'numeric'});
+  navigateTo('dashboard');
+}
+
+// ==================== NAVIGATION ====================
+function navigateTo(page) {
+  currentPage = page;
+  document.querySelectorAll('.menu-item').forEach(m => m.classList.toggle('active', m.dataset.page === page));
+  const titles = {dashboard:'Dashboard',questions:'Question Management',tests:'Test Management',pdfs:'PDF Management',students:'Student Management',weekly:'Weekly Test Scheduler',leaderboard:'Leaderboard',notifications:'Notifications',affairs:'Current Affairs',dailyquiz:'Daily Quiz',doubts:'Doubt Management',analytics:'Analytics'};
+  document.getElementById('pageTitle').textContent = titles[page] || page;
+  renderPage(page);
+  // Close mobile sidebar
+  document.getElementById('sidebar').classList.remove('mobile-open');
+}
+
+function toggleSidebar() {
+  const sb = document.getElementById('sidebar');
+  if (window.innerWidth <= 768) { sb.classList.toggle('mobile-open'); }
+  else { sb.classList.toggle('collapsed'); }
+}
+
+// ==================== RENDER ====================
+function renderPage(page) {
+  const area = document.getElementById('contentArea');
+  area.innerHTML = '<div class="loader"><div class="loader-spinner"></div></div>';
+  switch(page) {
+    case 'dashboard': renderDashboard(); break;
+    case 'questions': renderQuestions(); break;
+    case 'tests': renderTests(); break;
+    case 'pdfs': renderPDFs(); break;
+    case 'students': renderStudents(); break;
+    case 'weekly': renderWeekly(); break;
+    case 'leaderboard': renderLeaderboard(); break;
+    case 'notifications': renderNotifications(); break;
+    case 'affairs': renderAffairs(); break;
+    case 'dailyquiz': renderDailyQuiz(); break;
+    case 'doubts': renderDoubts(); break;
+    case 'analytics': renderAnalytics(); break;
+  }
+}
+
+// ==================== DASHBOARD ====================
+function renderDashboard() {
+  const area = document.getElementById('contentArea');
+  area.innerHTML = `<div class="fade-in">
+    <div class="stats-grid" id="dashStats"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px">
+      <div class="card"><h4 style="font-size:14px;margin-bottom:12px;color:var(--gold)"><i class="fas fa-user-clock"></i> Recent Registrations</h4><div id="recentRegs"></div></div>
+      <div class="card"><h4 style="font-size:14px;margin-bottom:12px;color:var(--gold)"><i class="fas fa-chart-line"></i> Recent Results</h4><div id="recentResults"></div></div>
+    </div>
+    <div class="card">
+      <h4 style="font-size:14px;margin-bottom:12px;color:var(--gold)"><i class="fas fa-bolt"></i> Quick Actions</h4>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <button class="btn btn-gold btn-sm" onclick="navigateTo('questions')"><i class="fas fa-plus"></i> Add Question</button>
+        <button class="btn btn-outline btn-sm" onclick="navigateTo('tests')"><i class="fas fa-plus"></i> Create Test</button>
+        <button class="btn btn-outline btn-sm" onclick="navigateTo('pdfs')"><i class="fas fa-upload"></i> Upload PDF</button>
+        <button class="btn btn-outline btn-sm" onclick="navigateTo('notifications')"><i class="fas fa-bell"></i> Send Notification</button>
+      </div>
+    </div>
+    <div class="chart-container"><canvas id="dashChart"></canvas></div>
+  </div>`;
+  loadDashboardStats();
+}
+
+function loadDashboardStats() {
+  Promise.all([
+    db.ref('users').once('value'),
+    db.ref('tests').once('value'),
+    db.ref('questions').once('value'),
+    db.ref('pdfs').once('value'),
+    db.ref('results').orderByChild('completedAt').limitToLast(5).once('value')
+  ]).then(([uSnap,tSnap,qSnap,pSnap,rSnap]) => {
+    const users = uSnap.val()||{};
+    const tests = tSnap.val()||{};
+    const questions = qSnap.val()||{};
+    const pdfs = pSnap.val()||{};
+    const results = Object.values(rSnap.val()||{}).reverse();
+    document.getElementById('dashStats').innerHTML = `
+      <div class="stat-card"><i class="fas fa-users"></i><h3>${Object.keys(users).length}</h3><p>Total Students</p></div>
+      <div class="stat-card"><i class="fas fa-file-alt"></i><h3>${Object.keys(tests).length}</h3><p>Total Tests</p></div>
+      <div class="stat-card"><i class="fas fa-question-circle"></i><h3>${Object.keys(questions).length}</h3><p>Total Questions</p></div>
+      <div class="stat-card"><i class="fas fa-file-pdf"></i><h3>${Object.keys(pdfs).length}</h3><p>PDF Materials</p></div>`;
+    // Recent registrations
+    const regArr = Object.values(users).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0)).slice(0,5);
+    document.getElementById('recentRegs').innerHTML = regArr.length ? regArr.map(u => `
+      <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.03);font-size:12px">
+        <span>${u.name}</span><span style="color:var(--text3)">${u.examCategory||''}</span>
+      </div>`).join('') : '<p style="font-size:12px;color:var(--text3)">No registrations yet</p>';
+    // Recent results
+    document.getElementById('recentResults').innerHTML = results.length ? results.map(r => `
+      <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.03);font-size:12px">
+        <span>${r.userName||'Unknown'}</span><span style="color:var(--gold)">${Math.round(r.score)}/${r.totalMarks}</span>
+      </div>`).join('') : '<p style="font-size:12px;color:var(--text3)">No results yet</p>';
+    // Chart
+    drawDashChart(Object.keys(users).length, Object.keys(tests).length, Object.keys(questions).length, Object.keys(pdfs).length);
+  });
+}
+
+function drawDashChart(users, tests, questions, pdfs) {
+  const canvas = document.getElementById('dashChart');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  canvas.width = canvas.parentElement.clientWidth - 40;
+  canvas.height = 200;
+  const w = canvas.width, h = canvas.height, pad = 40;
+  ctx.clearRect(0,0,w,h);
+  ctx.fillStyle='#1a1a1a'; ctx.fillRect(0,0,w,h);
+  const data = [{label:'Students',val:users,color:'#3498db'},{label:'Tests',val:tests,color:'#d4af37'},{label:'Questions',val:questions,color:'#2ecc71'},{label:'PDFs',val:pdfs,color:'#e74c3c'}];
+  const max = Math.max(...data.map(d=>d.val),1);
+  const barW = Math.min(60, (w-pad*2)/data.length - 20);
+  data.forEach((d,i) => {
+    const x = pad + i*((w-pad*2)/data.length) + ((w-pad*2)/data.length - barW)/2;
+    const barH = Math.max(2, (h-pad*2)*d.val/max);
+    ctx.fillStyle = d.color;
+    ctx.beginPath(); ctx.roundRect(x, h-pad-barH, barW, barH, [4,4,0,0]); ctx.fill();
+    ctx.fillStyle='#888'; ctx.font='11px Roboto'; ctx.textAlign='center';
+    ctx.fillText(d.label, x+barW/2, h-10);
+    ctx.fillStyle=d.color; ctx.font='bold 12px Poppins';
+    ctx.fillText(d.val, x+barW/2, h-pad-barH-6);
+  });
+}
+
+// ==================== QUESTIONS ====================
+let allQuestions = [];
+let qPage = 1;
+const qPerPage = 10;
+let qSubjectFilter = 'all';
+let qCategoryFilter = 'all';
+let qDifficultyFilter = 'all';
+
+function renderQuestions() {
+  const area = document.getElementById('contentArea');
+  area.innerHTML = `<div class="fade-in">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px">
+      <div class="section-title" style="margin-bottom:0"><i class="fas fa-question-circle"></i> Questions</div>
+      <button class="btn btn-gold btn-sm" onclick="showAddQuestionModal()"><i class="fas fa-plus"></i> Add Question</button>
+    </div>
+    <div class="search-box"><i class="fas fa-search"></i><input type="text" id="qSearch" placeholder="Search questions..." oninput="filterQuestions()"></div>
+    <div class="filter-row">
+      <select onchange="qSubjectFilter=this.value;filterQuestions()"><option value="all">All Subjects</option><option>Maths</option><option>Reasoning</option><option>English</option><option>GS</option><option>Current Affairs</option></select>
+      <select onchange="qCategoryFilter=this.value;filterQuestions()"><option value="all">All Categories</option><option>SSC</option><option>Railway</option><option>MP</option></select>
+      <select onchange="qDifficultyFilter=this.value;filterQuestions()"><option value="all">All Difficulty</option><option>Easy</option><option>Medium</option><option>Hard</option></select>
+    </div>
+    <div class="table-wrapper"><table class="data-table"><thead><tr><th>#</th><th>Question</th><th>Subject</th><th>Category</th><th>Difficulty</th><th>Actions</th></tr></thead><tbody id="qTableBody"></tbody></table></div>
+    <div class="pagination" id="qPagination"></div>
+  </div>`;
+  loadQuestions();
+}
+
+function loadQuestions() {
+  db.ref('questions').once('value').then(snap => {
+    allQuestions = Object.entries(snap.val()||{}).map(([id,q])=>({id,...q}));
+    filterQuestions();
+  });
+}
+
+function filterQuestions() {
+  const search = (document.getElementById('qSearch')?.value||'').toLowerCase();
+  let filtered = allQuestions.filter(q => {
+    if (qSubjectFilter!=='all' && q.subject!==qSubjectFilter) return false;
+    if (qCategoryFilter!=='all' && q.examCategory!==qCategoryFilter) return false;
+    if (qDifficultyFilter!=='all' && q.difficulty!==qDifficultyFilter) return false;
+    if (search && !(q.questionText||'').toLowerCase().includes(search)) return false;
+    return true;
+  });
+  qPage = 1;
+  renderQuestionsTable(filtered);
+}
+
+function renderQuestionsTable(questions) {
+  const start = (qPage-1)*qPerPage;
+  const page = questions.slice(start, start+qPerPage);
+  const tbody = document.getElementById('qTableBody');
+  if (!page.length) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:30px;color:var(--text3)">No questions found</td></tr>'; return; }
+  tbody.innerHTML = page.map((q,i) => `<tr>
+    <td>${start+i+1}</td>
+    <td style="max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${q.questionText||''}</td>
+    <td>${q.subject||'-'}</td>
+    <td><span class="badge badge-${(q.examCategory||'').toLowerCase()}">${q.examCategory||'-'}</span></td>
+    <td><span class="badge badge-${(q.difficulty||'medium').toLowerCase()}">${q.difficulty||'Medium'}</span></td>
+    <td>
+      <button class="btn btn-outline btn-xs" onclick="showEditQuestionModal('${q.id}')"><i class="fas fa-edit"></i></button>
+      <button class="btn btn-danger btn-xs" onclick="deleteQuestion('${q.id}')"><i class="fas fa-trash"></i></button>
+    </td>
+  </tr>`).join('');
+  // Pagination
+  const totalPages = Math.ceil(questions.length/qPerPage);
+  const pag = document.getElementById('qPagination');
+  if (totalPages <= 1) { pag.innerHTML = ''; return; }
+  let html = '';
+  for (let i=1;i<=totalPages;i++) {
+    html += `<button class="page-btn ${i===qPage?'active':''}" onclick="qPage=${i};renderQuestionsTable(getFilteredQuestions())">${i}</button>`;
+  }
+  pag.innerHTML = html;
+}
+
+function getFilteredQuestions() {
+  const search = (document.getElementById('qSearch')?.value||'').toLowerCase();
+  return allQuestions.filter(q => {
+    if (qSubjectFilter!=='all' && q.subject!==qSubjectFilter) return false;
+    if (qCategoryFilter!=='all' && q.examCategory!==qCategoryFilter) return false;
+    if (qDifficultyFilter!=='all' && q.difficulty!==qDifficultyFilter) return false;
+    if (search && !(q.questionText||'').toLowerCase().includes(search)) return false;
+    return true;
+  });
+}
+
+function showAddQuestionModal() {
+  showModal('Add Question', `
+    <div class="form-group"><label>Exam Category</label><select id="mqCategory"><option>SSC</option><option>Railway</option><option>MP</option></select></div>
+    <div class="form-group"><label>Subject</label><select id="mqSubject"><option>Maths</option><option>Reasoning</option><option>English</option><option>GS</option><option>Current Affairs</option></select></div>
+    <div class="form-row">
+      <div class="form-group"><label>Topic</label><input type="text" id="mqTopic" placeholder="e.g. Algebra, Percentage"></div>
+      <div class="form-group"><label>Difficulty</label><select id="mqDifficulty"><option>Easy</option><option>Medium</option><option>Hard</option></select></div>
+    </div>
+    <div class="form-group"><label>Question Text</label><textarea id="mqText" placeholder="Enter the question..."></textarea></div>
+    <div class="form-row"><div class="form-group"><label>Option A</label><input type="text" id="mqOptA" placeholder="Option A"></div><div class="form-group"><label>Option B</label><input type="text" id="mqOptB" placeholder="Option B"></div></div>
+    <div class="form-row"><div class="form-group"><label>Option C</label><input type="text" id="mqOptC" placeholder="Option C"></div><div class="form-group"><label>Option D</label><input type="text" id="mqOptD" placeholder="Option D"></div></div>
+    <div class="form-group"><label>Correct Answer</label><select id="mqCorrect"><option>A</option><option>B</option><option>C</option><option>D</option></select></div>
+    <div class="form-group"><label>Explanation</label><textarea id="mqExplanation" placeholder="Explain the answer..."></textarea></div>
+    <div class="form-group"><label>Link to Test (optional)</label><select id="mqTestId"><option value="">-- None --</option></select></div>
+  `, [{text:'Cancel',cls:'btn-outline',action:closeModal},{text:'Save Question',cls:'btn-gold',action:saveQuestion}]);
+  loadTestsForSelect('mqTestId');
+}
+
+function saveQuestion() {
+  const data = {
+    examCategory: document.getElementById('mqCategory').value,
+    subject: document.getElementById('mqSubject').value,
+    topic: document.getElementById('mqTopic').value.trim(),
+    difficulty: document.getElementById('mqDifficulty').value,
+    questionText: document.getElementById('mqText').value.trim(),
+    optionA: document.getElementById('mqOptA').value.trim(),
+    optionB: document.getElementById('mqOptB').value.trim(),
+    optionC: document.getElementById('mqOptC').value.trim(),
+    optionD: document.getElementById('mqOptD').value.trim(),
+    correctAnswer: document.getElementById('mqCorrect').value,
+    explanation: document.getElementById('mqExplanation').value.trim(),
+    testId: document.getElementById('mqTestId').value
+  };
+  if (!data.questionText || !data.optionA || !data.optionB || !data.optionC || !data.optionD) { showToast('Please fill all required fields','error'); return; }
+  db.ref('questions').push(data).then(() => {
+    if (data.testId) { updateTestQuestionCount(data.testId); }
+    closeModal(); showToast('Question added!','success'); loadQuestions();
+  });
+}
+
+function showEditQuestionModal(qId) {
+  const q = allQuestions.find(x => x.id === qId);
+  if (!q) return;
+  showModal('Edit Question', `
+    <div class="form-group"><label>Exam Category</label><select id="mqCategory"><option ${q.examCategory==='SSC'?'selected':''}>SSC</option><option ${q.examCategory==='Railway'?'selected':''}>Railway</option><option ${q.examCategory==='MP'?'selected':''}>MP</option></select></div>
+    <div class="form-group"><label>Subject</label><select id="mqSubject"><option ${q.subject==='Maths'?'selected':''}>Maths</option><option ${q.subject==='Reasoning'?'selected':''}>Reasoning</option><option ${q.subject==='English'?'selected':''}>English</option><option ${q.subject==='GS'?'selected':''}>GS</option><option ${q.subject==='Current Affairs'?'selected':''}>Current Affairs</option></select></div>
+    <div class="form-row"><div class="form-group"><label>Topic</label><input type="text" id="mqTopic" value="${q.topic||''}"></div><div class="form-group"><label>Difficulty</label><select id="mqDifficulty"><option ${q.difficulty==='Easy'?'selected':''}>Easy</option><option ${q.difficulty==='Medium'?'selected':''}>Medium</option><option ${q.difficulty==='Hard'?'selected':''}>Hard</option></select></div></div>
+    <div class="form-group"><label>Question</label><textarea id="mqText">${q.questionText||''}</textarea></div>
+    <div class="form-row"><div class="form-group"><label>Option A</label><input type="text" id="mqOptA" value="${q.optionA||''}"></div><div class="form-group"><label>Option B</label><input type="text" id="mqOptB" value="${q.optionB||''}"></div></div>
+    <div class="form-row"><div class="form-group"><label>Option C</label><input type="text" id="mqOptC" value="${q.optionC||''}"></div><div class="form-group"><label>Option D</label><input type="text" id="mqOptD" value="${q.optionD||''}"></div></div>
+    <div class="form-group"><label>Correct Answer</label><select id="mqCorrect"><option ${q.correctAnswer==='A'?'selected':''}>A</option><option ${q.correctAnswer==='B'?'selected':''}>B</option><option ${q.correctAnswer==='C'?'selected':''}>C</option><option ${q.correctAnswer==='D'?'selected':''}>D</option></select></div>
+    <div class="form-group"><label>Explanation</label><textarea id="mqExplanation">${q.explanation||''}</textarea></div>
+    <input type="hidden" id="mqEditId" value="${qId}">
+  `, [{text:'Cancel',cls:'btn-outline',action:closeModal},{text:'Update',cls:'btn-gold',action:updateQuestion}]);
+}
+
+function updateQuestion() {
+  const qId = document.getElementById('mqEditId').value;
+  const data = {
+    examCategory: document.getElementById('mqCategory').value,
+    subject: document.getElementById('mqSubject').value,
+    topic: document.getElementById('mqTopic').value.trim(),
+    difficulty: document.getElementById('mqDifficulty').value,
+    questionText: document.getElementById('mqText').value.trim(),
+    optionA: document.getElementById('mqOptA').value.trim(),
+    optionB: document.getElementById('mqOptB').value.trim(),
+    optionC: document.getElementById('mqOptC').value.trim(),
+    optionD: document.getElementById('mqOptD').value.trim(),
+    correctAnswer: document.getElementById('mqCorrect').value,
+    explanation: document.getElementById('mqExplanation').value.trim()
+  };
+  db.ref('questions/' + qId).update(data).then(() => { closeModal(); showToast('Question updated!','success'); loadQuestions(); });
+}
+
+function deleteQuestion(qId) {
+  showConfirm('Delete Question?', 'This action cannot be undone.', () => {
+    db.ref('questions/' + qId).remove().then(() => { showToast('Question deleted','success'); loadQuestions(); });
+  });
+}
+
+function updateTestQuestionCount(testId) {
+  db.ref('questions').orderByChild('testId').equalTo(testId).once('value').then(snap => {
+    const count = Object.keys(snap.val()||{}).length;
+    db.ref('tests/' + testId + '/questionCount').set(count);
+  });
+}
+
+function loadTestsForSelect(selectId) {
+  db.ref('tests').once('value').then(snap => {
+    const tests = snap.val()||{};
+    const el = document.getElementById(selectId);
+    if (!el) return;
+    Object.entries(tests).forEach(([id,t]) => {
+      const opt = document.createElement('option');
+      opt.value = id; opt.textContent = t.title;
+      el.appendChild(opt);
+    });
+  });
+}
+
+// ==================== TESTS ====================
+let allTests = [];
+
+function renderTests() {
+  const area = document.getElementById('contentArea');
+  area.innerHTML = `<div class="fade-in">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px">
+      <div class="section-title" style="margin-bottom:0"><i class="fas fa-file-alt"></i> Tests</div>
+      <button class="btn btn-gold btn-sm" onclick="showCreateTestModal()"><i class="fas fa-plus"></i> Create Test</button>
+    </div>
+    <div class="search-box"><i class="fas fa-search"></i><input type="text" id="tSearch" placeholder="Search tests..." oninput="filterTests()"></div>
+    <div class="table-wrapper"><table class="data-table"><thead><tr><th>Title</th><th>Type</th><th>Category</th><th>Subject</th><th>Questions</th><th>Duration</th><th>Status</th><th>Actions</th></tr></thead><tbody id="tTableBody"></tbody></table></div>
+  </div>`;
+  loadTests();
+}
+
+function loadTests() {
+  db.ref('tests').once('value').then(snap => {
+    allTests = Object.entries(snap.val()||{}).map(([id,t])=>({id,...t}));
+    filterTests();
+  });
+}
+
+function filterTests() {
+  const search = (document.getElementById('tSearch')?.value||'').toLowerCase();
+  let filtered = allTests.filter(t => !search || (t.title||'').toLowerCase().includes(search));
+  const tbody = document.getElementById('tTableBody');
+  if (!filtered.length) { tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:30px;color:var(--text3)">No tests found</td></tr>'; return; }
+  tbody.innerHTML = filtered.map(t => `<tr>
+    <td style="font-weight:500">${t.title||''}</td>
+    <td><span class="badge badge-${(t.type||'sectional').toLowerCase()}">${t.type||'Sectional'}</span></td>
+    <td><span class="badge badge-${(t.examCategory||'ssc').toLowerCase()}">${t.examCategory||'-'}</span></td>
+    <td>${t.subject||'-'}</td>
+    <td>${t.questionCount||0}</td>
+    <td>${t.duration||0} min</td>
+    <td><span class="badge badge-${t.isActive!==false?'active':'inactive'}">${t.isActive!==false?'Active':'Inactive'}</span></td>
+    <td>
+      <button class="btn btn-outline btn-xs" onclick="showAssignQuestionsModal('${t.id}')"><i class="fas fa-link"></i></button>
+      <button class="btn btn-outline btn-xs" onclick="showEditTestModal('${t.id}')"><i class="fas fa-edit"></i></button>
+      <button class="btn btn-danger btn-xs" onclick="deleteTest('${t.id}')"><i class="fas fa-trash"></i></button>
+      <button class="btn btn-xs ${t.isActive!==false?'btn-outline':'btn-success'}" onclick="toggleTestActive('${t.id}',${t.isActive!==false})">${t.isActive!==false?'<i class="fas fa-eye-slash"></i>':'<i class="fas fa-eye"></i>'}</button>
+    </td>
+  </tr>`).join('');
+}
+
+function showCreateTestModal() {
+  showModal('Create Test', `
+    <div class="form-group"><label>Test Title</label><input type="text" id="mtTitle" placeholder="e.g. SSC CGL Mock Test 1"></div>
+    <div class="form-row">
+      <div class="form-group"><label>Exam Category</label><select id="mtCategory"><option>SSC</option><option>Railway</option><option>MP</option><option>All</option></select></div>
+      <div class="form-group"><label>Subject</label><select id="mtSubject"><option>Maths</option><option>Reasoning</option><option>English</option><option>GS</option><option>Current Affairs</option><option>Mixed</option></select></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Type</label><select id="mtType"><option>sectional</option><option>mock</option><option>weekly</option></select></div>
+      <div class="form-group"><label>Duration (min)</label><input type="number" id="mtDuration" value="30" min="5"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Total Marks</label><input type="number" id="mtMarks" value="50" min="10"></div>
+      <div class="form-group"><label>Negative Marking</label><input type="number" id="mtNegative" value="0" step="0.25" min="0" placeholder="0 for none"></div>
+    </div>
+    <div class="form-group"><label>Scheduled Date (for weekly)</label><input type="date" id="mtDate"></div>
+    <div class="form-group" style="display:flex;align-items:center;gap:10px"><label style="margin:0">Active</label><label class="toggle"><input type="checkbox" id="mtActive" checked><span class="toggle-slider"></span></label></div>
+  `, [{text:'Cancel',cls:'btn-outline',action:closeModal},{text:'Create Test',cls:'btn-gold',action:saveTest}]);
+}
+
+function saveTest() {
+  const data = {
+    title: document.getElementById('mtTitle').value.trim(),
+    examCategory: document.getElementById('mtCategory').value,
+    subject: document.getElementById('mtSubject').value,
+    type: document.getElementById('mtType').value,
+    duration: parseInt(document.getElementById('mtDuration').value)||30,
+    totalMarks: parseInt(document.getElementById('mtMarks').value)||50,
+    negativeMarking: parseFloat(document.getElementById('mtNegative').value)||0,
+    scheduledDate: document.getElementById('mtDate').value||'',
+    isActive: document.getElementById('mtActive').checked,
+    questionCount: 0,
+    createdAt: Date.now()
+  };
+  if (!data.title) { showToast('Title is required','error'); return; }
+  db.ref('tests').push(data).then(() => { closeModal(); showToast('Test created!','success'); loadTests(); });
+}
+
+function showEditTestModal(tId) {
+  const t = allTests.find(x => x.id === tId);
+  if (!t) return;
+  showModal('Edit Test', `
+    <div class="form-group"><label>Test Title</label><input type="text" id="mtTitle" value="${t.title||''}"></div>
+    <div class="form-row">
+      <div class="form-group"><label>Exam Category</label><select id="mtCategory"><option ${t.examCategory==='SSC'?'selected':''}>SSC</option><option ${t.examCategory==='Railway'?'selected':''}>Railway</option><option ${t.examCategory==='MP'?'selected':''}>MP</option><option ${t.examCategory==='All'?'selected':''}>All</option></select></div>
+      <div class="form-group"><label>Subject</label><select id="mtSubject"><option ${t.subject==='Maths'?'selected':''}>Maths</option><option ${t.subject==='Reasoning'?'selected':''}>Reasoning</option><option ${t.subject==='English'?'selected':''}>English</option><option ${t.subject==='GS'?'selected':''}>GS</option><option ${t.subject==='Current Affairs'?'selected':''}>Current Affairs</option><option ${t.subject==='Mixed'?'selected':''}>Mixed</option></select></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Type</label><select id="mtType"><option ${t.type==='sectional'?'selected':''}>sectional</option><option ${t.type==='mock'?'selected':''}>mock</option><option ${t.type==='weekly'?'selected':''}>weekly</option></select></div>
+      <div class="form-group"><label>Duration</label><input type="number" id="mtDuration" value="${t.duration||30}"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Total Marks</label><input type="number" id="mtMarks" value="${t.totalMarks||50}"></div>
+      <div class="form-group"><label>Negative Marking</label><input type="number" id="mtNegative" value="${t.negativeMarking||0}" step="0.25"></div>
+    </div>
+    <div class="form-group"><label>Scheduled Date</label><input type="date" id="mtDate" value="${t.scheduledDate||''}"></div>
+    <div class="form-group" style="display:flex;align-items:center;gap:10px"><label style="margin:0">Active</label><label class="toggle"><input type="checkbox" id="mtActive" ${t.isActive!==false?'checked':''}><span class="toggle-slider"></span></label></div>
+    <input type="hidden" id="mtEditId" value="${tId}">
+  `, [{text:'Cancel',cls:'btn-outline',action:closeModal},{text:'Update',cls:'btn-gold',action:updateTest}]);
+}
+
+function updateTest() {
+  const tId = document.getElementById('mtEditId').value;
+  const data = {
+    title: document.getElementById('mtTitle').value.trim(),
+    examCategory: document.getElementById('mtCategory').value,
+    subject: document.getElementById('mtSubject').value,
+    type: document.getElementById('mtType').value,
+    duration: parseInt(document.getElementById('mtDuration').value)||30,
+    totalMarks: parseInt(document.getElementById('mtMarks').value)||50,
+    negativeMarking: parseFloat(document.getElementById('mtNegative').value)||0,
+    scheduledDate: document.getElementById('mtDate').value||'',
+    isActive: document.getElementById('mtActive').checked
+  };
+  db.ref('tests/' + tId).update(data).then(() => { closeModal(); showToast('Test updated!','success'); loadTests(); });
+}
+
+function deleteTest(tId) {
+  showConfirm('Delete Test?', 'All linked questions will be unlinked.', () => {
+    db.ref('tests/' + tId).remove().then(() => { showToast('Test deleted','success'); loadTests(); });
+  });
+}
+
+function toggleTestActive(tId, currentActive) {
+  db.ref('tests/' + tId + '/isActive').set(!currentActive).then(() => { showToast('Status updated','success'); loadTests(); });
+}
+
+function showAssignQuestionsModal(tId) {
+  const test = allTests.find(t => t.id === tId);
+  showModal('Assign Questions to: ' + (test?.title||''), `
+    <p style="font-size:12px;color:var(--text3);margin-bottom:12px">Select questions to assign to this test. Questions must match the test's subject/category for best results.</p>
+    <div id="assignList" style="max-height:400px;overflow-y:auto"><div class="loader"><div class="loader-spinner"></div></div></div>
+  `, [{text:'Close',cls:'btn-outline',action:closeModal},{text:'Assign Selected',cls:'btn-gold',action:()=>assignQuestions(tId)}]);
+  loadAssignableQuestions(tId);
+}
+
+function loadAssignableQuestions(tId) {
+  db.ref('questions').once('value').then(snap => {
+    const questions = snap.val()||{};
+    const list = document.getElementById('assignList');
+    const entries = Object.entries(questions);
+    if (!entries.length) { list.innerHTML = '<div class="empty-state"><i class="fas fa-question-circle"></i><h3>No questions available</h3></div>'; return; }
+    list.innerHTML = entries.map(([id,q]) => `
+      <div class="q-assign-item">
+        <input type="checkbox" id="aq_${id}" ${q.testId===tId?'checked':''}>
+        <label for="aq_${id}" class="q-text">${q.questionText||''}</label>
+        <span class="badge badge-${(q.difficulty||'medium').toLowerCase()}" style="flex-shrink:0">${q.difficulty||'Med'}</span>
+      </div>`).join('');
+  });
+}
+
+function assignQuestions(tId) {
+  db.ref('questions').once('value').then(snap => {
+    const questions = snap.val()||{};
+    const updates = {};
+    Object.entries(questions).forEach(([id,q]) => {
+      const cb = document.getElementById('aq_'+id);
+      if (cb) {
+        if (cb.checked) { updates[id+'/testId'] = tId; }
+        else if (q.testId === tId) { updates[id+'/testId'] = ''; }
+      }
+    });
+    if (Object.keys(updates).length) {
+      db.ref('questions').update(updates).then(() => {
+        updateTestQuestionCount(tId);
+        closeModal(); showToast('Questions assigned!','success');
+      });
+    } else { closeModal(); }
+  });
+}
+
+// ==================== PDFs ====================
+function renderPDFs() {
+  const area = document.getElementById('contentArea');
+  area.innerHTML = `<div class="fade-in">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px">
+      <div class="section-title" style="margin-bottom:0"><i class="fas fa-file-pdf"></i> PDF Materials</div>
+      <button class="btn btn-gold btn-sm" onclick="showUploadPdfModal()"><i class="fas fa-upload"></i> Upload PDF</button>
+    </div>
+    <div class="table-wrapper"><table class="data-table"><thead><tr><th>Title</th><th>Subject</th><th>Category</th><th>Uploaded</th><th>Actions</th></tr></thead><tbody id="pdfTableBody"></tbody></table></div>
+  </div>`;
+  loadPDFs();
+}
+
+function loadPDFs() {
+  db.ref('pdfs').once('value').then(snap => {
+    const pdfs = Object.entries(snap.val()||{}).map(([id,p])=>({id,...p})).sort((a,b)=>(b.uploadedAt||0)-(a.uploadedAt||0));
+    const tbody = document.getElementById('pdfTableBody');
+    if (!pdfs.length) { tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:30px;color:var(--text3)">No PDFs uploaded</td></tr>'; return; }
+    tbody.innerHTML = pdfs.map(p => `<tr>
+      <td style="font-weight:500"><i class="fas fa-file-pdf" style="color:var(--error);margin-right:6px"></i>${p.title}</td>
+      <td>${p.subject||'-'}</td>
+      <td><span class="badge badge-${(p.examCategory||'ssc').toLowerCase()}">${p.examCategory||'All'}</span></td>
+      <td>${new Date(p.uploadedAt).toLocaleDateString()}</td>
+      <td>
+        <a href="${p.url}" target="_blank" class="btn btn-outline btn-xs"><i class="fas fa-eye"></i></a>
+        <button class="btn btn-outline btn-xs" onclick="showEditPdfModal('${p.id}')"><i class="fas fa-edit"></i></button>
+        <button class="btn btn-danger btn-xs" onclick="deletePdf('${p.id}')"><i class="fas fa-trash"></i></button>
+      </td>
+    </tr>`).join('');
+  });
+}
+
+function showUploadPdfModal() {
+  showModal('Upload PDF', `
+    <div class="form-group"><label>PDF Title</label><input type="text" id="mpTitle" placeholder="e.g. Maths Formula Book"></div>
+    <div class="form-row">
+      <div class="form-group"><label>Subject</label><select id="mpSubject"><option>Maths</option><option>Reasoning</option><option>English</option><option>GS</option><option>Current Affairs</option></select></div>
+      <div class="form-group"><label>Exam Category</label><select id="mpCategory"><option>SSC</option><option>Railway</option><option>MP</option><option>All</option></select></div>
+    </div>
+    <div class="form-group"><label>PDF URL</label><input type="url" id="mpUrl" placeholder="https://example.com/file.pdf"></div>
+  `, [{text:'Cancel',cls:'btn-outline',action:closeModal},{text:'Upload',cls:'btn-gold',action:savePdf}]);
+}
+
+function savePdf() {
+  const data = {
+    title: document.getElementById('mpTitle').value.trim(),
+    subject: document.getElementById('mpSubject').value,
+    examCategory: document.getElementById('mpCategory').value,
+    url: document.getElementById('mpUrl').value.trim(),
+    uploadedBy: adminUser?.email || 'admin',
+    uploadedAt: Date.now()
+  };
+  if (!data.title || !data.url) { showToast('Title and URL are required','error'); return; }
+  db.ref('pdfs').push(data).then(() => { closeModal(); showToast('PDF uploaded!','success'); loadPDFs(); });
+}
+
+function showEditPdfModal(pId) {
+  db.ref('pdfs/'+pId).once('value').then(snap => {
+    const p = snap.val(); if (!p) return;
+    showModal('Edit PDF', `
+      <div class="form-group"><label>PDF Title</label><input type="text" id="mpTitle" value="${p.title||''}"></div>
+      <div class="form-row">
+        <div class="form-group"><label>Subject</label><select id="mpSubject"><option ${p.subject==='Maths'?'selected':''}>Maths</option><option ${p.subject==='Reasoning'?'selected':''}>Reasoning</option><option ${p.subject==='English'?'selected':''}>English</option><option ${p.subject==='GS'?'selected':''}>GS</option><option ${p.subject==='Current Affairs'?'selected':''}>Current Affairs</option></select></div>
+        <div class="form-group"><label>Exam Category</label><select id="mpCategory"><option ${p.examCategory==='SSC'?'selected':''}>SSC</option><option ${p.examCategory==='Railway'?'selected':''}>Railway</option><option ${p.examCategory==='MP'?'selected':''}>MP</option><option ${p.examCategory==='All'?'selected':''}>All</option></select></div>
+      </div>
+      <div class="form-group"><label>PDF URL</label><input type="url" id="mpUrl" value="${p.url||''}"></div>
+      <input type="hidden" id="mpEditId" value="${pId}">
+    `, [{text:'Cancel',cls:'btn-outline',action:closeModal},{text:'Update',cls:'btn-gold',action:updatePdf}]);
+  });
+}
+
+function updatePdf() {
+  const pId = document.getElementById('mpEditId').value;
+  const data = {
+    title: document.getElementById('mpTitle').value.trim(),
+    subject: document.getElementById('mpSubject').value,
+    examCategory: document.getElementById('mpCategory').value,
+    url: document.getElementById('mpUrl').value.trim()
+  };
+  db.ref('pdfs/'+pId).update(data).then(() => { closeModal(); showToast('PDF updated!','success'); loadPDFs(); });
+}
+
+function deletePdf(pId) {
+  showConfirm('Delete PDF?', 'This action cannot be undone.', () => {
+    db.ref('pdfs/'+pId).remove().then(() => { showToast('PDF deleted','success'); loadPDFs(); });
+  });
+}
+
+// ==================== STUDENTS ====================
+function renderStudents() {
+  const area = document.getElementById('contentArea');
+  area.innerHTML = `<div class="fade-in">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px">
+      <div class="section-title" style="margin-bottom:0"><i class="fas fa-users"></i> Students</div>
+      <button class="btn btn-outline btn-sm" onclick="exportStudentsCSV()"><i class="fas fa-download"></i> Export CSV</button>
+    </div>
+    <div class="search-box"><i class="fas fa-search"></i><input type="text" id="sSearch" placeholder="Search by name or email..." oninput="filterStudents()"></div>
+    <div class="filter-row"><select id="sCategoryFilter" onchange="filterStudents()"><option value="all">All Categories</option><option>SSC</option><option>Railway</option><option>MP</option></select>
+    <select id="sSortBy" onchange="filterStudents()"><option value="name">Sort by Name</option><option value="date">Sort by Date</option><option value="streak">Sort by Streak</option><option value="coins">Sort by Coins</option></select></div>
+    <div class="table-wrapper"><table class="data-table"><thead><tr><th>#</th><th>Name</th><th>Email</th><th>State</th><th>Category</th><th>Joined</th><th>Actions</th></tr></thead><tbody id="sTableBody"></tbody></table></div>
+  </div>`;
+  loadStudents();
+}
+
+let allStudents = [];
+function loadStudents() {
+  Promise.all([db.ref('users').once('value'), db.ref('user_streaks').once('value')]).then(([uSnap,sSnap]) => {
+    const users = uSnap.val()||{};
+    const streaks = sSnap.val()||{};
+    allStudents = Object.entries(users).map(([id,u])=>({id,...u,streak:(streaks[id]||{}).currentStreak||0,coins:(streaks[id]||{}).coins||0}));
+    filterStudents();
+  });
+}
+
+function filterStudents() {
+  const search = (document.getElementById('sSearch')?.value||'').toLowerCase();
+  const cat = document.getElementById('sCategoryFilter')?.value||'all';
+  const sort = document.getElementById('sSortBy')?.value||'name';
+  let filtered = allStudents.filter(s => {
+    if (cat!=='all' && s.examCategory!==cat) return false;
+    if (search && !(s.name||'').toLowerCase().includes(search) && !(s.email||'').toLowerCase().includes(search)) return false;
+    return true;
+  });
+  filtered.sort((a,b) => {
+    if (sort==='date') return (b.createdAt||0)-(a.createdAt||0);
+    if (sort==='streak') return (b.streak||0)-(a.streak||0);
+    if (sort==='coins') return (b.coins||0)-(a.coins||0);
+    return (a.name||'').localeCompare(b.name||'');
+  });
+  const tbody = document.getElementById('sTableBody');
+  if (!filtered.length) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:30px;color:var(--text3)">No students found</td></tr>'; return; }
+  tbody.innerHTML = filtered.map((s,i) => `<tr>
+    <td>${i+1}</td>
+    <td style="font-weight:500">${s.name}</td>
+    <td style="font-size:12px">${s.email}</td>
+    <td>${s.state||'-'}</td>
+    <td><span class="badge badge-${(s.examCategory||'ssc').toLowerCase()}">${s.examCategory||'-'}</span></td>
+    <td>${s.createdAt ? new Date(s.createdAt).toLocaleDateString() : '-'}</td>
+    <td>
+      <button class="btn btn-outline btn-xs" onclick="viewStudentDetails('${s.id}')"><i class="fas fa-eye"></i></button>
+      <button class="btn btn-danger btn-xs" onclick="deleteStudent('${s.id}')"><i class="fas fa-trash"></i></button>
+    </td>
+  </tr>`).join('');
+}
+
+function viewStudentDetails(uid) {
+  Promise.all([db.ref('users/'+uid).once('value'), db.ref('results').orderByChild('userId').equalTo(uid).once('value'), db.ref('user_streaks/'+uid).once('value')]).then(([uSnap,rSnap,sSnap]) => {
+    const user = uSnap.val()||{};
+    const results = Object.values(rSnap.val()||{});
+    const streak = sSnap.val()||{};
+    const avg = results.length ? Math.round(results.reduce((s,r)=>s+(r.score/r.totalMarks*100),0)/results.length) : 0;
+    showModal('Student Details', `
+      <div style="text-align:center;margin-bottom:16px">
+        <div style="width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold3));display:inline-flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;color:#000;margin-bottom:8px">${(user.name||'U').charAt(0)}</div>
+        <h4 style="font-size:16px">${user.name||'Unknown'}</h4>
+        <p style="font-size:12px;color:var(--text3)">${user.email||''}</p>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px;text-align:center">
+        <div style="padding:10px;background:rgba(255,255,255,0.03);border-radius:8px"><div style="font-size:18px;font-weight:700;color:var(--gold)">${results.length}</div><div style="font-size:10px;color:var(--text3)">Tests</div></div>
+        <div style="padding:10px;background:rgba(255,255,255,0.03);border-radius:8px"><div style="font-size:18px;font-weight:700;color:var(--gold)">${avg}%</div><div style="font-size:10px;color:var(--text3)">Avg Score</div></div>
+        <div style="padding:10px;background:rgba(255,255,255,0.03);border-radius:8px"><div style="font-size:18px;font-weight:700;color:var(--gold)">${streak.currentStreak||0}</div><div style="font-size:10px;color:var(--text3)">Streak</div></div>
+      </div>
+      <div style="font-size:13px"><strong>State:</strong> ${user.state||'-'} &bull; <strong>Exam:</strong> ${user.examCategory||'-'} &bull; <strong>Coins:</strong> ${streak.coins||0}</div>
+      ${results.length ? '<h4 style="margin-top:12px;font-size:13px;color:var(--gold)">Recent Results</h4>' + results.slice(-5).reverse().map(r=>`<div style="padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.03);font-size:12px">${r.testTitle||'Test'} — <span style="color:var(--gold)">${Math.round(r.score)}/${r.totalMarks}</span></div>`).join('') : ''}
+    `, [{text:'Close',cls:'btn-outline',action:closeModal}]);
+  });
+}
+
+function deleteStudent(uid) {
+  showConfirm('Delete Student?', 'All their data will be removed.', () => {
+    db.ref('users/'+uid).remove().then(() => { db.ref('user_streaks/'+uid).remove(); showToast('Student deleted','success'); loadStudents(); });
+  });
+}
+
+function exportStudentsCSV() {
+  let csv = 'Name,Email,State,Exam Category,Streak,Coins,Joined\n';
+  allStudents.forEach(s => { csv += `"${s.name}","${s.email}","${s.state||''}","${s.examCategory||''}",${s.streak||0},${s.coins||0},"${s.createdAt?new Date(s.createdAt).toLocaleDateString():''}"\n`; });
+  const blob = new Blob([csv], {type:'text/csv'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = 'students.csv'; a.click();
+  URL.revokeObjectURL(url);
+  showToast('CSV exported!','success');
+}
+
+// ==================== WEEKLY TESTS ====================
+function renderWeekly() {
+  const area = document.getElementById('contentArea');
+  area.innerHTML = `<div class="fade-in">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px">
+      <div class="section-title" style="margin-bottom:0"><i class="fas fa-calendar-alt"></i> Weekly Test Scheduler</div>
+      <button class="btn btn-gold btn-sm" onclick="showScheduleWeeklyModal()"><i class="fas fa-plus"></i> Schedule Saturday Test</button>
+    </div>
+    <div id="weeklyList"><div class="loader"><div class="loader-spinner"></div></div></div>
+  </div>`;
+  loadWeeklyTests();
+}
+
+function loadWeeklyTests() {
+  db.ref('tests').orderByChild('type').equalTo('weekly').once('value').then(snap => {
+    const tests = Object.entries(snap.val()||{}).map(([id,t])=>({id,...t})).sort((a,b)=>(b.scheduledDate||'').localeCompare(a.scheduledDate||''));
+    const el = document.getElementById('weeklyList');
+    if (!tests.length) { el.innerHTML = '<div class="empty-state"><i class="fas fa-calendar-alt"></i><h3>No weekly tests scheduled</h3></div>'; return; }
+    el.innerHTML = `<div class="table-wrapper"><table class="data-table"><thead><tr><th>Title</th><th>Category</th><th>Date</th><th>Duration</th><th>Marks</th><th>Status</th><th>Actions</th></tr></thead><tbody>${tests.map(t => {
+      const isPast = t.scheduledDate && new Date(t.scheduledDate) < new Date();
+      return `<tr>
+        <td style="font-weight:500">${t.title}</td>
+        <td><span class="badge badge-${(t.examCategory||'ssc').toLowerCase()}">${t.examCategory||'-'}</span></td>
+        <td>${t.scheduledDate||'-'}</td>
+        <td>${t.duration} min</td>
+        <td>${t.totalMarks}</td>
+        <td><span class="badge badge-${isPast?'inactive':'active'}">${isPast?'Completed':'Upcoming'}</span></td>
+        <td>
+          <button class="btn btn-outline btn-xs" onclick="showAssignQuestionsModal('${t.id}')"><i class="fas fa-link"></i></button>
+          <button class="btn btn-danger btn-xs" onclick="deleteTest('${t.id}')"><i class="fas fa-trash"></i></button>
+        </td>
+      </tr>`;
+    }).join('')}</tbody></table></div>`;
+  });
+}
+
+function showScheduleWeeklyModal() {
+  // Find next Saturday
+  const d = new Date();
+  const daysUntilSat = (6 - d.getDay() + 7) % 7 || 7;
+  d.setDate(d.getDate() + daysUntilSat);
+  const nextSat = d.toISOString().split('T')[0];
+  showModal('Schedule Saturday Test', `
+    <div class="form-group"><label>Test Title</label><input type="text" id="mwTitle" placeholder="e.g. Saturday Mock Test - Week 5"></div>
+    <div class="form-row">
+      <div class="form-group"><label>Exam Category</label><select id="mwCategory"><option>SSC</option><option>Railway</option><option>MP</option><option>All</option></select></div>
+      <div class="form-group"><label>Scheduled Date (Saturday)</label><input type="date" id="mwDate" value="${nextSat}"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Duration (min)</label><input type="number" id="mwDuration" value="60"></div>
+      <div class="form-group"><label>Total Marks</label><input type="number" id="mwMarks" value="100"></div>
+    </div>
+    <div class="form-group"><label>Negative Marking</label><input type="number" id="mwNegative" value="0.25" step="0.25"></div>
+  `, [{text:'Cancel',cls:'btn-outline',action:closeModal},{text:'Schedule',cls:'btn-gold',action:saveWeeklyTest}]);
+}
+
+function saveWeeklyTest() {
+  const data = {
+    title: document.getElementById('mwTitle').value.trim(),
+    examCategory: document.getElementById('mwCategory').value,
+    subject: 'Mixed', type: 'weekly',
+    duration: parseInt(document.getElementById('mwDuration').value)||60,
+    totalMarks: parseInt(document.getElementById('mwMarks').value)||100,
+    negativeMarking: parseFloat(document.getElementById('mwNegative').value)||0,
+    scheduledDate: document.getElementById('mwDate').value,
+    isSaturday: true, isActive: true, questionCount: 0, createdAt: Date.now()
+  };
+  if (!data.title || !data.scheduledDate) { showToast('Title and date are required','error'); return; }
+  db.ref('tests').push(data).then(() => {
+    // Also save to weekly_tests node
+    db.ref('weekly_tests').push({...data});
+    closeModal(); showToast('Weekly test scheduled!','success'); loadWeeklyTests();
+  });
+}
+
+// ==================== LEADERBOARD ====================
+function renderLeaderboard() {
+  const area = document.getElementById('contentArea');
+  area.innerHTML = `<div class="fade-in">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px">
+      <div class="section-title" style="margin-bottom:0"><i class="fas fa-trophy"></i> Leaderboard</div>
+      <button class="btn btn-outline btn-sm" onclick="recalculateLeaderboard()"><i class="fas fa-sync"></i> Recalculate</button>
+    </div>
+    <div class="filter-row"><select id="lbFilter" onchange="loadLeaderboardData()"><option value="all">Overall</option><option>SSC</option><option>Railway</option><option>MP</option></select></div>
+    <div class="table-wrapper"><table class="data-table"><thead><tr><th>Rank</th><th>Name</th><th>Total Score</th><th>Tests</th><th>Category</th><th>Actions</th></tr></thead><tbody id="lbTableBody"></tbody></table></div>
+  </div>`;
+  loadLeaderboardData();
+}
+
+function loadLeaderboardData() {
+  const filter = document.getElementById('lbFilter')?.value||'all';
+  db.ref('leaderboard').once('value').then(snap => {
+    const entries = Object.entries(snap.val()||{});
+    let filtered = filter==='all' ? entries : entries.filter(([,e])=>e.examCategory===filter);
+    const userScores = {};
+    filtered.forEach(([id,e]) => {
+      if (!userScores[e.userId]) userScores[e.userId] = {id, userId:e.userId, userName:e.userName, totalScore:0, tests:0, examCategory:e.examCategory};
+      userScores[e.userId].totalScore += e.score;
+      userScores[e.userId].tests++;
+    });
+    const sorted = Object.values(userScores).sort((a,b)=>b.totalScore-a.totalScore);
+    const tbody = document.getElementById('lbTableBody');
+    if (!sorted.length) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:30px;color:var(--text3)">No leaderboard data</td></tr>'; return; }
+    tbody.innerHTML = sorted.map((u,i) => `<tr>
+      <td style="font-weight:700;color:${i<3?'var(--gold)':'var(--text2)'}">${i+1}</td>
+      <td style="font-weight:500">${u.userName||'Unknown'}</td>
+      <td style="color:var(--gold);font-weight:600">${Math.round(u.totalScore)}</td>
+      <td>${u.tests}</td>
+      <td><span class="badge badge-${(u.examCategory||'ssc').toLowerCase()}">${u.examCategory||'-'}</span></td>
+      <td><button class="btn btn-danger btn-xs" onclick="removeLbEntry('${u.id}')"><i class="fas fa-trash"></i></button></td>
+    </tr>`).join('');
+  });
+}
+
+function removeLbEntry(id) {
+  showConfirm('Remove Entry?', '', () => {
+    db.ref('leaderboard/'+id).remove().then(() => { showToast('Entry removed','success'); loadLeaderboardData(); });
+  });
+}
+
+function recalculateLeaderboard() {
+  db.ref('results').once('value').then(snap => {
+    const results = Object.values(snap.val()||{});
+    db.ref('leaderboard').remove().then(() => {
+      const updates = {};
+      results.forEach(r => {
+        const key = db.ref('leaderboard').push().key;
+        updates[key] = { userId:r.userId, userName:r.userName, testId:r.testId, score:r.score, totalMarks:r.totalMarks, examCategory:r.examCategory||'', subject:r.subject||'', completedAt:r.completedAt||Date.now() };
+      });
+      db.ref('leaderboard').update(updates).then(() => { showToast('Leaderboard recalculated!','success'); loadLeaderboardData(); });
+    });
+  });
+}
+
+// ==================== NOTIFICATIONS ====================
+function renderNotifications() {
+  const area = document.getElementById('contentArea');
+  area.innerHTML = `<div class="fade-in">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px">
+      <div class="section-title" style="margin-bottom:0"><i class="fas fa-bell"></i> Notifications</div>
+      <button class="btn btn-gold btn-sm" onclick="showCreateNotifModal()"><i class="fas fa-plus"></i> Send Notification</button>
+    </div>
+    <div id="notifList"><div class="loader"><div class="loader-spinner"></div></div></div>
+  </div>`;
+  loadNotifications();
+}
+
+function loadNotifications() {
+  db.ref('notifications').orderByChild('createdAt').limitToLast(50).once('value').then(snap => {
+    const notifs = Object.entries(snap.val()||{}).map(([id,n])=>({id,...n})).reverse();
+    const el = document.getElementById('notifList');
+    if (!notifs.length) { el.innerHTML = '<div class="empty-state"><i class="fas fa-bell-slash"></i><h3>No notifications sent</h3></div>'; return; }
+    el.innerHTML = `<div class="table-wrapper"><table class="data-table"><thead><tr><th>Title</th><th>Message</th><th>Type</th><th>Target</th><th>Date</th><th>Action</th></tr></thead><tbody>${notifs.map(n => `<tr>
+      <td style="font-weight:500">${n.title}</td>
+      <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${n.message}</td>
+      <td>${n.type||'general'}</td>
+      <td><span class="badge badge-${(n.targetExam||'all').toLowerCase()}">${n.targetExam||'All'}</span></td>
+      <td>${new Date(n.createdAt).toLocaleDateString()}</td>
+      <td><button class="btn btn-danger btn-xs" onclick="deleteNotif('${n.id}')"><i class="fas fa-trash"></i></button></td>
+    </tr>`).join('')}</tbody></table></div>`;
+  });
+}
+
+function showCreateNotifModal() {
+  showModal('Send Notification', `
+    <div class="form-group"><label>Title</label><input type="text" id="mnTitle" placeholder="Notification title"></div>
+    <div class="form-group"><label>Message</label><textarea id="mnMessage" placeholder="Notification message..."></textarea></div>
+    <div class="form-row">
+      <div class="form-group"><label>Type</label><select id="mnType"><option value="general">General</option><option value="test">New Test</option><option value="pdf">PDF Upload</option><option value="weekly">Weekly Test</option></select></div>
+      <div class="form-group"><label>Target Exam</label><select id="mnTarget"><option>All</option><option>SSC</option><option>Railway</option><option>MP</option></select></div>
+    </div>
+  `, [{text:'Cancel',cls:'btn-outline',action:closeModal},{text:'Send',cls:'btn-gold',action:sendNotification}]);
+}
+
+function sendNotification() {
+  const data = {
+    title: document.getElementById('mnTitle').value.trim(),
+    message: document.getElementById('mnMessage').value.trim(),
+    type: document.getElementById('mnType').value,
+    targetExam: document.getElementById('mnTarget').value,
+    createdAt: Date.now()
+  };
+  if (!data.title || !data.message) { showToast('Title and message required','error'); return; }
+  db.ref('notifications').push(data).then(() => { closeModal(); showToast('Notification sent!','success'); loadNotifications(); });
+}
+
+function deleteNotif(id) {
+  db.ref('notifications/'+id).remove().then(() => { showToast('Deleted','success'); loadNotifications(); });
+}
+
+// ==================== CURRENT AFFAIRS ====================
+function renderAffairs() {
+  const area = document.getElementById('contentArea');
+  area.innerHTML = `<div class="fade-in">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px">
+      <div class="section-title" style="margin-bottom:0"><i class="fas fa-newspaper"></i> Current Affairs</div>
+      <button class="btn btn-gold btn-sm" onclick="showAddAffairModal()"><i class="fas fa-plus"></i> Add Current Affair</button>
+    </div>
+    <div id="affairsList"><div class="loader"><div class="loader-spinner"></div></div></div>
+  </div>`;
+  loadAffairs();
+}
+
+function loadAffairs() {
+  db.ref('current_affairs').orderByChild('createdAt').limitToLast(50).once('value').then(snap => {
+    const affairs = Object.entries(snap.val()||{}).map(([id,a])=>({id,...a})).reverse();
+    const el = document.getElementById('affairsList');
+    if (!affairs.length) { el.innerHTML = '<div class="empty-state"><i class="fas fa-newspaper"></i><h3>No current affairs</h3></div>'; return; }
+    el.innerHTML = `<div class="table-wrapper"><table class="data-table"><thead><tr><th>Title</th><th>Category</th><th>Date</th><th>Actions</th></tr></thead><tbody>${affairs.map(a => `<tr>
+      <td style="font-weight:500;max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${a.title}</td>
+      <td>${a.category||'-'}</td>
+      <td>${a.date||'-'}</td>
+      <td>
+        <button class="btn btn-outline btn-xs" onclick="showEditAffairModal('${a.id}')"><i class="fas fa-edit"></i></button>
+        <button class="btn btn-danger btn-xs" onclick="deleteAffair('${a.id}')"><i class="fas fa-trash"></i></button>
+      </td>
+    </tr>`).join('')}</tbody></table></div>`;
+  });
+}
+
+function showAddAffairModal() {
+  showModal('Add Current Affair', `
+    <div class="form-group"><label>Title</label><input type="text" id="maTitle" placeholder="e.g. India launches new satellite"></div>
+    <div class="form-row">
+      <div class="form-group"><label>Date</label><input type="date" id="maDate" value="${new Date().toISOString().split('T')[0]}"></div>
+      <div class="form-group"><label>Category</label><select id="maCategory"><option>National</option><option>International</option><option>Sports</option><option>Economy</option><option>Science</option><option>Other</option></select></div>
+    </div>
+    <div class="form-group"><label>Content</label><textarea id="maContent" style="min-height:120px" placeholder="Full content..."></textarea></div>
+  `, [{text:'Cancel',cls:'btn-outline',action:closeModal},{text:'Add',cls:'btn-gold',action:saveAffair}]);
+}
+
+function saveAffair() {
+  const data = {
+    title: document.getElementById('maTitle').value.trim(),
+    date: document.getElementById('maDate').value,
+    category: document.getElementById('maCategory').value,
+    content: document.getElementById('maContent').value.trim(),
+    createdAt: Date.now()
+  };
+  if (!data.title || !data.content) { showToast('Title and content required','error'); return; }
+  db.ref('current_affairs').push(data).then(() => { closeModal(); showToast('Added!','success'); loadAffairs(); });
+}
+
+function showEditAffairModal(aId) {
+  db.ref('current_affairs/'+aId).once('value').then(snap => {
+    const a = snap.val(); if (!a) return;
+    showModal('Edit Current Affair', `
+      <div class="form-group"><label>Title</label><input type="text" id="maTitle" value="${a.title||''}"></div>
+      <div class="form-row">
+        <div class="form-group"><label>Date</label><input type="date" id="maDate" value="${a.date||''}"></div>
+        <div class="form-group"><label>Category</label><select id="maCategory"><option ${a.category==='National'?'selected':''}>National</option><option ${a.category==='International'?'selected':''}>International</option><option ${a.category==='Sports'?'selected':''}>Sports</option><option ${a.category==='Economy'?'selected':''}>Economy</option><option ${a.category==='Science'?'selected':''}>Science</option><option ${a.category==='Other'?'selected':''}>Other</option></select></div>
+      </div>
+      <div class="form-group"><label>Content</label><textarea id="maContent" style="min-height:120px">${a.content||''}</textarea></div>
+      <input type="hidden" id="maEditId" value="${aId}">
+    `, [{text:'Cancel',cls:'btn-outline',action:closeModal},{text:'Update',cls:'btn-gold',action:updateAffair}]);
+  });
+}
+
+function updateAffair() {
+  const aId = document.getElementById('maEditId').value;
+  const data = {
+    title: document.getElementById('maTitle').value.trim(),
+    date: document.getElementById('maDate').value,
+    category: document.getElementById('maCategory').value,
+    content: document.getElementById('maContent').value.trim()
+  };
+  db.ref('current_affairs/'+aId).update(data).then(() => { closeModal(); showToast('Updated!','success'); loadAffairs(); });
+}
+
+function deleteAffair(aId) {
+  showConfirm('Delete?', '', () => { db.ref('current_affairs/'+aId).remove().then(() => { showToast('Deleted','success'); loadAffairs(); }); });
+}
+
+// ==================== DAILY QUIZ ====================
+function renderDailyQuiz() {
+  const area = document.getElementById('contentArea');
+  area.innerHTML = `<div class="fade-in">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px">
+      <div class="section-title" style="margin-bottom:0"><i class="fas fa-clock"></i> Daily Quiz</div>
+      <button class="btn btn-gold btn-sm" onclick="showAddQuizModal()"><i class="fas fa-plus"></i> Add Quiz Question</button>
+    </div>
+    <div id="quizList"><div class="loader"><div class="loader-spinner"></div></div></div>
+  </div>`;
+  loadDailyQuiz();
+}
+
+function loadDailyQuiz() {
+  db.ref('daily_quiz').orderByChild('date').limitToLast(50).once('value').then(snap => {
+    const quizzes = Object.entries(snap.val()||{}).map(([id,q])=>({id,...q})).reverse();
+    const el = document.getElementById('quizList');
+    const today = new Date().toISOString().split('T')[0];
+    if (!quizzes.length) { el.innerHTML = '<div class="empty-state"><i class="fas fa-clock"></i><h3>No quiz questions</h3></div>'; return; }
+    el.innerHTML = `<div class="table-wrapper"><table class="data-table"><thead><tr><th>Question</th><th>Answer</th><th>Date</th><th>Category</th><th>Status</th><th>Actions</th></tr></thead><tbody>${quizzes.map(q => `<tr>
+      <td style="max-width:250px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${q.question||''}</td>
+      <td style="color:var(--success);font-weight:600">${q.correctAnswer||''}</td>
+      <td>${q.date||'-'}</td>
+      <td><span class="badge badge-${(q.examCategory||'ssc').toLowerCase()}">${q.examCategory||'-'}</span></td>
+      <td><span class="badge badge-${q.date===today?'active':'inactive'}">${q.date===today?'Today':'Past'}</span></td>
+      <td>
+        <button class="btn btn-outline btn-xs" onclick="showEditQuizModal('${q.id}')"><i class="fas fa-edit"></i></button>
+        <button class="btn btn-danger btn-xs" onclick="deleteQuiz('${q.id}')"><i class="fas fa-trash"></i></button>
+      </td>
+    </tr>`).join('')}</tbody></table></div>`;
+  });
+}
+
+function showAddQuizModal() {
+  showModal('Add Daily Quiz', `
+    <div class="form-group"><label>Question</label><textarea id="mdqQuestion" placeholder="Quiz question..."></textarea></div>
+    <div class="form-row"><div class="form-group"><label>Option A</label><input type="text" id="mdqOptA"></div><div class="form-group"><label>Option B</label><input type="text" id="mdqOptB"></div></div>
+    <div class="form-row"><div class="form-group"><label>Option C</label><input type="text" id="mdqOptC"></div><div class="form-group"><label>Option D</label><input type="text" id="mdqOptD"></div></div>
+    <div class="form-row">
+      <div class="form-group"><label>Correct Answer</label><select id="mdqCorrect"><option>A</option><option>B</option><option>C</option><option>D</option></select></div>
+      <div class="form-group"><label>Date</label><input type="date" id="mdqDate" value="${new Date().toISOString().split('T')[0]}"></div>
+    </div>
+    <div class="form-group"><label>Exam Category</label><select id="mdqCategory"><option>SSC</option><option>Railway</option><option>MP</option><option>All</option></select></div>
+  `, [{text:'Cancel',cls:'btn-outline',action:closeModal},{text:'Add',cls:'btn-gold',action:saveQuiz}]);
+}
+
+function saveQuiz() {
+  const data = {
+    question: document.getElementById('mdqQuestion').value.trim(),
+    optionA: document.getElementById('mdqOptA').value.trim(),
+    optionB: document.getElementById('mdqOptB').value.trim(),
+    optionC: document.getElementById('mdqOptC').value.trim(),
+    optionD: document.getElementById('mdqOptD').value.trim(),
+    correctAnswer: document.getElementById('mdqCorrect').value,
+    date: document.getElementById('mdqDate').value,
+    examCategory: document.getElementById('mdqCategory').value
+  };
+  if (!data.question) { showToast('Question required','error'); return; }
+  db.ref('daily_quiz').push(data).then(() => { closeModal(); showToast('Quiz added!','success'); loadDailyQuiz(); });
+}
+
+function showEditQuizModal(qId) {
+  db.ref('daily_quiz/'+qId).once('value').then(snap => {
+    const q = snap.val(); if (!q) return;
+    showModal('Edit Quiz', `
+      <div class="form-group"><label>Question</label><textarea id="mdqQuestion">${q.question||''}</textarea></div>
+      <div class="form-row"><div class="form-group"><label>Option A</label><input type="text" id="mdqOptA" value="${q.optionA||''}"></div><div class="form-group"><label>Option B</label><input type="text" id="mdqOptB" value="${q.optionB||''}"></div></div>
+      <div class="form-row"><div class="form-group"><label>Option C</label><input type="text" id="mdqOptC" value="${q.optionC||''}"></div><div class="form-group"><label>Option D</label><input type="text" id="mdqOptD" value="${q.optionD||''}"></div></div>
+      <div class="form-row">
+        <div class="form-group"><label>Correct Answer</label><select id="mdqCorrect"><option ${q.correctAnswer==='A'?'selected':''}>A</option><option ${q.correctAnswer==='B'?'selected':''}>B</option><option ${q.correctAnswer==='C'?'selected':''}>C</option><option ${q.correctAnswer==='D'?'selected':''}>D</option></select></div>
+        <div class="form-group"><label>Date</label><input type="date" id="mdqDate" value="${q.date||''}"></div>
+      </div>
+      <div class="form-group"><label>Exam Category</label><select id="mdqCategory"><option ${q.examCategory==='SSC'?'selected':''}>SSC</option><option ${q.examCategory==='Railway'?'selected':''}>Railway</option><option ${q.examCategory==='MP'?'selected':''}>MP</option><option ${q.examCategory==='All'?'selected':''}>All</option></select></div>
+      <input type="hidden" id="mdqEditId" value="${qId}">
+    `, [{text:'Cancel',cls:'btn-outline',action:closeModal},{text:'Update',cls:'btn-gold',action:updateQuiz}]);
+  });
+}
+
+function updateQuiz() {
+  const qId = document.getElementById('mdqEditId').value;
+  const data = {
+    question: document.getElementById('mdqQuestion').value.trim(),
+    optionA: document.getElementById('mdqOptA').value.trim(),
+    optionB: document.getElementById('mdqOptB').value.trim(),
+    optionC: document.getElementById('mdqOptC').value.trim(),
+    optionD: document.getElementById('mdqOptD').value.trim(),
+    correctAnswer: document.getElementById('mdqCorrect').value,
+    date: document.getElementById('mdqDate').value,
+    examCategory: document.getElementById('mdqCategory').value
+  };
+  db.ref('daily_quiz/'+qId).update(data).then(() => { closeModal(); showToast('Updated!','success'); loadDailyQuiz(); });
+}
+
+function deleteQuiz(qId) {
+  showConfirm('Delete?', '', () => { db.ref('daily_quiz/'+qId).remove().then(() => { showToast('Deleted','success'); loadDailyQuiz(); }); });
+}
+
+// ==================== DOUBTS ====================
+function renderDoubts() {
+  const area = document.getElementById('contentArea');
+  area.innerHTML = `<div class="fade-in">
+    <div class="section-title"><i class="fas fa-comments"></i> Doubt Management</div>
+    <div class="filter-row"><select id="doubtFilter" onchange="loadDoubtsData()"><option value="all">All</option><option value="pending">Pending</option><option value="answered">Answered</option></select></div>
+    <div id="doubtsList"><div class="loader"><div class="loader-spinner"></div></div></div>
+  </div>`;
+  loadDoubtsData();
+}
+
+function loadDoubtsData() {
+  const filter = document.getElementById('doubtFilter')?.value||'all';
+  db.ref('doubts').orderByChild('createdAt').limitToLast(50).once('value').then(snap => {
+    let doubts = Object.entries(snap.val()||{}).map(([id,d])=>({id,...d})).reverse();
+    if (filter!=='all') doubts = doubts.filter(d => d.status === filter);
+    const el = document.getElementById('doubtsList');
+    if (!doubts.length) { el.innerHTML = '<div class="empty-state"><i class="fas fa-comments"></i><h3>No doubts</h3></div>'; return; }
+    el.innerHTML = `<div class="table-wrapper"><table class="data-table"><thead><tr><th>Student</th><th>Question</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead><tbody>${doubts.map(d => `<tr>
+      <td>${d.userName||'Unknown'}</td>
+      <td style="max-width:250px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${d.question||''}</td>
+      <td><span class="badge badge-${d.status==='answered'?'active':'inactive'}">${d.status||'pending'}</span></td>
+      <td>${d.createdAt?new Date(d.createdAt).toLocaleDateString():'-'}</td>
+      <td>
+        <button class="btn btn-outline btn-xs" onclick="answerDoubt('${d.id}')"><i class="fas fa-reply"></i></button>
+        <button class="btn btn-danger btn-xs" onclick="deleteDoubt('${d.id}')"><i class="fas fa-trash"></i></button>
+      </td>
+    </tr>`).join('')}</tbody></table></div>`;
+  });
+}
+
+function answerDoubt(dId) {
+  db.ref('doubts/'+dId).once('value').then(snap => {
+    const d = snap.val(); if (!d) return;
+    showModal('Answer Doubt', `
+      <div style="margin-bottom:12px;padding:12px;background:rgba(255,255,255,0.03);border-radius:8px">
+        <div style="font-size:12px;color:var(--text3);margin-bottom:4px">${d.userName||'Student'}</div>
+        <div style="font-size:14px">${d.question}</div>
+      </div>
+      <div class="form-group"><label>Your Answer</label><textarea id="dAnswer" placeholder="Type your answer..." style="min-height:100px">${d.answer||''}</textarea></div>
+    `, [{text:'Cancel',cls:'btn-outline',action:closeModal},{text:'Send Answer',cls:'btn-gold',action:() => saveDoubtAnswer(dId)}]);
+  });
+}
+
+function saveDoubtAnswer(dId) {
+  const answer = document.getElementById('dAnswer').value.trim();
+  if (!answer) { showToast('Please write an answer','error'); return; }
+  db.ref('doubts/'+dId).update({ answer, status: 'answered' }).then(() => { closeModal(); showToast('Answer sent!','success'); loadDoubtsData(); });
+}
+
+function deleteDoubt(dId) {
+  showConfirm('Delete?', '', () => { db.ref('doubts/'+dId).remove().then(() => { showToast('Deleted','success'); loadDoubtsData(); }); });
+}
+
+// ==================== ANALYTICS ====================
+function renderAnalytics() {
+  const area = document.getElementById('contentArea');
+  area.innerHTML = `<div class="fade-in">
+    <div class="section-title"><i class="fas fa-chart-bar"></i> Platform Analytics</div>
+    <div class="stats-grid" id="anStats"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px">
+      <div class="chart-container"><h4 style="font-size:13px;color:var(--gold);margin-bottom:10px">Category Distribution</h4><canvas id="catChart"></canvas></div>
+      <div class="chart-container"><h4 style="font-size:13px;color:var(--gold);margin-bottom:10px">Test Participation</h4><canvas id="partChart"></canvas></div>
+    </div>
+    <div class="card"><h4 style="font-size:14px;color:var(--gold);margin-bottom:12px"><i class="fas fa-exclamation-triangle"></i> Most Difficult Questions</h4><div id="diffQuestions"></div></div>
+  </div>`;
+  loadAnalytics();
+}
+
+function loadAnalytics() {
+  Promise.all([db.ref('users').once('value'),db.ref('results').once('value'),db.ref('tests').once('value'),db.ref('questions').once('value')]).then(([uSnap,rSnap,tSnap,qSnap]) => {
+    const users = Object.values(uSnap.val()||{});
+    const results = Object.values(rSnap.val()||{});
+    const tests = Object.values(tSnap.val()||{});
+    const questions = Object.values(qSnap.val()||{});
+    const avgScore = results.length ? Math.round(results.reduce((s,r)=>s+(r.score/r.totalMarks*100),0)/results.length) : 0;
+    document.getElementById('anStats').innerHTML = `
+      <div class="stat-card"><i class="fas fa-users"></i><h3>${users.length}</h3><p>Total Users</p></div>
+      <div class="stat-card"><i class="fas fa-file-alt"></i><h3>${results.length}</h3><p>Total Attempts</p></div>
+      <div class="stat-card"><i class="fas fa-percentage"></i><h3>${avgScore}%</h3><p>Avg Score</p></div>
+      <div class="stat-card"><i class="fas fa-question-circle"></i><h3>${questions.length}</h3><p>Questions</p></div>`;
+    // Category chart
+    drawCategoryChart(users);
+    // Participation chart
+    drawParticipationChart(tests, results);
+    // Difficult questions
+    const qStats = {};
+    results.forEach(r => {
+      if (r.answers) {
+        Object.entries(r.answers).forEach(([idx,a]) => {
+          if (a.correctAnswer) {
+            if (!qStats[a.correctAnswer]) qStats[a.correctAnswer] = {correct:0,wrong:0};
+            if (a.userAnswer === a.correctAnswer) qStats[a.correctAnswer].correct++;
+            else if (a.userAnswer !== 'skipped') qStats[a.correctAnswer].wrong++;
+          }
+        });
+      }
+    });
+    const diffQs = Object.entries(qStats).map(([key,d]) => ({key,...d, rate: d.correct+d.wrong>0 ? Math.round(d.correct/(d.correct+d.wrong)*100) : 100})).sort((a,b)=>a.rate-b.rate).slice(0,5);
+    document.getElementById('diffQuestions').innerHTML = diffQs.length ? diffQs.map(d => `
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.03);font-size:13px">
+        <span>Answer Key: ${d.key} (${d.correct+d.wrong} attempts)</span>
+        <span style="color:var(--error);font-weight:600">${d.rate}% correct</span>
+      </div>`).join('') : '<p style="font-size:13px;color:var(--text3)">Not enough data yet</p>';
+  });
+}
+
+function drawCategoryChart(users) {
+  const canvas = document.getElementById('catChart');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  canvas.width = canvas.parentElement.clientWidth - 40;
+  canvas.height = 180;
+  const w = canvas.width, h = canvas.height, cx = w/2, cy = h/2, r = Math.min(cx,cy)-20;
+  ctx.clearRect(0,0,w,h);
+  ctx.fillStyle='#1a1a1a'; ctx.fillRect(0,0,w,h);
+  const cats = {SSC:0,Railway:0,MP:0};
+  users.forEach(u => { if (cats[u.examCategory]!==undefined) cats[u.examCategory]++; });
+  const total = Object.values(cats).reduce((a,b)=>a+b,0) || 1;
+  const colors = ['#3498db','#2ecc71','#d4af37'];
+  let startAngle = -Math.PI/2;
+  Object.entries(cats).forEach(([cat,count],i) => {
+    const slice = (count/total)*Math.PI*2;
+    ctx.beginPath(); ctx.moveTo(cx,cy); ctx.arc(cx,cy,r,startAngle,startAngle+slice); ctx.fillStyle=colors[i]; ctx.fill();
+    const mid = startAngle+slice/2;
+    const lx = cx + (r+15)*Math.cos(mid), ly = cy + (r+15)*Math.sin(mid);
+    ctx.fillStyle='#fff'; ctx.font='11px Roboto'; ctx.textAlign='center';
+    ctx.fillText(`${cat}: ${count}`,lx,ly);
+    startAngle += slice;
+  });
+  ctx.beginPath(); ctx.arc(cx,cy,r*0.5,0,Math.PI*2); ctx.fillStyle='#1a1a1a'; ctx.fill();
+}
+
+function drawParticipationChart(tests, results) {
+  const canvas = document.getElementById('partChart');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  canvas.width = canvas.parentElement.clientWidth - 40;
+  canvas.height = 180;
+  const w = canvas.width, h = canvas.height, pad = 30;
+  ctx.clearRect(0,0,w,h);
+  ctx.fillStyle='#1a1a1a'; ctx.fillRect(0,0,w,h);
+  const testParticipation = {};
+  results.forEach(r => { testParticipation[r.testTitle||'Unknown'] = (testParticipation[r.testTitle||'Unknown']||0)+1; });
+  const sorted = Object.entries(testParticipation).sort((a,b)=>b[1]-a[1]).slice(0,6);
+  if (!sorted.length) return;
+  const max = Math.max(...sorted.map(s=>s[1]),1);
+  const barW = Math.min(40, (w-pad*2)/sorted.length - 10);
+  sorted.forEach(([name,count],i) => {
+    const x = pad + i*((w-pad*2)/sorted.length) + ((w-pad*2)/sorted.length - barW)/2;
+    const barH = Math.max(2, (h-pad*2)*count/max);
+    const grad = ctx.createLinearGradient(x,h-pad-barH,x,h-pad);
+    grad.addColorStop(0,'#f4d03f'); grad.addColorStop(1,'#c5a028');
+    ctx.fillStyle = grad;
+    ctx.beginPath(); ctx.roundRect(x,h-pad-barH,barW,barH,[4,4,0,0]); ctx.fill();
+    ctx.fillStyle='#888'; ctx.font='9px Roboto'; ctx.textAlign='center';
+    ctx.fillText(name.substring(0,10),x+barW/2,h-8);
+    ctx.fillStyle='#d4af37'; ctx.fillText(count,x+barW/2,h-pad-barH-6);
+  });
+}
+
+// ==================== UTILITY ====================
+function showModal(title, content, actions) {
+  document.getElementById('modalContainer').innerHTML = `
+    <div class="modal-overlay">
+      <div class="modal-box">
+        <h3>${title}</h3>
+        ${content}
+        <div class="modal-actions">${actions.map(a=>`<button class="btn ${a.cls} btn-sm" onclick="(${a.action})()">${a.text}</button>`).join('')}</div>
+      </div>
+    </div>`;
+}
+
+function closeModal() { document.getElementById('modalContainer').innerHTML = ''; }
+
+function showConfirm(title, msg, onConfirm) {
+  showModal(title, `<p>${msg}</p>`, [
+    {text:'Cancel',cls:'btn-outline',action:closeModal},
+    {text:'Confirm',cls:'btn-danger',action:()=>{closeModal();onConfirm();}}
+  ]);
+}
+
+function showToast(msg, type='info') {
+  const container = document.getElementById('toastContainer');
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.innerHTML = `<i class="fas fa-${type==='success'?'check-circle':type==='error'?'exclamation-circle':'info-circle'}"></i> ${msg}`;
+  container.appendChild(toast);
+  setTimeout(() => toast.remove(), 3000);
+}
+
+// ==================== INIT ====================
+checkSession();
+</script>
+</body>
+</html>
